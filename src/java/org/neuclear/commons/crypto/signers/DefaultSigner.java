@@ -1,12 +1,12 @@
 package org.neuclear.commons.crypto.signers;
 
+import org.neuclear.commons.LowLevelException;
 import org.neuclear.commons.crypto.CryptoException;
 import org.neuclear.commons.crypto.CryptoTools;
 import org.neuclear.commons.crypto.passphraseagents.InteractiveAgent;
 import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.security.KeyStoreException;
 import java.security.PublicKey;
 import java.util.Iterator;
@@ -31,8 +31,13 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: DefaultSigner.java,v 1.8 2004/04/13 17:32:07 pelle Exp $
+$Id: DefaultSigner.java,v 1.9 2004/04/14 00:10:52 pelle Exp $
 $Log: DefaultSigner.java,v $
+Revision 1.9  2004/04/14 00:10:52  pelle
+Added a MessageLabel for handling errors, validation and info
+Save works well now.
+It's pretty much there I think.
+
 Revision 1.8  2004/04/13 17:32:07  pelle
 Now has save dialog
 Remembers passphrases
@@ -91,13 +96,34 @@ public final class DefaultSigner implements BrowsableSigner {
         File file = new File(filename);
         if (file.exists() && file.length() == 0)
             file.delete(); // Delete empty file
+        InputStream is = null;
+        if (file.exists()) {
+            passphrase = agent.getPassPhrase(filename);
+            try {
+                is = new FileInputStream(file);
+            } catch (FileNotFoundException e) {
+                throw new LowLevelException(e);
+            }
+        }
         try {
             prefs.flush();
         } catch (BackingStoreException e) {
             e.printStackTrace();
         }
-        signer = new JCESigner(filename, "jks", "SUN", agent);
+        if (passphrase != null)
+            signer = loadSigner(is, agent);
+        else
+            signer = new JCESigner(filename, is, "jks", "SUN", agent);
 
+
+    }
+
+    private JCESigner loadSigner(InputStream is, final InteractiveAgent agent) throws InvalidPassphraseException {
+        try {
+            return new JCESigner(filename, is, "jks", "SUN", agent, passphrase);
+        } catch (InvalidPassphraseException e) {
+            return loadSigner(is, agent);
+        }
     }
 
     public final byte[] sign(final String name, final byte[] data) throws NonExistingSignerException, UserCancellationException {
@@ -138,6 +164,16 @@ public final class DefaultSigner implements BrowsableSigner {
 
     public void save() {
         try {
+            save(false);
+        } catch (IOException e) {
+            throw new LowLevelException(e);
+        } catch (UserCancellationException e) {
+            throw new LowLevelException(e);
+        }
+    }
+
+    public void save(final boolean force) throws IOException, UserCancellationException {
+        if (force || filename == null) {
             filename = agent.getSaveToFileName("Save Keys... ", filename).getCanonicalPath();
             prefs.put(KEYSTORE, filename);
             try {
@@ -145,12 +181,11 @@ public final class DefaultSigner implements BrowsableSigner {
             } catch (BackingStoreException e) {
                 e.printStackTrace();
             }
-            signer.save(filename);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (UserCancellationException e) {
-            e.printStackTrace();
         }
+        if (force || passphrase == null || passphrase.length == 0)
+            passphrase = agent.getNewPassPhrase(filename);
+        System.out.println("Saving " + filename);
+        signer.save(filename, passphrase);
     }
 
     public Iterator iterator() throws KeyStoreException {
@@ -162,5 +197,6 @@ public final class DefaultSigner implements BrowsableSigner {
     private final InteractiveAgent agent;
     private Preferences prefs;
     private static final String KEYSTORE = "KEYSTORE";
+    private char passphrase[] = null;
 
 }

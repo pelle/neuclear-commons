@@ -1,6 +1,11 @@
 /*
- * $Id: JCESigner.java,v 1.23 2004/04/13 17:32:07 pelle Exp $
+ * $Id: JCESigner.java,v 1.24 2004/04/14 00:10:52 pelle Exp $
  * $Log: JCESigner.java,v $
+ * Revision 1.24  2004/04/14 00:10:52  pelle
+ * Added a MessageLabel for handling errors, validation and info
+ * Save works well now.
+ * It's pretty much there I think.
+ *
  * Revision 1.23  2004/04/13 17:32:07  pelle
  * Now has save dialog
  * Remembers passphrases
@@ -445,7 +450,6 @@ public class JCESigner implements BrowsableSigner {
         } catch (NoSuchAlgorithmException e) {
             throw new LowLevelException(e);
         } catch (KeyStoreException e) {
-            // Could try to reload it here but I wont for now
             throw new LowLevelException(e);
         } catch (CryptoException e) {
             throw new LowLevelException(e);
@@ -466,7 +470,7 @@ public class JCESigner implements BrowsableSigner {
         }
     }
 
-    public void save() {
+    public void save() throws UserCancellationException {
         try {
             save(filename);
         } catch (FileNotFoundException e) {
@@ -474,14 +478,18 @@ public class JCESigner implements BrowsableSigner {
         }
     }
 
-    public synchronized final void save(String filename) throws FileNotFoundException {
+    public synchronized final void save(String filename) throws FileNotFoundException, UserCancellationException {
+        save(filename, agent.getPassPhrase(filename));
+    }
+
+    public synchronized final void save(String filename, char passphrase[]) throws FileNotFoundException {
         if (Utility.isEmpty(filename))
             throw new FileNotFoundException("no keystore filename");
         try {
             File ksfile = new File(filename);
             ksfile.getParentFile().mkdirs();
             System.out.println(Thread.currentThread());
-            ks.store(new FileOutputStream(ksfile), agent.getPassPhrase(filename));
+            ks.store(new FileOutputStream(ksfile), passphrase);
         } catch (Exception e) {
             throw new LowLevelException(e);
         }
@@ -508,7 +516,6 @@ public class JCESigner implements BrowsableSigner {
     private final KeyStore ks;
     private final KeyCache cache;
     private final PassPhraseAgent agent;
-
     private final KeyPairGenerator kpg;
     private String filename;
 }

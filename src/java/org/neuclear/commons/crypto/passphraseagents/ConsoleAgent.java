@@ -29,8 +29,13 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: ConsoleAgent.java,v 1.7 2004/04/13 18:14:02 pelle Exp $
+$Id: ConsoleAgent.java,v 1.8 2004/04/14 00:10:52 pelle Exp $
 $Log: ConsoleAgent.java,v $
+Revision 1.8  2004/04/14 00:10:52  pelle
+Added a MessageLabel for handling errors, validation and info
+Save works well now.
+It's pretty much there I think.
+
 Revision 1.7  2004/04/13 18:14:02  pelle
 added open dialog to swing agent and interactive agent
 
@@ -179,6 +184,10 @@ public final class ConsoleAgent implements InteractiveAgent {
 
     public File getOpenFileName(String title, String def) throws UserCancellationException {
         return null;
+    }
+
+    public char[] getNewPassPhrase(String name) throws UserCancellationException {
+        return new char[0];
     }
 
 }

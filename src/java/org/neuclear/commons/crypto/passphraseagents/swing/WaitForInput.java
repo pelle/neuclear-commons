@@ -3,8 +3,13 @@ package org.neuclear.commons.crypto.passphraseagents.swing;
 import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
 
 /*
-$Id: WaitForInput.java,v 1.2 2004/04/13 17:32:05 pelle Exp $
+$Id: WaitForInput.java,v 1.3 2004/04/14 00:10:52 pelle Exp $
 $Log: WaitForInput.java,v $
+Revision 1.3  2004/04/14 00:10:52  pelle
+Added a MessageLabel for handling errors, validation and info
+Save works well now.
+It's pretty much there I think.
+
 Revision 1.2  2004/04/13 17:32:05  pelle
 Now has save dialog
 Remembers passphrases
@@ -50,6 +55,8 @@ public abstract class WaitForInput implements Runnable {
             monitor.notifyAll();
         }
     }
+
+    abstract void execute();
 
     private Object result;
     private boolean cancelled = false;

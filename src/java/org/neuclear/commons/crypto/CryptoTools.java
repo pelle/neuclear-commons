@@ -1,6 +1,11 @@
 /*
- * $Id: CryptoTools.java,v 1.20 2004/04/09 20:02:54 pelle Exp $
+ * $Id: CryptoTools.java,v 1.21 2004/04/14 00:10:52 pelle Exp $
  * $Log: CryptoTools.java,v $
+ * Revision 1.21  2004/04/14 00:10:52  pelle
+ * Added a MessageLabel for handling errors, validation and info
+ * Save works well now.
+ * It's pretty much there I think.
+ *
  * Revision 1.20  2004/04/09 20:02:54  pelle
  * Added PrivateKey wrapping and unwrapping to CryptoTools with the methods:
  * byte [] wrapKey(char passphrase[], PrivateKey key)
@@ -934,7 +939,7 @@ public final class CryptoTools {
 
     private static SecureRandom randSource;
 
-    public final static String DEFAULT_KEYSTORE = System.getProperty("user.home") + "/.neuclear/keystore.jks";
+    public final static String DEFAULT_KEYSTORE = System.getProperty("user.home") + "/.neuclear/identities.jks";
     public static final int RAND_BIT_LENGTH = 128;
     private static final long YPLUS20 = 20 * 365 * 24 * 60 * 60;
 }

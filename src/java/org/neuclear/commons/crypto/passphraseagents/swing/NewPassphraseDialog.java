@@ -15,9 +15,9 @@ import java.awt.event.KeyListener;
 import java.net.URL;
 
 /*
-$Id: SimpleDialog.java,v 1.4 2004/04/14 00:10:52 pelle Exp $
-$Log: SimpleDialog.java,v $
-Revision 1.4  2004/04/14 00:10:52  pelle
+$Id: NewPassphraseDialog.java,v 1.1 2004/04/14 00:10:51 pelle Exp $
+$Log: NewPassphraseDialog.java,v $
+Revision 1.1  2004/04/14 00:10:51  pelle
 Added a MessageLabel for handling errors, validation and info
 Save works well now.
 It's pretty much there I think.
@@ -45,26 +45,26 @@ The XMLSig classes have also been updated to support this.
  * Date: Apr 7, 2004
  * Time: 9:55:37 AM
  */
-public class SimpleDialog {
-    public SimpleDialog() {
+public class NewPassphraseDialog {
+    public NewPassphraseDialog() {
         try {
             UIManager.setLookAndFeel("com.jgoodies.plaf.plastic.PlasticXPLookAndFeel");
             UIManager.put(Options.USE_SYSTEM_FONTS_APP_KEY, Boolean.TRUE);
         } catch (Exception e) {
             // Likely PlasticXP is not in the class path; ignore.
         }
-        ok = new JButton("Open");
+        ok = new JButton("Save");
         ok.setEnabled(false);
         cancel = new JButton("Cancel");
         alias = new JLabel();
         passphrase = new JPasswordField();
-        message = new MessageLabel();
+        passphrase2 = new JPasswordField();
         final URL imageurl = this.getClass().getClassLoader().getResource("org/neuclear/commons/crypto/passphraseagents/neuclear.png");
         if (imageurl != null)
             icon = new JLabel(new ImageIcon(imageurl));
         else
             icon = new JLabel("NeuClear");
-
+        message = new MessageLabel();
         dialog = new JDialog();
         dialog.setTitle("NeuClear Signing Agent");
         dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -93,6 +93,7 @@ public class SimpleDialog {
         };
         ok.addActionListener(action);
         passphrase.addActionListener(action);
+        passphrase2.addActionListener(action);
         final KeyListener validate = new KeyListener() {
             public void keyPressed(KeyEvent e) {
 
@@ -108,66 +109,78 @@ public class SimpleDialog {
             }
         };
         passphrase.addKeyListener(validate);
+        passphrase2.addKeyListener(validate);
 
     }
 
     private Component buildPanel() {
         FormLayout layout = new FormLayout("right:pref, 3dlu, pref:grow ",
-                "pref,3dlu,pref, 3dlu, fill:pref:grow, 3dlu, pref, 3dlu, pref, 7dlu, pref");
+                "pref,3dlu,pref, 3dlu, fill:pref:grow, 3dlu, pref,3dlu, pref,3dlu, pref, 7dlu, pref");
         PanelBuilder builder = new PanelBuilder(layout);
         CellConstraints cc = new CellConstraints();
 
         builder.setDefaultDialogBorder();
 
         builder.add(icon, cc.xyw(1, 1, 1, CellConstraints.LEFT, CellConstraints.TOP));
-        builder.addSeparator("Enter passphrase", cc.xyw(1, 3, 3));
-        builder.addLabel("open:", cc.xy(1, 5)).setLabelFor(alias);
+        builder.addSeparator("Enter new passphrase", cc.xyw(1, 3, 3));
+        builder.addLabel("name:", cc.xy(1, 5)).setLabelFor(alias);
         builder.add(alias, cc.xy(3, 5));
         builder.addLabel("Passphrase:", cc.xy(1, 7)).setLabelFor(passphrase);
         builder.add(passphrase, cc.xy(3, 7));
-        builder.add(message, cc.xyw(1, 9, 3));
-
+        builder.addLabel("Repeat Passphrase:", cc.xy(1, 9)).setLabelFor(passphrase2);
+        builder.add(passphrase2, cc.xy(3, 9));
+        builder.add(message, cc.xyw(1, 11, 3));
 
         ButtonBarBuilder bb = new ButtonBarBuilder();
         bb.addGlue();
         bb.addUnrelatedGap();
         bb.addGridded(ok);
         bb.addGridded(cancel);
-        builder.add(bb.getPanel(), cc.xyw(1, 11, 3));
+        builder.add(bb.getPanel(), cc.xyw(1, 13, 3));
 
         return builder.getPanel();
     }
 
 
     private boolean validate() {
-        return (passphrase.getPassword().length > 0);
+        char[] p1 = passphrase.getPassword();
+        char[] p2 = passphrase2.getPassword();
+        if (p1 == null || p2 == null || p1.length == 0 || p2.length == 0) {
+            message.invalid("Please enter your new matching passphrases");
+            return false;
+        }
+        if (p1.length != p2.length) {
+            message.invalid("Both passphrases must be the same");
+            return false;
+        }
+        message.clear();
+        return true;//new String(p1).equals(new String(p2));
     }
 
-    WaitForInput createGetPassphraseTask(final String name, final boolean incorrect) {
-        return new DialogRunner(name, incorrect);
-    }
 
+    public WaitForInput createGetNewPassphraseTask(String name) {
+        return new NewPassPhraseRunner(name);
+    }
 
     private final JButton ok;
     private final JButton cancel;
     private final JLabel alias;
     private final JPasswordField passphrase;
+    private final JPasswordField passphrase2;
     private final JDialog dialog;
     private final JLabel icon;
     private final MessageLabel message;
     private WaitForInput runner;
 
-    class DialogRunner extends WaitForInput {
-        public DialogRunner(final String alias, final boolean incorrect) {
+    class NewPassPhraseRunner extends WaitForInput {
+        public NewPassPhraseRunner(final String alias) {
             this.req = alias;
-            this.incorrect = incorrect;
         }
 
         public void run() {
             runner = this;
+            ok.setEnabled(false);
             alias.setText(req);
-            if (incorrect)
-                message.invalid("You entered an invalid passphrase. Try again...");
             dialog.pack();
             dialog.show();
             System.out.println(Thread.currentThread());
@@ -177,14 +190,11 @@ public class SimpleDialog {
         public void execute() {
             dialog.hide();
             final char[] phrase = passphrase.getPassword();
-//            if (remember.getState())
-//                cache.put(name, phrase);
             passphrase.setText("");
             setResult(phrase);
         }
 
         private final String req;
-        private final boolean incorrect;
     }
 
 }

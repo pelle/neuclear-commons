@@ -14,8 +14,13 @@ import java.io.File;
 import java.security.PublicKey;
 
 /*
-$Id: SwingAgent.java,v 1.6 2004/04/13 18:14:02 pelle Exp $
+$Id: SwingAgent.java,v 1.7 2004/04/14 00:10:52 pelle Exp $
 $Log: SwingAgent.java,v $
+Revision 1.7  2004/04/14 00:10:52  pelle
+Added a MessageLabel for handling errors, validation and info
+Save works well now.
+It's pretty much there I think.
+
 Revision 1.6  2004/04/13 18:14:02  pelle
 added open dialog to swing agent and interactive agent
 
@@ -55,6 +60,7 @@ public class SwingAgent implements InteractiveAgent {
         }
         ksd = new KeyStoreDialog();
         simple = new SimpleDialog();
+        np = new NewPassphraseDialog();
         queue = new RunnableQueue();
         fc = new JFileChooser();
         fc.setFileFilter(new JKSFilter());
@@ -62,6 +68,7 @@ public class SwingAgent implements InteractiveAgent {
     }
 
     private final SimpleDialog simple;
+    private final NewPassphraseDialog np;
     private final KeyStoreDialog ksd;
     private final RunnableQueue queue;
     private final JFileChooser fc;
@@ -126,14 +133,24 @@ public class SwingAgent implements InteractiveAgent {
 
     public File getSaveToFileName(String title, String def) throws UserCancellationException {
         prepFileChooser(def, title);
-        fc.showSaveDialog(ksd.getDialog());
+        int result = fc.showSaveDialog(ksd.getFrame());
+        if (result == JFileChooser.CANCEL_OPTION)
+            throw new UserCancellationException(title);
         return fc.getSelectedFile();
     }
 
     public File getOpenFileName(String title, String def) throws UserCancellationException {
         prepFileChooser(def, title);
-        fc.showOpenDialog(ksd.getDialog());
+        int result = fc.showOpenDialog(ksd.getFrame());
+        if (result == JFileChooser.CANCEL_OPTION)
+            throw new UserCancellationException(title);
         return fc.getSelectedFile();
+    }
+
+    public char[] getNewPassPhrase(String name) throws UserCancellationException {
+        WaitForInput waiter = np.createGetNewPassphraseTask(name);
+        queue.queue(waiter);
+        return (char[]) waiter.getResult();
     }
 
     private void prepFileChooser(String def, String title) {

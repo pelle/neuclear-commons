@@ -30,8 +30,13 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /*
-$Id: KeyStoreDialog.java,v 1.3 2004/04/13 17:32:05 pelle Exp $
+$Id: KeyStoreDialog.java,v 1.4 2004/04/14 00:10:51 pelle Exp $
 $Log: KeyStoreDialog.java,v $
+Revision 1.4  2004/04/14 00:10:51  pelle
+Added a MessageLabel for handling errors, validation and info
+Save works well now.
+It's pretty much there I think.
+
 Revision 1.3  2004/04/13 17:32:05  pelle
 Now has save dialog
 Remembers passphrases
@@ -72,28 +77,32 @@ public class KeyStoreDialog {
         sign.setEnabled(false);
         cancel = new JButton("Cancel");
         newId = new JButton("New ID ...");
+        message = new MessageLabel();
         save = new JButton("Save ...");
         remember = new JCheckBox("remember passphrase in current session", prefs.getBoolean(REMEMBER_PASSPHRASE, false));
         list = new JList();
         list.setBorder(BorderFactory.createLoweredBevelBorder());
         passphrase = new JPasswordField();
+        frame = new JFrame();
+
         final URL imageurl = this.getClass().getClassLoader().getResource("org/neuclear/commons/crypto/passphraseagents/neuclear.png");
-        if (imageurl != null)
-            icon = new JLabel(new ImageIcon(imageurl));
-        else
+        if (imageurl != null) {
+            final ImageIcon icon = new ImageIcon(imageurl);
+            frame.setIconImage(icon.getImage());
+            this.icon = new JLabel(icon);
+        } else
             icon = new JLabel("NeuClear");
 
-        dialog = new JDialog();
-        dialog.setTitle("NeuClear Signing Agent");
-        dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        dialog.getContentPane().add(buildPanel());
-        dialog.pack();
+        frame.setTitle("NeuClear Signing Agent");
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        frame.getContentPane().add(buildPanel());
+        frame.pack();
         nad = new NewAliasDialog(this);
         cancel.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent actionEvent) {
                 synchronized (passphrase) {
                     passphrase.setText("");
-                    dialog.hide();
+                    frame.hide();
                     runner.cancel();
                 }
 
@@ -135,6 +144,8 @@ public class KeyStoreDialog {
              * @param e the event that characterizes the change.
              */
             public void valueChanged(ListSelectionEvent e) {
+                if (list.getModel().getSize() == 0)
+                    return;
                 lastSelected = (String) list.getSelectedValue();
                 if (remember.isSelected() && cache.containsKey(lastSelected))
                     passphrase.setText((String) cache.get(lastSelected));
@@ -158,7 +169,7 @@ public class KeyStoreDialog {
              * Invoked when an action occurs.
              */
             public void actionPerformed(ActionEvent e) {
-                new Thread(new SaveKeyStore(signer)).start();
+                SaveKeyStore.saveAs(signer, message);
             }
 
         });
@@ -183,24 +194,29 @@ public class KeyStoreDialog {
         if (alias != null) {
             fillAliasList();
             list.setSelectedValue(alias, true);
-            dialog.pack();
+            message.info(alias + " added");
+            frame.pack();
+            SaveKeyStore.save(signer, message);
+
         }
     }
 
     private Component buildPanel() {
         FormLayout layout = new FormLayout("right:pref, 3dlu, pref:grow ",
-                "pref,3dlu,pref, 3dlu, fill:pref:grow, 3dlu, pref, 3dlu, pref, 7dlu, pref");
+                "pref,3dlu,pref, 3dlu, fill:pref:grow, 3dlu, pref, 3dlu, pref,3dlu, pref, 7dlu, pref");
         PanelBuilder builder = new PanelBuilder(layout);
         CellConstraints cc = new CellConstraints();
 
         builder.setDefaultDialogBorder();
 
         builder.add(icon, cc.xyw(1, 5, 1, CellConstraints.LEFT, CellConstraints.TOP));
+        icon.setLabelFor(list);
         builder.addSeparator("Identities", cc.xyw(1, 3, 3));
         builder.add(list, cc.xyw(3, 5, 1));
-        builder.addLabel("Passphrase:", cc.xy(1, 7));
+        builder.addLabel("Passphrase:", cc.xy(1, 7)).setLabelFor(passphrase);
         builder.add(passphrase, cc.xy(3, 7));
         builder.add(remember, cc.xy(3, 9));
+        builder.add(message, cc.xyw(1, 11, 3));
 
         ButtonBarBuilder bb = new ButtonBarBuilder();
         bb.addGridded(newId);
@@ -209,7 +225,7 @@ public class KeyStoreDialog {
         bb.addUnrelatedGap();
         bb.addGridded(sign);
         bb.addGridded(cancel);
-        builder.add(bb.getPanel(), cc.xyw(1, 11, 3));
+        builder.add(bb.getPanel(), cc.xyw(1, 13, 3));
 
         return builder.getPanel();
     }
@@ -233,8 +249,8 @@ public class KeyStoreDialog {
         return signer;
     }
 
-    JDialog getDialog() {
-        return dialog;
+    JFrame getFrame() {
+        return frame;
     }
 
     private boolean validate() {
@@ -251,10 +267,11 @@ public class KeyStoreDialog {
     private final JButton cancel;
     private final JButton newId;
     private final JButton save;
+    private final MessageLabel message;
     private final JCheckBox remember;
     private final JList list;
     private final JPasswordField passphrase;
-    private final JDialog dialog;
+    private final JFrame frame;
     private final NewAliasDialog nad;
     private final Map cache;
     private final JLabel icon;
@@ -267,22 +284,31 @@ public class KeyStoreDialog {
             this.data = data;
             this.cb = cb;
             this.bs = bs;
+            this.invalid = false;
         }
 
         public void run() {
             runner = this;
             signer = bs;
             fillAliasList();
-            list.setSelectedValue(prefs.get(DEFAULT_ALIAS, ""), true);
-            if (list.getSelectedIndex() == -1)
-                list.setSelectedIndex(0);
-            if (remember.isSelected() && cache.containsKey(list.getSelectedValue().toString()))
-                passphrase.setText((String) cache.get(list.getSelectedValue()));
-            else
+            if (list.getModel().getSize() > 0) {
+                list.setSelectedValue(prefs.get(DEFAULT_ALIAS, ""), true);
+                if (list.getSelectedIndex() == -1)
+                    list.setSelectedIndex(0);
+                if (remember.isSelected() && (list.getSelectedIndex() != -1)
+                        && cache.containsKey(list.getSelectedValue()))
+                    passphrase.setText((String) cache.get(list.getSelectedValue()));
+                else
+                    passphrase.setText("");
+            } else
                 passphrase.setText("");
-
-            dialog.pack();
-            dialog.show();
+            if (invalid)
+                message.invalidPassphrase();
+            else
+                message.clear();
+            passphrase.requestFocus();
+            frame.pack();
+            frame.show();
             sign.setEnabled(false);
         }
 
@@ -297,14 +323,18 @@ public class KeyStoreDialog {
                 e.printStackTrace();
             }
 
-            dialog.hide();
             char phrase[] = passphrase.getPassword();
             passphrase.setText("");
             try {
-                //Todo handle when an alias hasnt been selected
-                setResult(signer.sign(list.getSelectedValue().toString(), phrase, data, cb));
+                final byte[] sig = signer.sign(list.getSelectedValue().toString(), phrase, data, cb);
+                invalid = false;
+                frame.hide();
+                setResult(sig);
             } catch (InvalidPassphraseException e) {
+                invalid = true;
                 run();
+            } catch (Exception e) {
+                message.error(e);
             }
 
         }
@@ -313,6 +343,7 @@ public class KeyStoreDialog {
         private final byte data[];
         private final SetPublicKeyCallBack cb;
         private final BrowsableSigner bs;
+        private boolean invalid = false;
 
     }
 

@@ -14,8 +14,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 /*
-$Id: NewAliasDialog.java,v 1.4 2004/04/13 17:32:05 pelle Exp $
+$Id: NewAliasDialog.java,v 1.5 2004/04/14 00:10:51 pelle Exp $
 $Log: NewAliasDialog.java,v $
+Revision 1.5  2004/04/14 00:10:51  pelle
+Added a MessageLabel for handling errors, validation and info
+Save works well now.
+It's pretty much there I think.
+
 Revision 1.4  2004/04/13 17:32:05  pelle
 Now has save dialog
 Remembers passphrases
@@ -56,10 +61,12 @@ public class NewAliasDialog implements Runnable {
 
         passphrase1 = new JPasswordField();
         passphrase2 = new JPasswordField();
+        message = new MessageLabel();
+
         progress = new JProgressBar(0, 100);
         progress.setIndeterminate(true);
         progress.setVisible(true);
-        dialog = new JDialog(agent.getDialog(), true);
+        dialog = new JDialog(agent.getFrame(), true);
         dialog.setTitle("NeuClear Signing Agent");
         dialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         dialog.hide();
@@ -130,41 +137,47 @@ public class NewAliasDialog implements Runnable {
     }
 
     private boolean validate() {
-        if (alias.getText().length() == 0)
+        if (alias.getText().length() == 0) {
+            message.invalid("Please enter your new Identity Name");
             return false;
+        }
         char[] p1 = passphrase1.getPassword();
         char[] p2 = passphrase2.getPassword();
-        if (p1 == null || p2 == null)
+        if (p1 == null || p2 == null || p1.length == 0 || p2.length == 0) {
+            message.invalid("Please enter your new matching passphrases");
             return false;
-        if (p1.length != p2.length)
+        }
+        if (p1.length != p2.length) {
+            message.invalid("Both passphrases must be the same");
             return false;
-        if (p1.length == 0)
-            return false;
+        }
+        message.clear();
         return true;//new String(p1).equals(new String(p2));
     }
 
     private JPanel buildPanel() {
         FormLayout layout = new FormLayout("right:pref, 3dlu, 100dlu:grow ",
-                "pref,3dlu,pref, 3dlu, pref, 3dlu, pref, 7dlu, pref");
+                "pref,3dlu,pref, 3dlu, pref, 3dlu, pref,3dlu, pref, 7dlu, pref");
         PanelBuilder builder = new PanelBuilder(layout);
         CellConstraints cc = new CellConstraints();
 
         builder.setDefaultDialogBorder();
 
         builder.addSeparator("Create alias", cc.xyw(1, 1, 3));
-        builder.addLabel("Alias:", cc.xy(1, 3));
+        builder.addLabel("Alias:", cc.xy(1, 3)).setLabelFor(alias);
         builder.add(alias, cc.xy(3, 3));
-        builder.addLabel("Passphrase:", cc.xy(1, 5));
+        builder.addLabel("Passphrase:", cc.xy(1, 5)).setLabelFor(passphrase1);
         builder.add(passphrase1, cc.xy(3, 5));
-        builder.addLabel("(Repeat) Passphrase:", cc.xy(1, 7));
+        builder.addLabel("(Repeat) Passphrase:", cc.xy(1, 7)).setLabelFor(passphrase2);
         builder.add(passphrase2, cc.xy(3, 7));
-//        builder.add(progress,cc.xyw(1,9,3));
+        builder.add(message, cc.xyw(1, 9, 3));
+
         ButtonBarBuilder bb = new ButtonBarBuilder();
         bb.addGlue();
         bb.addUnrelatedGap();
         bb.addGridded(ok);
         bb.addGridded(cancel);
-        builder.add(bb.getPanel(), cc.xyw(1, 9, 3));
+        builder.add(bb.getPanel(), cc.xyw(1, 11, 3));
 
         return builder.getPanel();
 
@@ -207,6 +220,10 @@ public class NewAliasDialog implements Runnable {
         ok.setEnabled(false);
         cancel.setEnabled(true);
         passphrase1.setEnabled(true);
+        alias.setText("");
+        alias.setEnabled(true);
+        passphrase1.setText("");
+        passphrase2.setText("");
         alias.setEnabled(true);
         passphrase2.setEnabled(true);
         setMainPanel();
@@ -255,5 +272,6 @@ public class NewAliasDialog implements Runnable {
     private JProgressBar progress;
     private JPanel regular;
     private JPanel process;
+    private MessageLabel message;
 
 }
