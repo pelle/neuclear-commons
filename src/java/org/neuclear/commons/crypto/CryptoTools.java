@@ -1,6 +1,9 @@
 /*
- * $Id: CryptoTools.java,v 1.21 2004/04/14 00:10:52 pelle Exp $
+ * $Id: CryptoTools.java,v 1.22 2004/04/19 18:45:26 pelle Exp $
  * $Log: CryptoTools.java,v $
+ * Revision 1.22  2004/04/19 18:45:26  pelle
+ * Changed default signer store to use correct path seperators.
+ *
  * Revision 1.21  2004/04/14 00:10:52  pelle
  * Added a MessageLabel for handling errors, validation and info
  * Save works well now.
@@ -285,6 +288,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
@@ -939,7 +943,7 @@ public final class CryptoTools {
 
     private static SecureRandom randSource;
 
-    public final static String DEFAULT_KEYSTORE = System.getProperty("user.home") + "/.neuclear/identities.jks";
+    public final static String DEFAULT_KEYSTORE = System.getProperty("user.home") + File.separatorChar + ".neuclear" + File.separatorChar + "identities.jks";
     public static final int RAND_BIT_LENGTH = 128;
     private static final long YPLUS20 = 20 * 365 * 24 * 60 * 60;
 }
