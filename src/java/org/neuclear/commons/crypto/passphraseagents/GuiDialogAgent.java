@@ -30,8 +30,13 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: GuiDialogAgent.java,v 1.12 2004/04/14 00:10:52 pelle Exp $
+$Id: GuiDialogAgent.java,v 1.13 2004/04/28 23:50:58 pelle Exp $
 $Log: GuiDialogAgent.java,v $
+Revision 1.13  2004/04/28 23:50:58  pelle
+Created various sample programs in src/examplecode/
+Preparing documentation for release 0.9
+Updating BDG
+
 Revision 1.12  2004/04/14 00:10:52  pelle
 Added a MessageLabel for handling errors, validation and info
 Save works well now.
@@ -260,8 +265,8 @@ public final class GuiDialogAgent implements InteractiveAgent {
     public static void main(final String[] args) {
         final InteractiveAgent dia = new GuiDialogAgent();
         try {
-            System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("neu://pelle@test")));
-            System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("neu://pelle@test", true)));
+            System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("operations")));
+            System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("operations", true)));
         } catch (UserCancellationException e) {
             System.out.print("User Cancellation by: " + e.getName());
         }
