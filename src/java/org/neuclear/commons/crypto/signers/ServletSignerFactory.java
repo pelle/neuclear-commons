@@ -26,7 +26,7 @@ import java.util.Map;
  * <tt>gui</tt>(default) and <tt>console</tt></td></tr>
  * <tr><td>keeppassphrase</td><td>This asks for the service passphrase once at startup and remembers it through the lifetime of the signers</td></tr>
  * </table>
- * <p>
+ * <p/>
  * To use the factory. Do as follows within your servlets init() method:
  * <code>Signer signer=ServletSignerFactory.getInstance().createSigner(config);</code>
  *
@@ -36,44 +36,45 @@ import java.util.Map;
 public final class ServletSignerFactory {
 
     private ServletSignerFactory() {
-        map=Collections.synchronizedMap(new HashMap());
+        map = Collections.synchronizedMap(new HashMap());
     }
-    public synchronized Signer createSigner(ServletConfig config) throws FileNotFoundException, GeneralSecurityException, NeuClearException {
-        final String keystore=ServletTools.getInitParam("keystore",config);
-        final String keeppassphrase=ServletTools.getInitParam("keeppassphrase",config);
-        final String agenttype=ServletTools.getInitParam("passphraseagent",config);
-        final String serviceid = ServletTools.getInitParam("serviceid",config);
-        final String hash = getConfigHash(keystore, keeppassphrase, agenttype,serviceid);
-        if (map.containsKey(hash))
-            return (Signer)map.get(hash);
 
-        final PassPhraseAgent coreagent=getAgent(agenttype);
-        final PassPhraseAgent agent=createWrapperAgent(keeppassphrase, coreagent, serviceid);
+    public synchronized Signer createSigner(ServletConfig config) throws FileNotFoundException, GeneralSecurityException, NeuClearException {
+        final String keystore = ServletTools.getInitParam("keystore", config);
+        final String keeppassphrase = ServletTools.getInitParam("keeppassphrase", config);
+        final String agenttype = ServletTools.getInitParam("passphraseagent", config);
+        final String serviceid = ServletTools.getInitParam("serviceid", config);
+        final String hash = getConfigHash(keystore, keeppassphrase, agenttype, serviceid);
+        if (map.containsKey(hash))
+            return (Signer) map.get(hash);
+
+        final PassPhraseAgent coreagent = getAgent(agenttype);
+        final PassPhraseAgent agent = createWrapperAgent(keeppassphrase, coreagent, serviceid);
         // If keystore is "test" setup the TestCaseSigner otherwise use the JCESigner
-        final Signer signer=createSigner(keystore, agent);
-        map.put(hash,signer);
+        final Signer signer = createSigner(keystore, agent);
+        map.put(hash, signer);
         return signer;
     }
 
     private static final PassPhraseAgent createWrapperAgent(final String keeppassphrase, final PassPhraseAgent coreagent, final String serviceid) throws UserCancellationException {
-        if (!Utility.isEmpty(keeppassphrase)&&keeppassphrase.equals("1")&&coreagent instanceof InteractiveAgent)
-            return new AskAtStartupAgent((InteractiveAgent)coreagent,serviceid);
+        if (!Utility.isEmpty(keeppassphrase) && keeppassphrase.equals("1") && coreagent instanceof InteractiveAgent)
+            return new AskAtStartupAgent((InteractiveAgent) coreagent, serviceid);
         return coreagent;
     }
 
-    private static final JCESigner createSigner(final String keystore, final PassPhraseAgent agent) throws GeneralSecurityException, NeuClearException, FileNotFoundException {
-        if (!Utility.isEmpty(keystore)){
+    private static final BrowsableSigner createSigner(final String keystore, final PassPhraseAgent agent) throws GeneralSecurityException, NeuClearException, FileNotFoundException {
+        if (!Utility.isEmpty(keystore)) {
             if (keystore.toLowerCase().equals("test"))
                 return new TestCaseSigner(agent);
 
             if (!keystore.toLowerCase().equals("default"))
-                return new JCESigner(keystore,"jks", "SUN",agent);
+                return new JCESigner(keystore, "jks", "SUN", agent);
         }
         return new DefaultSigner(agent);
     }
 
     private static final PassPhraseAgent getAgent(final String agenttype) {
-        if (!Utility.isEmpty(agenttype)){
+        if (!Utility.isEmpty(agenttype)) {
             if (agenttype.toLowerCase().equals("console"))
                 return new ConsoleAgent();
             if (agenttype.toLowerCase().equals("signers"))
@@ -84,13 +85,13 @@ public final class ServletSignerFactory {
         return new GuiDialogAgent();  //The default DialogAgent
     }
 
-    private static final String getConfigHash(final String keystore, final String keeppassphrase, final String agenttype,final String serviceid) {
-        return new String(CryptoTools.digest((keystore+keeppassphrase+agenttype).getBytes()));
+    private static final String getConfigHash(final String keystore, final String keeppassphrase, final String agenttype, final String serviceid) {
+        return new String(CryptoTools.digest((keystore + keeppassphrase + agenttype).getBytes()));
     }
 
-    public synchronized static ServletSignerFactory getInstance(){
-        if (instance==null)
-            instance=new ServletSignerFactory();
+    public synchronized static ServletSignerFactory getInstance() {
+        if (instance == null)
+            instance = new ServletSignerFactory();
         return instance;
     }
 

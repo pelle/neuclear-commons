@@ -1,8 +1,13 @@
 package org.neuclear.commons.crypto.signers;
 
+import org.neuclear.commons.crypto.CryptoException;
 import org.neuclear.commons.crypto.CryptoTools;
 import org.neuclear.commons.crypto.passphraseagents.PassPhraseAgent;
 import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
+
+import java.security.KeyStoreException;
+import java.security.PublicKey;
+import java.util.Iterator;
 
 /*
 NeuClear Distributed Transaction Clearing Platform
@@ -22,8 +27,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: DefaultSigner.java,v 1.5 2004/01/19 17:53:14 pelle Exp $
+$Id: DefaultSigner.java,v 1.6 2004/04/12 15:37:01 pelle Exp $
 $Log: DefaultSigner.java,v $
+Revision 1.6  2004/04/12 15:37:01  pelle
+Refactored DefaultSigner to delegate to a JCESigner and not inherit.
+
 Revision 1.5  2004/01/19 17:53:14  pelle
 Various clean ups
 
@@ -64,10 +72,56 @@ as SmartCards for end user applications.
  * Date: Oct 29, 2003
  * Time: 3:22:17 PM
  */
-public final class DefaultSigner extends JCESigner {
-    public DefaultSigner(final PassPhraseAgent agent) throws  UserCancellationException,InvalidPassphraseException {
-        super(CryptoTools.DEFAULT_KEYSTORE, "jks", "SUN", agent);
+public final class DefaultSigner implements BrowsableSigner {
+    public DefaultSigner(final PassPhraseAgent agent) throws UserCancellationException, InvalidPassphraseException {
+        signer = new JCESigner(CryptoTools.DEFAULT_KEYSTORE, "jks", "SUN", agent);
 
     }
+
+    public final byte[] sign(final String name, final byte[] data) throws NonExistingSignerException, UserCancellationException {
+        return signer.sign(name, data);
+    }
+
+    public final byte[] sign(final String name, final byte[] data, boolean incorrect) throws UserCancellationException, NonExistingSignerException {
+        return signer.sign(name, data, incorrect);
+    }
+
+    public final boolean canSignFor(final String name) {
+        return signer.canSignFor(name);
+    }
+
+    public final int getKeyType(final String name) {
+        return signer.getKeyType(name);
+    }
+
+    public final PublicKey generateKey(final String alias) throws UserCancellationException {
+        return signer.generateKey(alias);
+    }
+
+    public final PublicKey getPublicKey(final String name) throws NonExistingSignerException {
+        return signer.getPublicKey(name);
+    }
+
+    public byte[] sign(byte data[], SetPublicKeyCallBack callback) throws UserCancellationException {
+        return signer.sign(data, callback);
+    }
+
+    public byte[] sign(String name, char pass[], byte data[], SetPublicKeyCallBack callback) throws InvalidPassphraseException {
+        return signer.sign(name, pass, data, callback);
+    }
+
+    public void createKeyPair(String alias, char passphrase[]) throws CryptoException {
+        signer.createKeyPair(alias, passphrase);
+    }
+
+    public void save() {
+        signer.save();
+    }
+
+    public Iterator iterator() throws KeyStoreException {
+        return signer.iterator();
+    }
+
+    private final JCESigner signer;
 
 }
