@@ -1,6 +1,12 @@
 /*
- * $Id: CryptoTools.java,v 1.17 2004/03/18 21:31:26 pelle Exp $
+ * $Id: CryptoTools.java,v 1.18 2004/03/19 22:21:24 pelle Exp $
  * $Log: CryptoTools.java,v $
+ * Revision 1.18  2004/03/19 22:21:24  pelle
+ * Changes in the XMLSignature class, which is now Abstract there are currently 3 implementations for:
+ * - Enveloped
+ * - DataObjects - (Enveloping)
+ * - Any for interop testing mainly.
+ *
  * Revision 1.17  2004/03/18 21:31:26  pelle
  * Some fixups in SignedInfo
  *
@@ -723,22 +729,22 @@ public final class CryptoTools {
     }
 
     public static KeyPairGenerator getTinyRSAKeyPairGenerator() throws NoSuchAlgorithmException {
-        if (kg == null) {
-            kg = KeyPairGenerator.getInstance("RSA");
+        if (tkg == null) {
+            tkg = KeyPairGenerator.getInstance("RSA");
 
-            kg.initialize(512, new SecureRandom("Bear it all with NeuDist".getBytes()));
+            tkg.initialize(512, new SecureRandom("Bear it all with NeuDist".getBytes()));
         }
-        return kg;
+        return tkg;
 
     }
 
     public static KeyPairGenerator getTinyDSAKeyPairGenerator() throws NoSuchAlgorithmException {
-        if (kg == null) {
-            kg = KeyPairGenerator.getInstance("DSA");
+        if (tdkg == null) {
+            tdkg = KeyPairGenerator.getInstance("DSA");
 
-            kg.initialize(512, new SecureRandom("Bear it all with NeuDist".getBytes()));
+            tdkg.initialize(512, new SecureRandom("Bear it all with NeuDist".getBytes()));
         }
-        return kg;
+        return tdkg;
 
     }
 
@@ -867,6 +873,8 @@ public final class CryptoTools {
     private static final String RSA = "RSA", DSA = "DSA";
     private static KeyPairGenerator kg;
     private static KeyPairGenerator dkg;
+    private static KeyPairGenerator tkg;
+    private static KeyPairGenerator tdkg;
     public static final String DEFAULT_PBE_ALGORITHM = "PBEWithSHAAnd3-KeyTripleDES-CBC";
     public static final String DEFAULT_JCE_PROVIDER = "BC";
     private static final byte DEFAULT_SALT[] = "LiquidNightClubPanam".getBytes();
