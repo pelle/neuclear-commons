@@ -1,6 +1,12 @@
 /*
- * $Id: JCESigner.java,v 1.26 2004/05/14 23:47:02 pelle Exp $
+ * $Id: JCESigner.java,v 1.27 2004/05/16 00:04:00 pelle Exp $
  * $Log: JCESigner.java,v $
+ * Revision 1.27  2004/05/16 00:04:00  pelle
+ * Added SigningServer which encapsulates all the web serving functionality.
+ * Added IdentityPanel which contains an IdentityTree of Identities.
+ * Added AssetPanel
+ * Save now works and Add Personality as well.
+ *
  * Revision 1.26  2004/05/14 23:47:02  pelle
  * Moved PersonalSigner and OpenSignerDialog to neuclear-commons where they belong.
  * The whole mechanism of opening keystores is pretty smooth right now.

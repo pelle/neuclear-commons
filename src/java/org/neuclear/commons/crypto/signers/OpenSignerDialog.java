@@ -1,5 +1,25 @@
 package org.neuclear.commons.crypto.signers;
 
+/*
+ *  The NeuClear Project and it's libraries are
+ *  (c) 2002-2004 Antilles Software Ventures SA
+ *  For more information see: http://neuclear.org
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2.1 of the License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this library; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -21,26 +41,6 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.prefs.Preferences;
-
-/*
- *  The NeuClear Project and it's libraries are
- *  (c) 2002-2004 Antilles Software Ventures SA
- *  For more information see: http://neuclear.org
- *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Lesser General Public
- *  License as published by the Free Software Foundation; either
- *  version 2.1 of the License, or (at your option) any later version.
- *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  Lesser General Public License for more details.
- *
- *  You should have received a copy of the GNU Lesser General Public
- *  License along with this library; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */
 
 /**
  * User: pelleb
@@ -74,6 +74,7 @@ public class OpenSignerDialog extends JDialog {
         cancel.setIcon(IconTools.getCancel());
         filefield = new JTextField(filename);
         passphrase = new JPasswordField();
+
         message = new MessageLabel();
         banner = new com.l2fprod.common.swing.BannerPanel();
         banner.setIcon(IconTools.getLogo());
@@ -143,7 +144,7 @@ public class OpenSignerDialog extends JDialog {
                 int result = fc.showOpenDialog(dia);
                 if (result == JFileChooser.APPROVE_OPTION)
                     filefield.setText(fc.getSelectedFile().getAbsolutePath());
-
+                passphrase.requestFocus();
             }
 
         });
@@ -209,6 +210,7 @@ public class OpenSignerDialog extends JDialog {
         pack();
         filefield.setText(filename);
         updateOKText();
+        message.clear();
         com.l2fprod.common.swing.UIUtilities.centerOnScreen(dia);
         passphrase.requestFocus();
         show();

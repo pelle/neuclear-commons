@@ -2,6 +2,7 @@ package org.neuclear.commons.crypto.passphraseagents.swing.actions;
 
 import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
 import org.neuclear.commons.crypto.signers.BrowsableSigner;
+import org.neuclear.commons.crypto.signers.PersonalSigner;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -24,8 +25,14 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: SaveKeyStoreAction.java,v 1.3 2004/05/06 21:40:29 pelle Exp $
+$Id: SaveKeyStoreAction.java,v 1.4 2004/05/16 00:03:59 pelle Exp $
 $Log: SaveKeyStoreAction.java,v $
+Revision 1.4  2004/05/16 00:03:59  pelle
+Added SigningServer which encapsulates all the web serving functionality.
+Added IdentityPanel which contains an IdentityTree of Identities.
+Added AssetPanel
+Save now works and Add Personality as well.
+
 Revision 1.3  2004/05/06 21:40:29  pelle
 More swing refactorings
 
@@ -43,7 +50,7 @@ I am creating actions, panels and dialogs.
  * Date: May 5, 2004
  * Time: 11:16:19 PM
  */
-public class SaveKeyStoreAction extends SignerAction {
+public class SaveKeyStoreAction extends SignerAction implements Runnable {
     public SaveKeyStoreAction(BrowsableSigner signer) {
         super("savekeys", IconTools.getSaveAs(), signer);
         putValue(SHORT_DESCRIPTION, caps.getString("savekeys"));
@@ -55,6 +62,12 @@ public class SaveKeyStoreAction extends SignerAction {
      * Invoked when an action occurs.
      */
     public void actionPerformed(ActionEvent e) {
-
+        if (signer instanceof PersonalSigner)
+            new Thread(this).start();
     }
+
+    public void run() {
+        ((PersonalSigner) signer).save();
+    }
+
 }

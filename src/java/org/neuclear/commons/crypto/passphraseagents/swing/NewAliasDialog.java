@@ -10,15 +10,18 @@ import org.neuclear.commons.crypto.passphraseagents.AgentMessages;
 import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.util.ResourceBundle;
 
 /*
-$Id: NewAliasDialog.java,v 1.11 2004/05/14 23:47:01 pelle Exp $
+$Id: NewAliasDialog.java,v 1.12 2004/05/16 00:04:00 pelle Exp $
 $Log: NewAliasDialog.java,v $
+Revision 1.12  2004/05/16 00:04:00  pelle
+Added SigningServer which encapsulates all the web serving functionality.
+Added IdentityPanel which contains an IdentityTree of Identities.
+Added AssetPanel
+Save now works and Add Personality as well.
+
 Revision 1.11  2004/05/14 23:47:01  pelle
 Moved PersonalSigner and OpenSignerDialog to neuclear-commons where they belong.
 The whole mechanism of opening keystores is pretty smooth right now.
@@ -105,7 +108,7 @@ public class NewAliasDialog implements Runnable {
 
         dialog = new JDialog();
         dialog.setTitle(caps.getString("signingagent"));
-        dialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         dialog.hide();
         regular = buildPanel();
         process = buildProcessPanel();
@@ -124,6 +127,24 @@ public class NewAliasDialog implements Runnable {
         };
         cancel.addActionListener(cl);
         cancel2.addActionListener(cl);
+        ((JComponent) regular).registerKeyboardAction(cl,
+                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ((JComponent) process).registerKeyboardAction(cl,
+                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+        dialog.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                synchronized (alias) {
+                    passphrase1.setText("");
+                    passphrase2.setText("");
+                    alias.setText("");
+                    dialog.hide();
+                }
+
+            }
+        });
 
         final KeyListener validate = new KeyListener() {
             public void keyPressed(KeyEvent e) {
@@ -300,7 +321,7 @@ public class NewAliasDialog implements Runnable {
                 System.out.println("Generating Key");
                 ksPanel.getSigner().createKeyPair(alias.getText(), passphrase1.getPassword());
                 progress.setVisible(false);
-                ksPanel.updateList(alias.getText());
+//                ksPanel.updateList(alias.getText());
                 dialog.hide();
             } catch (CryptoException e) {
                 e.printStackTrace();

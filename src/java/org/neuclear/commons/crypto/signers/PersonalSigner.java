@@ -1,21 +1,5 @@
 package org.neuclear.commons.crypto.signers;
 
-import org.neuclear.commons.LowLevelException;
-import org.neuclear.commons.crypto.CryptoException;
-import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
-import org.neuclear.commons.crypto.passphraseagents.swing.SwingAgent;
-
-import javax.swing.*;
-import javax.swing.event.EventListenerList;
-import javax.swing.event.ListDataEvent;
-import javax.swing.event.ListDataListener;
-import java.io.IOException;
-import java.security.KeyStoreException;
-import java.security.PublicKey;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.prefs.Preferences;
-
 /*
  *  The NeuClear Project and it's libraries are
  *  (c) 2002-2004 Antilles Software Ventures SA
@@ -36,6 +20,23 @@ import java.util.prefs.Preferences;
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import org.neuclear.commons.LowLevelException;
+import org.neuclear.commons.crypto.CryptoException;
+import org.neuclear.commons.crypto.passphraseagents.InteractiveAgent;
+import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
+import org.neuclear.commons.crypto.passphraseagents.swing.SwingAgent;
+
+import javax.swing.*;
+import javax.swing.event.EventListenerList;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+import java.io.IOException;
+import java.security.KeyStoreException;
+import java.security.PublicKey;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.prefs.Preferences;
+
 /**
  * User: pelleb
  * Date: May 13, 2004
@@ -45,10 +46,10 @@ public class PersonalSigner implements BrowsableSigner, ListModel {
     public PersonalSigner(JFrame frame) {
 //        signer=null;
         this.frame = frame;
-        agent = new SwingAgent();
-        this.dia = new OpenSignerDialog(frame, agent);
-        this.list = new ArrayList();
         this.listeners = new EventListenerList();
+        this.list = new ArrayList();
+        agent = new SwingAgent(this);
+        this.dia = new OpenSignerDialog(frame, agent);
         prefs = Preferences.userNodeForPackage(PersonalSigner.class);
 
     }
@@ -89,7 +90,7 @@ public class PersonalSigner implements BrowsableSigner, ListModel {
 
     public byte[] sign(byte data[], SetPublicKeyCallBack callback) throws UserCancellationException {
         openIfNecessary();
-        return signer.sign(data, callback);
+        return ((InteractiveAgent) agent).sign(this, data, callback);
     }
 
     public byte[] sign(String name, char pass[], byte data[], SetPublicKeyCallBack callback) throws InvalidPassphraseException {
@@ -100,6 +101,13 @@ public class PersonalSigner implements BrowsableSigner, ListModel {
         signer.createKeyPair(alias, passphrase);
         updateList();
         fireListUpdated();
+        try {
+            save(true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (UserCancellationException e) {
+            e.printStackTrace();
+        }
     }
 
     public void save() {
@@ -198,12 +206,12 @@ public class PersonalSigner implements BrowsableSigner, ListModel {
         // Process the listeners last to first, notifying
         // those that are interested in this event
         ListDataEvent event = null;
-        for (int i = listenerArray.length - 2; i >= 0; i -= 2) {
-            if (listenerArray[i].getClass().equals(ListDataListener.class)) {
+        for (int i = listenerArray.length - 1; i >= 0; i--) {
+            if (listenerArray[i] instanceof ListDataListener) {
                 // Lazily create the event:
                 if (event == null)
                     event = new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, getSize());
-                ((ListDataListener) listenerArray[i + 1]).contentsChanged(event);
+                ((ListDataListener) listenerArray[i]).contentsChanged(event);
             }
         }
     }
@@ -212,7 +220,6 @@ public class PersonalSigner implements BrowsableSigner, ListModel {
     private BrowsableSigner signer;
     private JFrame frame;
     private ArrayList list;
-    private AbstractListModel model;
     private EventListenerList listeners;
     private String filename;
     private final SwingAgent agent;

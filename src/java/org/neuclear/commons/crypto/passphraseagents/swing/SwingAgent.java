@@ -13,8 +13,14 @@ import java.io.File;
 import java.security.PublicKey;
 
 /*
-$Id: SwingAgent.java,v 1.14 2004/05/14 19:11:27 pelle Exp $
+$Id: SwingAgent.java,v 1.15 2004/05/16 00:04:00 pelle Exp $
 $Log: SwingAgent.java,v $
+Revision 1.15  2004/05/16 00:04:00  pelle
+Added SigningServer which encapsulates all the web serving functionality.
+Added IdentityPanel which contains an IdentityTree of Identities.
+Added AssetPanel
+Save now works and Add Personality as well.
+
 Revision 1.14  2004/05/14 19:11:27  pelle
 Added OpenSignerDialog, which has been integrated with PersonalSigner.
 
@@ -74,8 +80,13 @@ The XMLSig classes have also been updated to support this.
  */
 public class SwingAgent implements InteractiveAgent {
     public SwingAgent() {
+        this(null);
+    }
+
+    public SwingAgent(BrowsableSigner signer) {
+        this.signer = signer;
         SwingTools.setLAF();
-        ksd = new KeyStoreDialog();
+        ksd = new KeyStoreDialog(signer);
         simple = new SimpleDialog();
         np = new NewPassphraseDialog();
         queue = new RunnableQueue();
@@ -89,6 +100,7 @@ public class SwingAgent implements InteractiveAgent {
     private final KeyStoreDialog ksd;
     private final RunnableQueue queue;
     private final JFileChooser fc;
+    private final BrowsableSigner signer;
 
     public static void main(final String[] args) {
         final SwingAgent dia = new SwingAgent();

@@ -12,10 +12,7 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,8 +21,14 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /*
-$Id: KeyStoreDialog.java,v 1.13 2004/05/11 15:38:04 pelle Exp $
+$Id: KeyStoreDialog.java,v 1.14 2004/05/16 00:04:00 pelle Exp $
 $Log: KeyStoreDialog.java,v $
+Revision 1.14  2004/05/16 00:04:00  pelle
+Added SigningServer which encapsulates all the web serving functionality.
+Added IdentityPanel which contains an IdentityTree of Identities.
+Added AssetPanel
+Save now works and Add Personality as well.
+
 Revision 1.13  2004/05/11 15:38:04  pelle
 Removed a few compilation errors
 
@@ -91,7 +94,8 @@ The XMLSig classes have also been updated to support this.
  * Time: 9:55:37 AM
  */
 public class KeyStoreDialog {
-    public KeyStoreDialog() {
+    public KeyStoreDialog(BrowsableSigner signer) {
+        this.signer = signer;
         SwingTools.setLAF();
         prefs = Preferences.userNodeForPackage(DefaultSigner.class);
 //        AgentMessages.updateLocale("es", "ES");
@@ -117,10 +121,11 @@ public class KeyStoreDialog {
             icon = new JLabel("NeuClear");
 
         frame.setTitle("NeuClear " + caps.getString("signingagent"));
-        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        frame.getContentPane().add(buildPanel());
+        frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        final Component contents = buildPanel();
+        frame.getContentPane().add(contents);
         frame.pack();
-        cancel.addActionListener(new ActionListener() {
+        final ActionListener cancelCloseAction = new ActionListener() {
             public void actionPerformed(final ActionEvent actionEvent) {
                 synchronized (passphrase) {
                     passphrase.setText("");
@@ -128,6 +133,16 @@ public class KeyStoreDialog {
                     runner.cancel();
                 }
 
+            }
+        };
+        cancel.addActionListener(cancelCloseAction);
+        ((JComponent) contents).registerKeyboardAction(cancelCloseAction,
+                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+        frame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                runner.cancel();
             }
         });
 
@@ -313,7 +328,7 @@ public class KeyStoreDialog {
 
     public static void main(String args[]) {
         try {
-            final KeyStoreDialog dia = new KeyStoreDialog();
+            final KeyStoreDialog dia = new KeyStoreDialog(null);
             dia.setSigner(new TestCaseSigner());
             dia.frame.show();
 
