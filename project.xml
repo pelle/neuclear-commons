@@ -18,7 +18,7 @@
 	Tools used throughout NeuClear
     </description>
 
-    <url>http://old.neuclear.org/commons/</url>
+    <url>http://dev.neuclear.org/commons/</url>
 
     <repository>
         <connection>
@@ -29,7 +29,7 @@
         </url>
     </repository>
 
-    <siteAddress>old.neuclear.org</siteAddress>
+    <siteAddress>dev.neuclear.org</siteAddress>
     <siteDirectory>/home/sites/neuclear.org/public_html/commons/</siteDirectory>
     <issueTrackingUrl>http://jira.neuclear.org/</issueTrackingUrl>
     <mailingLists>

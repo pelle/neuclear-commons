@@ -10,14 +10,41 @@
         <section name="Introduction">
             <p>
 				This is a collection of common tools and utilities used throughout the
-                NeuClear framework. They concern them selves with all the little generalistic
+                NeuClear framework. They concern them selves mainly with Crypto, but also all the little generalistic
                 bits and pieces that dont quite fit neatly elsewhere. It is not really intended as a
                 library for use outside the NeuClear framework, as such it is currently not well documented.
             </p>
+            <p>
+                Much of the crypto code provide some useful abstractions ontop of the often complex JCE architecture from Sun.
+                If there is interest we will probably repackage it in the next version as neuclear-crypto and document it better.
+            </p>
+        </section>
+        <section name="[28 April, 2004] New release 0.7">
+            <p>
+                Panama City, 28 April, 2004. We are happy to announce
+                the 0.7 release of NeuClear Commons.
+            </p>
+            <p>
+                Main goal of this release is to support the
+                <a href="http://dev.neuclear.org/id/">0.9 release
+                of NeuClear ID</a>.
+                <a href="http://sourceforge.net/project/showfiles.php?group_id=90470">Download it today and join in the NeuClear revolution</a>.
+                Major new features are:
+            </p>
+            <ul>
+                <li>New Swing based Passphrase Agent</li>
+                <li>DefaultSigner is now completely interactive.</li>
+                <li>SQLSigner stores Public Private Key Pairs in SQL using Hibernate.</li>
+                <li>Removed all old SQL support code.</li>
+                <li>Added in memory caching to Public Key Resolver</li>
+                <li>Added new interactive signing model with the BrowsableSigner interface</li>
+                <li>New SetPublicKeyCallback method for returning the public key in interactive applications</li>
+            </ul>
+
         </section>
         <section name="[23 March, 2004] New release 0.6">
             <p>
-                Panama City, 12th of December, 2004. We are happy to announce
+                Panama City, 23rd of March, 2004. We are happy to announce
                 the 0.6 release of NeuClear Commons.
             </p>
             <p>

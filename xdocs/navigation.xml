@@ -6,6 +6,7 @@
         <links>
             <!--            <item name="NeuClear Live!" href="http://NeuClear.org:8080/NeuClearframework/"/>-->
             <item name="NeuClear" href="http://neuclear.org/"/>
+            <item name="Bux" href="http://bux.neuclear.org/"/>
             <item name="Issue Tracker" href="http://jira.neuclear.org/"/>
             <item name="Talk.org" href="http://talk.org"/>
             <item name="SourceForge" href="http://sourceforge.net/projects/neuclear/"/>

@@ -27,8 +27,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: TestCaseSignerTest.java,v 1.7 2004/02/19 15:29:12 pelle Exp $
+$Id: TestCaseSignerTest.java,v 1.8 2004/04/28 16:11:28 pelle Exp $
 $Log: TestCaseSignerTest.java,v $
+Revision 1.8  2004/04/28 16:11:28  pelle
+A few little documentation changes.
+This will be tagged as r_0_7
+
 Revision 1.7  2004/02/19 15:29:12  pelle
 Various cleanups and corrections
 
@@ -81,6 +85,7 @@ PaymentReceiverTest works, but needs a abit more work in its environment to succ
 public final class TestCaseSignerTest extends TestCase {
     public TestCaseSignerTest(final String string) throws GeneralSecurityException, NeuClearException {
         super(string);
+        CryptoTools.ensureProvider();
         signer = new TestCaseSigner();
     }
 

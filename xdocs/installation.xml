@@ -19,8 +19,15 @@
             <p>
                 Simply unpack it in mavens home directory retaining the directory structure and you should be allright.
             </p>
+        </section>
+        <section name="Enabling BouncyCaste">
             <p>
-                If you want to get them yourself. Get the latest version of
+                The easiest way to use Crypto is to register the BouncyCastle Crypto provider using the following line of code
+                in your java code:
+            </p>
+            <source>org.neuclear.commons.crypto.CryptoTools.ensureProvider();</source>
+            <p>
+                Alternatively you can install it as a system wide crypto provider. Get the latest version of
                 <a href="http://www.bouncycastle.org">Bouncy Castle Crypto</a>. For Bouncy Castle Crypto you need a JCE and a provider.
                 If you're using JDK1.4 you will allready have a JCE. Otherwise the easiest thing todo is to get their combined JCE/Provider.
                 I would also recommend getting the signed jar for your version of the JDK and install it as an extension in
@@ -34,12 +41,6 @@
 security.provider.6=org.bouncycastle.jce.provider.BouncyCastleProvider
             </source>
             <p>Making sure to change the 6 to whatever the last number is in the sequence of providers</p>
-            <p>
-                In Addition to play around with it you will need a J2EE compliant servlet engine such as
-                <a href="http://jakarta.apache.org/tomcat/">Jakarta Tomcat</a>
-                or
-                <a href="http://jetty.mortbay.org">Jetty</a>. Install this as required.
-            </p>
         </section>
         <section name="Building">
             <p>
