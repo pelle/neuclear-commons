@@ -20,8 +20,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: Base32Tests.java,v 1.6 2004/02/19 15:29:13 pelle Exp $
+$Id: Base32Tests.java,v 1.7 2004/03/03 23:24:25 pelle Exp $
 $Log: Base32Tests.java,v $
+Revision 1.7  2004/03/03 23:24:25  pelle
+Added a "test" alias to testkeys.jks
+
 Revision 1.6  2004/02/19 15:29:13  pelle
 Various cleanups and corrections
 
@@ -78,52 +81,54 @@ public class Base32Tests extends TestCase {
         }
     }
 
-/*    public void testSHABase32() throws CryptoException {
+    public void testSHA1vsDecodedTyler() throws CryptoException {
         for (int i=0;i<TESTSTRINGS.length;i++){
-//            System.out.print("Encoding: "+TESTSTRINGS[i]+" ...");
-            final String hash = com.waterken.url.Base32.encode(CryptoTools.digest(TESTSTRINGS[i]));
-            assertEquals(32, hash.length());
-            System.out.println(" ->"+hash);
+            assertTrue("TESTSTRINGS["+i+"]",CryptoTools.equalByteArrays(CryptoTools.digest(TESTSTRINGS[i]),Base32.decode(TYLER_SHA1_OUTPUT[i])));
+        }
+    }
+    public void testSHA1vsDecodedOwn() throws CryptoException {
+        for (int i=0;i<TESTSTRINGS.length;i++){
+            byte[] hash=Base32.encode(CryptoTools.digest(TESTSTRINGS[i])).getBytes();
             assertTrue("TESTSTRINGS["+i+"]",CryptoTools.equalByteArrays(CryptoTools.digest(TESTSTRINGS[i]),Base32.decode(hash)));
         }
     }
-    public void testSHABase32vsTyler() throws CryptoException {
+    public void testSHA1HomevsTyler() throws CryptoException {
         for (int i=0;i<TESTSTRINGS.length;i++){
-//            System.out.print("Encoding: "+TESTSTRINGS[i]+" ...");
-            final String hash = com.waterken.url.Base32.encode(CryptoTools.digest(TESTSTRINGS[i]));
-            assertEquals(32, hash.length());
-//            System.out.println(" ->"+hash);
-            assertTrue("TESTSTRINGS["+i+"]",CryptoTools.equalByteArrays(CryptoTools.digest(TESTSTRINGS[i]),Base32.decode(hash)));
+            assertEquals("TESTSTRINGS["+i+"]",Base32.encode(CryptoTools.digest(TESTSTRINGS[i])),TYLER_SHA1_OUTPUT);
         }
     }
 
     public void testBase32vsTyler() throws CryptoException {
 
         for (int i=0;i<TESTSTRINGS.length;i++){
-//            System.out.print("Encoding: "+TESTSTRINGS[i]+" ...");
             final String encoded = Base32.encode(TESTSTRINGS[i]);
-//            System.out.println(" ->"+encoded);
-            assertEquals("TESTSTRINGS["+i+"]",com.waterken.url.Base32.encode(TESTSTRINGS[i].getBytes()),encoded);
+            assertEquals("TESTSTRINGS["+i+"]",TYLER_OUTPUT[i],encoded);
         }
     }
 
     public void testDecodeTyler() throws CryptoException {
 
         for (int i=0;i<TESTSTRINGS.length;i++){
-//            System.out.print("Encoding: "+TESTSTRINGS[i]+" ...");
-//            final String encoded = Base32.encode(TESTSTRINGS[i]);
-//            System.out.println(" ->"+encoded);
-            final byte decoded[] = Base32.decode(com.waterken.url.Base32.encode(TESTSTRINGS[i].getBytes()));
+            final byte decoded[] = Base32.decode(TYLER_OUTPUT[i]);
             assertEquals("TESTSTRINGS["+i+"]",TESTSTRINGS[i].getBytes(),decoded);
         }
     }
-*/
     public void assertEquals(String description, byte a[], byte b[]) {
         assertEquals(description + " length", a.length, b.length);
         for (int i = 0; i < a.length; i++)
             assertEquals(description + "[" + i + "]", a[i], b[i]);
 
     }
+
+
+/*
+    public void testOutputTyler() throws CryptoException{
+        for (int i=0;i<TESTSTRINGS.length;i++){
+            final String encoded = com.waterken.url.Base32.encode(CryptoTools.digest(TESTSTRINGS[i]));
+            System.out.println("\""+encoded+"\",");
+        }
+    }
+*/
 
     static final String TESTSTRINGS[] = new String[]{
         "",
@@ -142,5 +147,37 @@ public class Base32Tests extends TestCase {
         new String(CryptoTools.digest("0123456"))
 
     };
+    static final String TYLER_OUTPUT[]=new String[]{
+        "",
+        "ga",
+        "gayq",
+        "gayte",
+        "gaytemy",
+        "gaytemzu",
+        "gaytemzugu",
+        "gaytemzugu3a",
+        "gaytemzugu3do",
+        "gaytemzugu3dooa",
+        "gaytemzugu3doobz",
+        "gaytemzugu3doobzie",
+        "gaytemzugu3doobzieydcmrtgq2tmnzyhfaxgmbrgiztinjwg44dsqi",
+        "h47qqpz7h4cd6hb7cq7t6pz7ha7wwx3x"
+    };
 
+    static final String TYLER_SHA1_OUTPUT[]=new String[]{
+        "3i42h3s6nnfq2msvx7xzkyayscx5qbyj",
+        "wzmj7rvlbxecz4jathi4fvakxgkoqqim",
+        "3x7bmm2f2m4bsowcxxayh6hj3t7zas2d",
+        "ysrntg6crurwbgfasutxw7vqoggwxydi",
+        "ys24q26vo7nd3e76u7ejzotby6furzmj",
+        "cgieutulo73cilrnfcdqkar23liaveyq",
+        "7x4lywauknxwmajiqtqunkeipjchbgsw",
+        "w7wqramqyiclghgxcsconiofhcmgwx3x",
+        "zsvi3dompubqzvvgo2g3qh4q2dxzo3b5",
+        "tjyutjnhpbv3g2hanuemlv3xotvuhje6",
+        "q6woyf6ntxgsbjywzqwpm5axw4oiu4aw",
+        "weh5oeb3kibeinn6i3jiaskxum76y7dn",
+        "uo4jb3ds2i2bb2qbds2h5nusuwum2fxh",
+        "5bhw3daqpo2iq5eqbqgt54g5otdjldov"
+    };
 }

@@ -19,8 +19,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: Base32.java,v 1.4 2004/01/19 23:49:29 pelle Exp $
+$Id: Base32.java,v 1.5 2004/03/03 23:24:25 pelle Exp $
 $Log: Base32.java,v $
+Revision 1.5  2004/03/03 23:24:25  pelle
+Added a "test" alias to testkeys.jks
+
 Revision 1.4  2004/01/19 23:49:29  pelle
 Unit testing uncovered further issues with Base32
 NSTools is now uptodate as are many other classes. All transactional builders habe been updated.
@@ -138,6 +141,17 @@ public final class Base32 {
      public static String encode(final byte[] raw)  {
          return new String(encodeToByteArray(raw));
      }
+
+    /**
+     * Encode a String as base32
+     *
+     * @param raw <code>byte[]<code> to be base32 encoded
+     * @return the <code>String<code> with encoded data
+     */
+    public static String encode(final String raw) throws CryptoException {
+        return encode(raw.getBytes());
+    }
+    
      public static int getEncodedLength(int src)  {
          final int baselength = src*8;
          final int mod=baselength%5;
@@ -192,15 +206,6 @@ public final class Base32 {
      }
      private static byte getPart(long chunk,int num){
          return (byte) ((chunk>>>((7-num)*5))&31);
-     }
-     /**
-      * Encode a String as base32
-      *
-      * @param raw <code>byte[]<code> to be base32 encoded
-      * @return the <code>String<code> with encoded data
-      */
-     public static String encode(final String raw) throws CryptoException {
-         return encode(raw.getBytes());
      }
 
     private static byte encodeVal(byte val) {
