@@ -1,6 +1,11 @@
 /*
- * $Id: Utility.java,v 1.2 2003/11/21 04:43:42 pelle Exp $
+ * $Id: Utility.java,v 1.3 2003/12/18 17:40:07 pelle Exp $
  * $Log: Utility.java,v $
+ * Revision 1.3  2003/12/18 17:40:07  pelle
+ * You can now create keys that get stored with a X509 certificate in the keystore. These can be saved as well.
+ * IdentityCreator has been modified to allow creation of keys.
+ * Note The actual Creation of Certificates still have a problem that will be resolved later today.
+ *
  * Revision 1.2  2003/11/21 04:43:42  pelle
  * EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
  * Otherwise You will Finaliate.
@@ -127,6 +132,9 @@ package org.neuclear.commons;
 import org.neuclear.commons.NeuClearException;
 
 import java.io.PrintStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
 
 public final class Utility {
     public static boolean isEmpty(final Object obj) {
@@ -192,6 +200,26 @@ public final class Utility {
             if (key.equals(enum[i]))
                 return i;
         return def;
+    }
+    /**
+     * Asks the User Y/N on the Console
+     * @return
+     */
+    public static boolean getAffirmative(final boolean def) throws IOException {
+        final String prompt = def?"(yes)/no":"yes/(no)";
+        String line=prompt(prompt).toLowerCase();
+        if (isEmpty(line))
+            return def;
+        return (line.equals("y")||line.equals("yes"));
+    }
+
+    public static String prompt(String prompt) throws IOException {
+        System.out.print(prompt);
+        return readLine();
+    }
+    public static String readLine() throws IOException {
+        BufferedReader reader=new BufferedReader(new InputStreamReader(System.in));
+        return reader.readLine();
     }
 
 /*

@@ -1,5 +1,10 @@
-/* $Id: SimpleSignerStoreTest.java,v 1.5 2003/12/10 23:55:45 pelle Exp $
+/* $Id: SimpleSignerStoreTest.java,v 1.6 2003/12/18 17:40:08 pelle Exp $
  * $Log: SimpleSignerStoreTest.java,v $
+ * Revision 1.6  2003/12/18 17:40:08  pelle
+ * You can now create keys that get stored with a X509 certificate in the keystore. These can be saved as well.
+ * IdentityCreator has been modified to allow creation of keys.
+ * Note The actual Creation of Certificates still have a problem that will be resolved later today.
+ *
  * Revision 1.5  2003/12/10 23:55:45  pelle
  * Did some cleaning up in the builders
  * Fixed some stuff in IdentityCreator
@@ -116,7 +121,7 @@ import java.security.*;
 
 /**
  * @author pelleb
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public final class SimpleSignerStoreTest extends TestCase {
     public SimpleSignerStoreTest(final String name) throws GeneralSecurityException, NeuClearException, ConfigurationException {

@@ -1,4 +1,6 @@
-package org.neuclear.commons.crypto;
+package org.neuclear.commons.crypto.jce;
+
+import org.neuclear.commons.crypto.CryptoTools;
 
 import java.security.*;
 import java.security.cert.Certificate;
@@ -23,8 +25,13 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: RawCertificate.java,v 1.4 2003/12/10 23:55:45 pelle Exp $
+$Id: RawCertificate.java,v 1.1 2003/12/18 17:40:07 pelle Exp $
 $Log: RawCertificate.java,v $
+Revision 1.1  2003/12/18 17:40:07  pelle
+You can now create keys that get stored with a X509 certificate in the keystore. These can be saved as well.
+IdentityCreator has been modified to allow creation of keys.
+Note The actual Creation of Certificates still have a problem that will be resolved later today.
+
 Revision 1.4  2003/12/10 23:55:45  pelle
 Did some cleaning up in the builders
 Fixed some stuff in IdentityCreator
@@ -63,7 +70,7 @@ Updated all major interfaces that used the old model to use the new model.
  */
 public final class RawCertificate extends Certificate {
     public RawCertificate(final PublicKey pub) {
-        super("RAW");
+        super("Raw");
         this.pub = pub;
     }
 

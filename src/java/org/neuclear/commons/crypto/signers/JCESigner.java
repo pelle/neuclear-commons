@@ -1,6 +1,11 @@
 /*
- * $Id: JCESigner.java,v 1.11 2003/12/16 21:09:22 pelle Exp $
+ * $Id: JCESigner.java,v 1.12 2003/12/18 17:40:07 pelle Exp $
  * $Log: JCESigner.java,v $
+ * Revision 1.12  2003/12/18 17:40:07  pelle
+ * You can now create keys that get stored with a X509 certificate in the keystore. These can be saved as well.
+ * IdentityCreator has been modified to allow creation of keys.
+ * Note The actual Creation of Certificates still have a problem that will be resolved later today.
+ *
  * Revision 1.11  2003/12/16 21:09:22  pelle
  * The Sample Web App is semi stable for now.
  *
@@ -129,10 +134,12 @@
 package org.neuclear.commons.crypto.signers;
 
 import org.neuclear.commons.NeuClearException;
+import org.neuclear.commons.Utility;
 import org.neuclear.commons.crypto.CryptoException;
 import org.neuclear.commons.crypto.CryptoTools;
-import org.neuclear.commons.crypto.RawCertificate;
+import org.neuclear.commons.crypto.jce.RawCertificate;
 import org.neuclear.commons.crypto.passphraseagents.PassPhraseAgent;
+import org.neuclear.commons.crypto.passphraseagents.UserCancelsException;
 
 import java.io.*;
 import java.security.*;
@@ -157,7 +164,8 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
      * @throws FileNotFoundException
      */
     public JCESigner(final String filename, final String type, final String provider, final PassPhraseAgent agent) throws NeuClearException, GeneralSecurityException, FileNotFoundException {
-        this(filename, new FileInputStream(new File(filename)), type, provider, agent);
+        this(filename, createInputStream(filename), type, provider, agent);
+        this.filename=filename;
     }
     /**
      * Constructs a JCESigner providing a initial passphrase in the parameters.
@@ -171,7 +179,24 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
      * @throws FileNotFoundException
      */
     public JCESigner(final String filename, final String type, final String provider, final PassPhraseAgent agent,final char[] initialpassphrase) throws NeuClearException, GeneralSecurityException, FileNotFoundException {
-        this(filename, new FileInputStream(new File(filename)), type, provider, agent,initialpassphrase);
+        this(filename, createInputStream(filename), type, provider, agent,initialpassphrase);
+        this.filename=filename;
+
+    }
+    /**
+     * The purpose of this method is to either return an InputStream or Null. The reason being that the Keystore accepts null
+     * to create a new KeyStore in memory.
+     * @param filename
+     * @return
+     * @throws FileNotFoundException
+     */
+    private static InputStream createInputStream(final String filename) throws FileNotFoundException {
+        if (Utility.isEmpty(filename))
+            return null;
+        final File file = new File(filename);
+        if (!file.exists())
+            return null;
+        return new FileInputStream(file);
     }
 
     /**
@@ -303,21 +328,17 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
         return KEY_NONE;  //To change body of implemented methods use Options | File Templates.
     }
 
-    /**
-     * Creates a new KeyPair, stores the PrivateKey using the given alias
-     * and returns the PublicKey.
-     * 
-     * @param alias 
-     * @return Generated PublicKey
-     * @throws org.neuclear.commons.crypto.CryptoException
-     *          
-     */
+
     public final PublicKey generateKey(final String alias) throws CryptoException {
         try {
             final KeyPair kp = kpg.generateKeyPair();
-            ks.setKeyEntry(alias, kp.getPrivate(), agent.getPassPhrase(alias), new Certificate[]{new RawCertificate(kp.getPublic())});
+            ks.setKeyEntry(alias, kp.getPrivate(), agent.getPassPhrase(alias), new Certificate[]{CryptoTools.createCertificate(alias,kp)});
             return kp.getPublic();
         } catch (KeyStoreException e) {
+            throw new CryptoException(e);
+        } catch (SignatureException e) {
+            throw new CryptoException(e);
+        } catch (InvalidKeyException e) {
             throw new CryptoException(e);
         }
     }
@@ -330,9 +351,24 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
         }
     }
 
+    public void save() throws CryptoException {
+        save(filename);
+    }
+    public synchronized final void save(String filename) throws CryptoException{
+        if (Utility.isEmpty(filename))
+            throw new CryptoException("We dont have a filename");
+        try {
+            File ksfile=new File(filename);
+            ksfile.getParentFile().mkdirs();
+            ks.store(new FileOutputStream(ksfile),agent.getPassPhrase(filename));
+        } catch (Exception e) {
+            throw new CryptoException(e);
+        }
+    }
     private final KeyStore ks;
     private final KeyCache cache;
     private final PassPhraseAgent agent;
 
     private final KeyPairGenerator kpg;
+    private String filename;
 }

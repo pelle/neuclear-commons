@@ -1,6 +1,11 @@
 /*
- * $Id: CryptoTools.java,v 1.7 2003/12/10 23:55:45 pelle Exp $
+ * $Id: CryptoTools.java,v 1.8 2003/12/18 17:40:07 pelle Exp $
  * $Log: CryptoTools.java,v $
+ * Revision 1.8  2003/12/18 17:40:07  pelle
+ * You can now create keys that get stored with a X509 certificate in the keystore. These can be saved as well.
+ * IdentityCreator has been modified to allow creation of keys.
+ * Note The actual Creation of Certificates still have a problem that will be resolved later today.
+ *
  * Revision 1.7  2003/12/10 23:55:45  pelle
  * Did some cleaning up in the builders
  * Fixed some stuff in IdentityCreator
@@ -215,6 +220,9 @@ import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.jce.interfaces.ECPrivateKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.jce.X509V3CertificateGenerator;
+import org.bouncycastle.jce.X509Principal;
+import org.bouncycastle.asn1.x509.X509Name;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
@@ -235,6 +243,9 @@ import java.security.spec.KeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Random;
+import java.util.HashMap;
+import java.util.Vector;
+import java.util.Date;
 
 // TODO Implement some code to automatically BC Provider if not installed
 
@@ -276,6 +287,20 @@ public final class CryptoTools {
     public static PublicKey getPublicKeyFromHex(final String hex) throws CryptoException {
         try {
             final byte[] barray = convertHexToByteArray(hex);
+            final X509EncodedKeySpec pubKeySpec = new X509EncodedKeySpec(barray);
+            final KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            return keyFactory.generatePublic(pubKeySpec);
+        } catch (NoSuchAlgorithmException e) {
+            rethrowException(e);
+        } catch (InvalidKeySpecException e) {
+            rethrowException(e);
+        }
+
+        return null;
+    }
+    public static PublicKey getPublicKeyFromBase64(final String b64) throws CryptoException {
+        try {
+            final byte[] barray = Base64.decode(b64);
             final X509EncodedKeySpec pubKeySpec = new X509EncodedKeySpec(barray);
             final KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             return keyFactory.generatePublic(pubKeySpec);
@@ -746,6 +771,23 @@ public final class CryptoTools {
         return asn1Bytes;
     }
 
+    public final static Certificate createCertificate(String name,KeyPair kp) throws SignatureException, InvalidKeyException {
+        X509V3CertificateGenerator gen=new X509V3CertificateGenerator();
+//        Vector code=new Vector(1);
+//        code.add(0,"CN");
+//        Vector names=new Vector(1);
+//        names.add(0,name);
+//        final X509Name x509Name = new X509Name(code,names);
+//        gen.setIssuerDN(x509Name);
+        final X509Principal x509 = new X509Principal("CN="+name+", OU=NEU, O=NEU, L=NEU, ST=NEU, C=PA");
+        gen.setSubjectDN(x509);
+        gen.setIssuerDN(x509);
+        gen.setPublicKey(kp.getPublic());
+        gen.setNotBefore(new Date());
+        gen.setSignatureAlgorithm("SHA1withRSA");
+        gen.setSerialNumber(new BigInteger( digest(kp.getPublic().getEncoded())));
+        return gen.generateX509Certificate(kp.getPrivate());
+    }
     {
         ensureProvider();
     }
@@ -761,7 +803,7 @@ public final class CryptoTools {
 
     private static SecureRandom randSource;
 
-    public final static String DEFAULT_KEYSTORE = System.getProperty("user.home") + "/.keystore";
+    public final static String DEFAULT_KEYSTORE = System.getProperty("user.home") + "/.neuclear/keystore.jks";
     public static final int RAND_BIT_LENGTH = 128;
 
 }

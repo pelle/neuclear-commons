@@ -1,6 +1,11 @@
 /*
- * $Id: SimpleSigner.java,v 1.6 2003/12/16 23:16:40 pelle Exp $
+ * $Id: SimpleSigner.java,v 1.7 2003/12/18 17:40:07 pelle Exp $
  * $Log: SimpleSigner.java,v $
+ * Revision 1.7  2003/12/18 17:40:07  pelle
+ * You can now create keys that get stored with a X509 certificate in the keystore. These can be saved as well.
+ * IdentityCreator has been modified to allow creation of keys.
+ * Note The actual Creation of Certificates still have a problem that will be resolved later today.
+ *
  * Revision 1.6  2003/12/16 23:16:40  pelle
  * Work done on the SigningServlet. The two phase web model is now only an option.
  * Allowing much quicker signing, using the GuiDialogueAgent.
@@ -120,6 +125,8 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import java.io.*;
 import java.security.*;
+import java.security.cert.*;
+import java.security.cert.Certificate;
 import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.HashMap;
@@ -244,14 +251,18 @@ public final class SimpleSigner implements Signer {
         return new String(CryptoTools.digest(name.getBytes()));
     }
 
-    public final void save() throws IOException {
+    public final void save() throws CryptoException {
         if (signerFile.getParent() != null)
             signerFile.getParentFile().mkdirs();
 
-        final FileOutputStream f = new FileOutputStream(signerFile);
-        final ObjectOutput s = new ObjectOutputStream(f);
-        s.writeObject(ks);
-        s.flush();
+        try {
+            final FileOutputStream f = new FileOutputStream(signerFile);
+            final ObjectOutput s = new ObjectOutputStream(f);
+            s.writeObject(ks);
+            s.flush();
+        } catch (IOException e) {
+            throw new CryptoException(e);
+        }
 
     }
 
@@ -268,16 +279,6 @@ public final class SimpleSigner implements Signer {
 
         return CryptoTools.sign(getKey(name, agent.getPassPhrase(name)), data);
     }
-
-    /**
-     * Creates a new KeyPair, stores the PrivateKey using the given alias
-     * and returns the PublicKey.
-     * 
-     * @param alias 
-     * @return Generated PublicKey
-     * @throws org.neuclear.commons.crypto.CryptoException
-     *          
-     */
     public final PublicKey generateKey(final String alias) throws CryptoException {
         try {
             final KeyPair kp = kpg.generateKeyPair();

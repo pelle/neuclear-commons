@@ -26,8 +26,13 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: TestCaseSignerTest.java,v 1.4 2003/12/10 23:55:45 pelle Exp $
+$Id: TestCaseSignerTest.java,v 1.5 2003/12/18 17:40:08 pelle Exp $
 $Log: TestCaseSignerTest.java,v $
+Revision 1.5  2003/12/18 17:40:08  pelle
+You can now create keys that get stored with a X509 certificate in the keystore. These can be saved as well.
+IdentityCreator has been modified to allow creation of keys.
+Note The actual Creation of Certificates still have a problem that will be resolved later today.
+
 Revision 1.4  2003/12/10 23:55:45  pelle
 Did some cleaning up in the builders
 Fixed some stuff in IdentityCreator
@@ -88,10 +93,7 @@ public final class TestCaseSignerTest extends TestCase {
         assertNotNull(sig);
         assertTrue(CryptoTools.verify(pub, data, sig));
         assertTrue(signer.canSignFor(ALIASEVE));
-
-
     }
-
     private void testKey(final String name) throws CryptoException {
         final byte[] sig = signer.sign(name, TESTDATA.getBytes());
         assertNotNull(sig);

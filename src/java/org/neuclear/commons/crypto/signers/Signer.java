@@ -1,6 +1,11 @@
 /*
- * $Id: Signer.java,v 1.3 2003/12/10 23:55:45 pelle Exp $
+ * $Id: Signer.java,v 1.4 2003/12/18 17:40:07 pelle Exp $
  * $Log: Signer.java,v $
+ * Revision 1.4  2003/12/18 17:40:07  pelle
+ * You can now create keys that get stored with a X509 certificate in the keystore. These can be saved as well.
+ * IdentityCreator has been modified to allow creation of keys.
+ * Note The actual Creation of Certificates still have a problem that will be resolved later today.
+ *
  * Revision 1.3  2003/12/10 23:55:45  pelle
  * Did some cleaning up in the builders
  * Fixed some stuff in IdentityCreator
@@ -86,6 +91,7 @@ package org.neuclear.commons.crypto.signers;
 import org.neuclear.commons.crypto.CryptoException;
 
 import java.security.PublicKey;
+import java.security.cert.Certificate;
 
 
 /**
@@ -137,10 +143,10 @@ public interface Signer {
     /**
      * Creates a new KeyPair, stores the PrivateKey using the given alias
      * and returns the PublicKey.
-     * 
-     * @param alias 
+     *
+     * @param alias
      * @return Generated PublicKey
-     * @throws CryptoException 
+     * @throws CryptoException
      */
     public PublicKey generateKey(String alias) throws CryptoException;
 
@@ -148,5 +154,7 @@ public interface Signer {
     final public static int KEY_RSA = 1;
     final public static int KEY_DSA = 2;
     final public static int KEY_OTHER = -1;
+
+    void save() throws CryptoException;
 
 }
