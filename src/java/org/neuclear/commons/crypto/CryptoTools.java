@@ -1,6 +1,10 @@
 /*
- * $Id: CryptoTools.java,v 1.15 2004/03/05 23:43:06 pelle Exp $
+ * $Id: CryptoTools.java,v 1.16 2004/03/08 23:50:34 pelle Exp $
  * $Log: CryptoTools.java,v $
+ * Revision 1.16  2004/03/08 23:50:34  pelle
+ * More improvements on the XMLSignature. Now uses the Transforms properly, References properly.
+ * All the major elements have been refactored to be cleaner and more correct.
+ *
  * Revision 1.15  2004/03/05 23:43:06  pelle
  * New Channels package with nio based channels for various crypto related tasks such as digests, signing, verifying and encoding.
  * DigestsChannel, SigningChannel and VerifyingChannel are complete, but not tested.
@@ -692,8 +696,12 @@ public final class CryptoTools {
         return getKeyPairGenerator().generateKeyPair();
     }
 
-    public static KeyPair createTinyKeyPair() throws NoSuchAlgorithmException {
-        return getTinyKeyPairGenerator().generateKeyPair();
+    public static KeyPair createTinyRSAKeyPair() throws NoSuchAlgorithmException {
+        return getTinyRSAKeyPairGenerator().generateKeyPair();
+    }
+
+    public static KeyPair createTinyDSAKeyPair() throws NoSuchAlgorithmException {
+        return getTinyDSAKeyPairGenerator().generateKeyPair();
     }
 
     public static KeyPair createKeyPair(final String algorithm)
@@ -711,9 +719,19 @@ public final class CryptoTools {
 
     }
 
-    public static KeyPairGenerator getTinyKeyPairGenerator() throws NoSuchAlgorithmException {
+    public static KeyPairGenerator getTinyRSAKeyPairGenerator() throws NoSuchAlgorithmException {
         if (kg == null) {
             kg = KeyPairGenerator.getInstance("RSA");
+
+            kg.initialize(512, new SecureRandom("Bear it all with NeuDist".getBytes()));
+        }
+        return kg;
+
+    }
+
+    public static KeyPairGenerator getTinyDSAKeyPairGenerator() throws NoSuchAlgorithmException {
+        if (kg == null) {
+            kg = KeyPairGenerator.getInstance("DSA");
 
             kg.initialize(512, new SecureRandom("Bear it all with NeuDist".getBytes()));
         }
