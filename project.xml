@@ -3,7 +3,7 @@
 
     <name>NeuClear Commons</name>
     <id>neuclear-commons</id>
-    <currentVersion>1.0-beta8</currentVersion>
+    <currentVersion>1.0-beta9</currentVersion>
     <inceptionYear>2003</inceptionYear>
     <package>org.neuclear.commons</package>
     <logo>/images/logo.gif</logo>
