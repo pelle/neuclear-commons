@@ -40,8 +40,8 @@ public class Messages {
     private Messages(Class ref, Messages parent, String name) {
         this.name = name;
         this.parent = parent;
-        System.setProperty("file.encoding","UTF-8");
-        System.out.println("encoding: "+System.getProperty("file.encoding"));
+        System.setProperty("file.encoding", "UTF-8");
+        System.out.println("encoding: " + System.getProperty("file.encoding"));
         this.bundle = ResourceBundle.getBundle(name, getLocale(), ref.getClassLoader());
     }
 
@@ -127,19 +127,24 @@ public class Messages {
         return Preferences.userNodeForPackage(Messages.class);
     }
 
-    private static Locale getLocale() {
+    public static Locale getLocale() {
         Locale deflocale = Locale.getDefault();
         Preferences prefs = getPrefs();
 //        String cc = prefs.get(CC, deflocale.getCountry());
         String lang = prefs.get(LANG, deflocale.getLanguage());
+        if (deflocale.getLanguage().equals(lang)) {
+            return deflocale;
+        }
 //        String variant=prefs.get("LANGUAGE",deflocale.getVariant());
 
-        return new Locale(lang);
+        final Locale locale = new Locale(lang);
+        Locale.setDefault(locale);
+        return locale;
     }
 
     public static void updateLocale(String language, String country) {
         Preferences prefs = getPrefs();
-        Locale.setDefault(new Locale(language,country));
+        Locale.setDefault(new Locale(language, country));
         prefs.put(LANG, language);
         prefs.put(CC, country);
         try {
