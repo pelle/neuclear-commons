@@ -1,5 +1,8 @@
-/* $Id: ServletTools.java,v 1.9 2004/03/22 20:09:05 pelle Exp $
+/* $Id: ServletTools.java,v 1.10 2004/04/21 23:10:14 pelle Exp $
  * $Log: ServletTools.java,v $
+ * Revision 1.10  2004/04/21 23:10:14  pelle
+ * Fixed mac look and feel
+ *
  * Revision 1.9  2004/03/22 20:09:05  pelle
  * Added simple ledger for unit testing and in memory use
  *
@@ -76,7 +79,7 @@ import java.io.PrintWriter;
 
 /**
  * @author pelleb
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public final class ServletTools {
     private ServletTools() {
@@ -88,14 +91,29 @@ public final class ServletTools {
                 + request.getContextPath() + item;
     }
 
+    public static void printHeader(final PrintWriter out, final HttpServletRequest request, final String title, final String sub) {
+        out.print("<html><head><title>");
+        out.print(title);
+        out.println("</title>");
+        out.println("<LINK rel=\"stylesheet\" type=\"text/css\" href=\"");
+        out.println(getAbsoluteURL(request, "/styles.css"));
+        out.println("\">");
+        out.println("</head><body><div id=\"banner\">");
+        out.println(title);
+        out.println("</div>\n<div id=\"subtitle\">");
+        out.println(sub);
+        out.println("</div>\n");
+
+
+    }
+
     public static void printHeader(final PrintWriter out, final HttpServletRequest request, final String title) {
         out.print("<html><head><title>");
         out.print(title);
         out.println("</title>");
-        //out.println("<LINK rel=\"STYLESHEET\" type=\"text/css\" href=\"style/neuclear.css\">");
         out.println("<style type=\"text/css\">");
         out.println("body, th, td, input, select, textarea, h2 small {\n font-family: Verdana, Helvetica, Arial, sans-serif;\n }\n code, pre {\n font-family: 'Andale Mono', Courier, monospace;\n font-size: small;\n background-color: lightgrey;\n}");
-        out.println("</style></head><body bgcolor=\"#FFFFFF\"><div id=\"banner\"><table bgcolor=\"#0000ff\" width=\"100%\"><tr><td><h3 style=\"color: white\">");
+        out.println("</head><body bgcolor=\"#FFFFFF\"><div id=\"banner\"><table bgcolor=\"#0000ff\" width=\"100%\"><tr><td><h3 style=\"color: white\">");
         out.println(title);
         out.println("</h3></td></tr></table></div>");
 

@@ -15,8 +15,11 @@ import java.awt.event.KeyListener;
 import java.net.URL;
 
 /*
-$Id: SimpleDialog.java,v 1.5 2004/04/15 15:34:41 pelle Exp $
+$Id: SimpleDialog.java,v 1.6 2004/04/21 23:10:13 pelle Exp $
 $Log: SimpleDialog.java,v $
+Revision 1.6  2004/04/21 23:10:13  pelle
+Fixed mac look and feel
+
 Revision 1.5  2004/04/15 15:34:41  pelle
 Got rid of the looping InvalidPassphraseException in DefaultSigner.
 Added initial focus for all dialogs.
@@ -52,8 +55,12 @@ The XMLSig classes have also been updated to support this.
 public class SimpleDialog {
     public SimpleDialog() {
         try {
-            UIManager.setLookAndFeel("com.jgoodies.plaf.plastic.PlasticXPLookAndFeel");
-            UIManager.put(Options.USE_SYSTEM_FONTS_APP_KEY, Boolean.TRUE);
+            if (UIManager.getSystemLookAndFeelClassName().equals("apple.laf.AquaLookAndFeel"))
+                System.setProperty("com.apple.laf.useScreenMenuBar", "true");
+            else {
+                UIManager.setLookAndFeel("com.jgoodies.plaf.plastic.PlasticXPLookAndFeel");
+                UIManager.put(Options.USE_SYSTEM_FONTS_APP_KEY, Boolean.TRUE);
+            }
         } catch (Exception e) {
             // Likely PlasticXP is not in the class path; ignore.
         }

@@ -14,8 +14,11 @@ import java.io.File;
 import java.security.PublicKey;
 
 /*
-$Id: SwingAgent.java,v 1.9 2004/04/15 20:03:52 pelle Exp $
+$Id: SwingAgent.java,v 1.10 2004/04/21 23:10:13 pelle Exp $
 $Log: SwingAgent.java,v $
+Revision 1.10  2004/04/21 23:10:13  pelle
+Fixed mac look and feel
+
 Revision 1.9  2004/04/15 20:03:52  pelle
 Added license screen to Personal Signer.
 Added Sign document menu to  Personal Signer.
@@ -61,8 +64,12 @@ The XMLSig classes have also been updated to support this.
 public class SwingAgent implements InteractiveAgent {
     public SwingAgent() {
         try {
-            UIManager.setLookAndFeel("com.jgoodies.plaf.plastic.PlasticXPLookAndFeel");
-            UIManager.put(Options.USE_SYSTEM_FONTS_APP_KEY, Boolean.TRUE);
+            if (UIManager.getSystemLookAndFeelClassName().equals("apple.laf.AquaLookAndFeel"))
+                System.setProperty("com.apple.laf.useScreenMenuBar", "true");
+            else {
+                UIManager.setLookAndFeel("com.jgoodies.plaf.plastic.PlasticXPLookAndFeel");
+                UIManager.put(Options.USE_SYSTEM_FONTS_APP_KEY, Boolean.TRUE);
+            }
         } catch (Exception e) {
             // Likely PlasticXP is not in the class path; ignore.
         }

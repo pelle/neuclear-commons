@@ -15,8 +15,11 @@ import java.awt.event.KeyListener;
 import java.net.URL;
 
 /*
-$Id: FileDialog.java,v 1.1 2004/04/13 17:32:05 pelle Exp $
+$Id: FileDialog.java,v 1.2 2004/04/21 23:10:13 pelle Exp $
 $Log: FileDialog.java,v $
+Revision 1.2  2004/04/21 23:10:13  pelle
+Fixed mac look and feel
+
 Revision 1.1  2004/04/13 17:32:05  pelle
 Now has save dialog
 Remembers passphrases
@@ -43,8 +46,12 @@ The XMLSig classes have also been updated to support this.
 public class FileDialog {
     public FileDialog() {
         try {
-            UIManager.setLookAndFeel("com.jgoodies.plaf.plastic.PlasticXPLookAndFeel");
-            UIManager.put(Options.USE_SYSTEM_FONTS_APP_KEY, Boolean.TRUE);
+            if (UIManager.getSystemLookAndFeelClassName().equals("apple.laf.AquaLookAndFeel"))
+                System.setProperty("com.apple.laf.useScreenMenuBar", "true");
+            else {
+                UIManager.setLookAndFeel("com.jgoodies.plaf.plastic.PlasticXPLookAndFeel");
+                UIManager.put(Options.USE_SYSTEM_FONTS_APP_KEY, Boolean.TRUE);
+            }
         } catch (Exception e) {
             // Likely PlasticXP is not in the class path; ignore.
         }

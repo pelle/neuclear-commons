@@ -28,8 +28,11 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /*
-$Id: KeyStoreDialog.java,v 1.8 2004/04/16 18:12:39 pelle Exp $
+$Id: KeyStoreDialog.java,v 1.9 2004/04/21 23:10:13 pelle Exp $
 $Log: KeyStoreDialog.java,v $
+Revision 1.9  2004/04/21 23:10:13  pelle
+Fixed mac look and feel
+
 Revision 1.8  2004/04/16 18:12:39  pelle
 Added AgentMessages to support localization.
 added us and spanish locales
@@ -84,8 +87,12 @@ public class KeyStoreDialog {
      */
     public KeyStoreDialog() {
         try {
-            UIManager.setLookAndFeel("com.jgoodies.plaf.plastic.PlasticXPLookAndFeel");
-            UIManager.put(Options.USE_SYSTEM_FONTS_APP_KEY, Boolean.TRUE);
+            if (UIManager.getSystemLookAndFeelClassName().equals("apple.laf.AquaLookAndFeel"))
+                System.setProperty("com.apple.laf.useScreenMenuBar", "true");
+            else {
+                UIManager.setLookAndFeel("com.jgoodies.plaf.plastic.PlasticXPLookAndFeel");
+                UIManager.put(Options.USE_SYSTEM_FONTS_APP_KEY, Boolean.TRUE);
+            }
         } catch (Exception e) {
             // Likely PlasticXP is not in the class path; ignore.
         }
