@@ -3,7 +3,7 @@
 
   <name>NeuClear Commons</name>
   <id>neuclear-commons</id>
-  <currentVersion>0.3</currentVersion>
+  <currentVersion>0.4-SNAPSHOT</currentVersion>
   <inceptionYear>2003</inceptionYear>
   <package>org.neuclear.commons</package>
   <logo>/images/logo.gif</logo>
@@ -22,7 +22,7 @@
 
     <repository>
      <connection>
-         scm:cvs:pserver:anonymous@cvs.neudist.sourceforge.net:/cvsroot/neuclear:neuclear-commons
+         scm:cvs:pserver:anonymous@cvs.neuclear.sourceforge.net:/cvsroot/neuclear:neuclear-commons
      </connection>
      <url>
       http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/neuclear/neuclear-commons/
@@ -79,11 +79,28 @@
            <id>nanocontainer</id>
            <version>1.0-alpha-PRESPLIT-1</version>
        </dependency>
+       <dependency>
+          <id>servletapi</id>
+          <name>servletapi</name>
+          <version>2.2</version>
+        </dependency>
+
+
    <dependency>
       <id>junit</id>
       <name>junit</name>
       <version>3.8.1</version>
     </dependency>
+       <dependency>
+          <id>bouncycastle</id>
+          <name>bouncycastle</name>
+          <jar>bouncycastle-jce-jdk13-112.jar</jar>
+    <!--	<jar>bcprov-jdk14-118.jar</jar>-->
+          <properties>
+                <war.bundle.jar>false</war.bundle.jar>
+          </properties>
+        </dependency>
+
   </dependencies>
   <build>
 

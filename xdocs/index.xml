@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<document>
+
+	<properties>
+		<title>NeuClear - Commons</title>
+		<author email="pelle@neubia.com">Pelle Braendgaard</author>
+	</properties>
+
+	<body>
+		<section name="Introduction">
+			<p>
+				This is a collection of common tools and utilities used throughout the
+                NeuClear framework. They concern them selves with all the little generalistic
+                bits and pieces that dont quite fit neatly elsewhere.
+            </p>
+		</section>
+        <section name="Released 0.3">
+            <p>
+                The first file release of NeuClear Commons has been released. Click the download link to
+                download.
+            </p>
+        </section>
+	</body>
+
+</document>

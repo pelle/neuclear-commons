@@ -1,52 +1,27 @@
-/*
- * $Id: NeuClearException.java,v 1.2 2003/11/11 21:17:50 pelle Exp $
- * $Log: NeuClearException.java,v $
- * Revision 1.2  2003/11/11 21:17:50  pelle
+package org.neuclear.commons.crypto;
+
+import org.neuclear.commons.NeuClearException;
+
+/**
+ * (C) 2003 Antilles Software Ventures SA
+ * User: pelleb
+ * Date: Feb 10, 2003
+ * Time: 10:53:08 AM
+ * $Id: CryptoException.java,v 1.1 2003/11/11 21:17:48 pelle Exp $
+ * $Log: CryptoException.java,v $
+ * Revision 1.1  2003/11/11 21:17:48  pelle
  * Further vital reshuffling.
  * org.neudist.crypto.* and org.neudist.utils.* have been moved to respective areas under org.neuclear.commons
  * org.neuclear.signers.* as well as org.neuclear.passphraseagents have been moved under org.neuclear.commons.crypto as well.
  * Did a bit of work on the Canonicalizer and changed a few other minor bits.
  *
- * Revision 1.1  2003/10/21 22:29:31  pelle
- * Renamed NeudistException to NeuClearException and moved it to org.neuclear.commons where it makes more sense.
- * Unhooked the XMLException in the xmlsig library from NeuClearException to make all of its exceptions an independent hierarchy.
- * Obviously had to perform many changes throughout the code to support these changes.
+ * Revision 1.1  2003/02/11 14:47:02  pelle
+ * Added benchmarking code.
+ * DigestValue is now a required part.
+ * If you pass a keypair when you sign, you get the PublicKey included as a KeyInfo block within the signature.
  *
- * Revision 1.2  2003/02/08 20:55:03  pelle
- * Some documentation changes.
- * Major reorganization of code. The code is slowly being cleaned up in such a way that we can
- * get rid of the org.neuclear.utils package and split out the org.neuclear.xml.soap package.
- * Got rid of tons of unnecessary dependencies.
- *
- * Revision 1.1  2003/01/18 18:12:30  pelle
- * First Independent commit of the Independent XML-Signature API for NeuDist.
- *
- * Revision 1.4  2002/10/03 01:51:58  pelle
- * Bunch of smaller fixes for bugs found during deployment.
- * Also a bit more documentation.
- * I'm happy with this being called rev. 0.4
- *
- * Revision 1.3  2002/09/21 23:11:16  pelle
- * A bunch of clean ups. Got rid of as many hard coded URL's as I could.
- *
- * User: pelleb
- * Date: 05-Jun-02
- * Time: 13:05:46
- * To change template for new class use 
- * Code Style | Class Templates options (Tools | IDE Options).
  */
-package org.neuclear.commons;
-
-
-
-public class NeuClearException extends Exception {
-    /**
-     * Constructs a new exception with <code>null</code> as its detail message.
-     * The cause is not initialized, and may subsequently be initialized by a
-     * call to {@link #initCause}.
-     */
-    public NeuClearException() {
-    }
+public class CryptoException extends NeuClearException {
 
     /**
      * Constructs a new exception with the specified cause and a detail
@@ -62,7 +37,7 @@ public class NeuClearException extends Exception {
      *         unknown.)
      * @since  1.4
      */
-    public NeuClearException(Throwable cause) {
+    public CryptoException(Throwable cause) {
         super(cause);
     }
 
@@ -74,7 +49,7 @@ public class NeuClearException extends Exception {
      * @param   message   the detail message. The detail message is saved for
      *          later retrieval by the {@link #getMessage()} method.
      */
-    public NeuClearException(String message) {
+    public CryptoException(String message) {
         super(message);
     }
 
@@ -92,8 +67,7 @@ public class NeuClearException extends Exception {
      *         unknown.)
      * @since  1.4
      */
-    public NeuClearException(String message, Throwable cause) {
+    public CryptoException(String message, Throwable cause) {
         super(message, cause);
     }
-
 }
