@@ -1,5 +1,8 @@
-/* $Id: ServletTools.java,v 1.8 2004/03/02 18:58:44 pelle Exp $
+/* $Id: ServletTools.java,v 1.9 2004/03/22 20:09:05 pelle Exp $
  * $Log: ServletTools.java,v $
+ * Revision 1.9  2004/03/22 20:09:05  pelle
+ * Added simple ledger for unit testing and in memory use
+ *
  * Revision 1.8  2004/03/02 18:58:44  pelle
  * Further cleanups in neuclear-id. Moved everything under id.
  *
@@ -15,8 +18,8 @@
  * Added AbstractObjectCreationTest to make it quicker to write unit tests to verify
  * NamedObjectBuilder/SignedNamedObject Pairs.
  * Sample application has been expanded with a basic email application.
- * Updated docs for sample web app.
- * Added missing LGPL LICENSE.txt files to signer and sample app
+ * Updated docs for simple web app.
+ * Added missing LGPL LICENSE.txt files to signer and simple app
  *
  * Revision 1.4  2003/12/15 23:32:40  pelle
  * added ServletTools.getInitParam() which first tries the ServletConfig, then the context config.
@@ -73,7 +76,7 @@ import java.io.PrintWriter;
 
 /**
  * @author pelleb
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public final class ServletTools {
     private ServletTools() {

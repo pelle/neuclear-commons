@@ -24,8 +24,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: TestCaseSigner.java,v 1.10 2004/01/19 17:53:14 pelle Exp $
+$Id: TestCaseSigner.java,v 1.11 2004/03/22 20:09:05 pelle Exp $
 $Log: TestCaseSigner.java,v $
+Revision 1.11  2004/03/22 20:09:05  pelle
+Added simple ledger for unit testing and in memory use
+
 Revision 1.10  2004/01/19 17:53:14  pelle
 Various clean ups
 
@@ -61,7 +64,7 @@ Changes to JCE Implementation
 Working on getting all tests working including store tests
 
 Revision 1.3  2003/11/18 00:01:02  pelle
-The sample signing web application for logging in and out is now working.
+The simple signing web application for logging in and out is now working.
 There had been an issue in the canonicalizer when dealing with the embedded object of the SignatureRequest object.
 
 Revision 1.2  2003/11/13 23:26:17  pelle
@@ -88,7 +91,7 @@ public final class TestCaseSigner extends JCESigner {
      * The password for all keys should be "neuclear"
      */
     public TestCaseSigner() throws InvalidPassphraseException {
-            this(KEYSTORE, getKeyStore(), "neuclear");
+        this(KEYSTORE, getKeyStore(), "neuclear");
     }
 
     public TestCaseSigner(final PassPhraseAgent agent) throws InvalidPassphraseException {
@@ -99,12 +102,12 @@ public final class TestCaseSigner extends JCESigner {
      * Creates a TestCaseSigner in the given location. The keystore must
      * be a SUN JKS format file and the passphrase for the keystore and all
      * keys must be the same.
-     * 
+     *
      * @param in         InputStream
      * @param passphrase The passphrase to use
      * @throws InvalidPassphraseException
      */
-    public TestCaseSigner(final String name, final InputStream in, final String passphrase) throws InvalidPassphraseException  {
+    public TestCaseSigner(final String name, final InputStream in, final String passphrase) throws InvalidPassphraseException {
         this(name, in, new AlwaysTheSamePassphraseAgent(passphrase));
     }
 
@@ -113,8 +116,7 @@ public final class TestCaseSigner extends JCESigner {
                 in,
                 "jks", "SUN",
                 agent,
-                "neuclear".toCharArray()
-        );
+                "neuclear".toCharArray());
     }
 
     private static InputStream getKeyStore() {

@@ -1,6 +1,9 @@
 /*
- * $Id: JCESigner.java,v 1.17 2004/01/20 17:38:58 pelle Exp $
+ * $Id: JCESigner.java,v 1.18 2004/03/22 20:09:05 pelle Exp $
  * $Log: JCESigner.java,v $
+ * Revision 1.18  2004/03/22 20:09:05  pelle
+ * Added simple ledger for unit testing and in memory use
+ *
  * Revision 1.17  2004/01/20 17:38:58  pelle
  * Further updates to unit tests
  *
@@ -71,7 +74,7 @@
  * Working on getting all tests working including store tests
  *
  * Revision 1.4  2003/11/18 00:01:02  pelle
- * The sample signing web application for logging in and out is now working.
+ * The simple signing web application for logging in and out is now working.
  * There had been an issue in the canonicalizer when dealing with the embedded object of the SignatureRequest object.
  *
  * Revision 1.3  2003/11/13 23:26:17  pelle
@@ -175,19 +178,22 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
 
     /**
      * Constructs a JCESigner with the agent providing the keystore passphrase.
+     *
      * @param filename
      * @param type
      * @param provider
      * @param agent
      * @throws InvalidPassphraseException If the given passphrase is incorrect
-     * @throws UserCancellationException If the user choses to cancel the process in the passphrase agent, this should cancel the loading process
+     * @throws UserCancellationException  If the user choses to cancel the process in the passphrase agent, this should cancel the loading process
      */
-    public JCESigner(final String filename, final String type, final String provider, final PassPhraseAgent agent) throws UserCancellationException,InvalidPassphraseException {
+    public JCESigner(final String filename, final String type, final String provider, final PassPhraseAgent agent) throws UserCancellationException, InvalidPassphraseException {
         this(filename, createInputStream(filename), type, provider, agent);
-        this.filename=filename;
+        this.filename = filename;
     }
+
     /**
      * Constructs a JCESigner providing a initial passphrase in the parameters.
+     *
      * @param filename
      * @param type
      * @param provider
@@ -195,19 +201,20 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
      * @param initialpassphrase
      * @throws InvalidPassphraseException If the given passphrase is incorrect
      */
-    public JCESigner(final String filename, final String type, final String provider, final PassPhraseAgent agent,final char[] initialpassphrase) throws InvalidPassphraseException
-    {
-        this(filename, createInputStream(filename), type, provider, agent,initialpassphrase);
-        this.filename=filename;
+    public JCESigner(final String filename, final String type, final String provider, final PassPhraseAgent agent, final char[] initialpassphrase) throws InvalidPassphraseException {
+        this(filename, createInputStream(filename), type, provider, agent, initialpassphrase);
+        this.filename = filename;
 
     }
+
     /**
      * The purpose of this method is to either return an InputStream or Null. The reason being that the Keystore accepts null
      * to create a new KeyStore in memory.
+     *
      * @param filename
      * @return
      */
-    private static InputStream createInputStream(final String filename)  {
+    private static InputStream createInputStream(final String filename) {
         if (Utility.isEmpty(filename))
             return null;
         final File file = new File(filename);
@@ -223,19 +230,22 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
 
     /**
      * Constructs a JCESigner using the agent to provide the initial passphrase
+     *
      * @param name
      * @param in
      * @param type
      * @param provider
      * @param agent
      * @throws InvalidPassphraseException If the given passphrase is incorrect
-     * @throws UserCancellationException If the user choses to cancel the process in the passphrase agent, this should cancel the loading process
+     * @throws UserCancellationException  If the user choses to cancel the process in the passphrase agent, this should cancel the loading process
      */
     protected JCESigner(final String name, final InputStream in, final String type, final String provider, final PassPhraseAgent agent) throws UserCancellationException, InvalidPassphraseException {
         this(loadKeyStore(provider, type, in, agent, name), agent);
     }
+
     /**
      * Constructs a JCESigner using the provided Initial passphrase to load the keystore
+     *
      * @param name
      * @param in
      * @param type
@@ -244,11 +254,11 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
      * @param initpassphrase
      * @throws InvalidPassphraseException If the given passphrase is incorrect
      */
-    protected JCESigner(final String name, final InputStream in, final String type, final String provider, final PassPhraseAgent agent, final char[] initpassphrase) throws  InvalidPassphraseException {
+    protected JCESigner(final String name, final InputStream in, final String type, final String provider, final PassPhraseAgent agent, final char[] initpassphrase) throws InvalidPassphraseException {
         this(loadKeyStore(provider, type, in, initpassphrase), agent);
     }
+
     /**
-     *
      * @param provider
      * @param type
      * @param in
@@ -258,12 +268,12 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
      * @throws InvalidPassphraseException
      * @throws UserCancellationException
      */
-    private static KeyStore loadKeyStore(final String provider, final String type, final InputStream in, final PassPhraseAgent agent, final String name) throws InvalidPassphraseException,UserCancellationException {
+    private static KeyStore loadKeyStore(final String provider, final String type, final InputStream in, final PassPhraseAgent agent, final String name) throws InvalidPassphraseException, UserCancellationException {
 //        System.out.println("Loading JCESigner: "+name);
-        return loadKeyStore(provider,type,in,agent.getPassPhrase("Keystore password for: "+name));
+        return loadKeyStore(provider, type, in, agent.getPassPhrase("Keystore password for: " + name));
     }
+
     /**
-     *
      * @param provider
      * @param type
      * @param in
@@ -297,10 +307,11 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
 
     /**
      * Creates a signer based on a fully loaded keystore
+     *
      * @param ks
      * @param agent
      */
-    public JCESigner(final KeyStore ks, final PassPhraseAgent agent)  {
+    public JCESigner(final KeyStore ks, final PassPhraseAgent agent) {
         this.agent = agent;
         this.ks = ks;
         cache = new KeyCache(ks);
@@ -326,15 +337,16 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
     }
 
     public final byte[] sign(final String name, final byte[] data) throws NonExistingSignerException, UserCancellationException {
-        return sign(name,data,false);
+        return sign(name, data, false);
     }
-    public final byte[] sign(final String name, final byte[] data,boolean incorrect) throws UserCancellationException, NonExistingSignerException {
+
+    public final byte[] sign(final String name, final byte[] data, boolean incorrect) throws UserCancellationException, NonExistingSignerException {
         try {
-            final char[] pass = getPassPhrase(name,incorrect);
+            final char[] pass = getPassPhrase(name, incorrect);
             return CryptoTools.sign(getKey(name, pass), data);
         } catch (UnrecoverableKeyException e) {
-            System.err.println("Incorrect Passphrase Attemt on: "+name);
-            return sign(name,data,true);
+            System.err.println("Incorrect Passphrase Attemt on: " + name);
+            return sign(name, data, true);
         } catch (NoSuchAlgorithmException e) {
             throw new LowLevelException(e);
         } catch (KeyStoreException e) {
@@ -345,13 +357,13 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
         }
     }
 
-    private char[] getPassPhrase(final String name,boolean incorrect) throws UserCancellationException {
-        if (incorrect&&(agent instanceof InteractiveAgent))
-            ((InteractiveAgent)agent).getPassPhrase(name,true);
+    private char[] getPassPhrase(final String name, boolean incorrect) throws UserCancellationException {
+        if (incorrect && (agent instanceof InteractiveAgent))
+            ((InteractiveAgent) agent).getPassPhrase(name, true);
         return agent.getPassPhrase(name);
     }
 
-    public final boolean canSignFor(final String name)  {
+    public final boolean canSignFor(final String name) {
         try {
             return ks.containsAlias(name);
         } catch (KeyStoreException e) {
@@ -359,7 +371,7 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
         }
     }
 
-    public final int getKeyType(final String name)  {
+    public final int getKeyType(final String name) {
         try {
             if (ks.isKeyEntry(name)) {
                 final PublicKey pk = getPublicKey(name);
@@ -381,7 +393,7 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
     public final PublicKey generateKey(final String alias) throws UserCancellationException {
         try {
             final KeyPair kp = kpg.generateKeyPair();
-            ks.setKeyEntry(alias, kp.getPrivate(), agent.getPassPhrase(alias), new Certificate[]{CryptoTools.createCertificate(alias,kp)});
+            ks.setKeyEntry(alias, kp.getPrivate(), agent.getPassPhrase(alias), new Certificate[]{CryptoTools.createCertificate(alias, kp)});
             return kp.getPublic();
         } catch (KeyStoreException e) {
             throw new LowLevelException(e);
@@ -395,11 +407,11 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
     public final PublicKey getPublicKey(final String name) throws NonExistingSignerException {
         try {
             final Certificate certificate = ks.getCertificate(name);
-            if (certificate==null)
+            if (certificate == null)
                 throw new NonExistingSignerException(name);
 
-            PublicKey pub= certificate.getPublicKey();
-            if (pub==null)
+            PublicKey pub = certificate.getPublicKey();
+            if (pub == null)
                 throw new NonExistingSignerException(name);
             return pub;
 
@@ -415,17 +427,19 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
             throw new LowLevelException(e);
         }
     }
-    public synchronized final void save(String filename) throws FileNotFoundException{
+
+    public synchronized final void save(String filename) throws FileNotFoundException {
         if (Utility.isEmpty(filename))
             throw new FileNotFoundException("no keystore filename");
         try {
-            File ksfile=new File(filename);
+            File ksfile = new File(filename);
             ksfile.getParentFile().mkdirs();
-            ks.store(new FileOutputStream(ksfile),agent.getPassPhrase(filename));
+            ks.store(new FileOutputStream(ksfile), agent.getPassPhrase(filename));
         } catch (Exception e) {
             throw new LowLevelException(e);
         }
     }
+
     private final KeyStore ks;
     private final KeyCache cache;
     private final PassPhraseAgent agent;

@@ -24,8 +24,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: KeyCache.java,v 1.2 2003/11/21 04:43:41 pelle Exp $
+$Id: KeyCache.java,v 1.3 2004/03/22 20:09:05 pelle Exp $
 $Log: KeyCache.java,v $
+Revision 1.3  2004/03/22 20:09:05  pelle
+Added simple ledger for unit testing and in memory use
+
 Revision 1.2  2003/11/21 04:43:41  pelle
 EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
 Otherwise You will Finaliate.
@@ -33,7 +36,7 @@ Anything that can be final has been made final throughout everyting. We've used 
 This should hopefully make everything more stable (and secure).
 
 Revision 1.1  2003/11/18 00:01:02  pelle
-The sample signing web application for logging in and out is now working.
+The simple signing web application for logging in and out is now working.
 There had been an issue in the canonicalizer when dealing with the embedded object of the SignatureRequest object.
 
 */
