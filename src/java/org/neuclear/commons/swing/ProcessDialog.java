@@ -8,6 +8,7 @@ import com.l2fprod.common.swing.BannerPanel;
 import org.neuclear.commons.crypto.passphraseagents.AgentMessages;
 import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
 import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
+import org.neuclear.commons.crypto.passphraseagents.swing.MessageLabel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -50,7 +51,7 @@ public abstract class ProcessDialog extends NeuClearDialog {
     private JPanel buildProcessPanel() {
 
         FormLayout layout = new FormLayout("right:pref, 3dlu, 100dlu:grow ",
-                "pref,3dlu,pref, 7dlu, pref");
+                "pref,3dlu,pref,3dlu,pref, 7dlu, pref");
         PanelBuilder builder = new PanelBuilder(layout);
         CellConstraints cc = new CellConstraints();
 
@@ -60,11 +61,13 @@ public abstract class ProcessDialog extends NeuClearDialog {
         banner.setTitle(AgentMessages.getProcessTitle(id));
         banner.setSubtitle(AgentMessages.getProcessDescription(id));
         builder.add(banner, cc.xyw(1, 1, 3));
+        processMessage = new MessageLabel();
+        builder.add(processMessage, cc.xyw(1, 3, 3));
         progress = new JProgressBar(0, 100);
         progress.setIndeterminate(true);
         progress.setVisible(true);
 
-        builder.add(progress, cc.xyw(1, 3, 3));
+        builder.add(progress, cc.xyw(1, 5, 3));
         ButtonBarBuilder bb = new ButtonBarBuilder();
         bb.addGlue();
         bb.addUnrelatedGap();
@@ -72,7 +75,7 @@ public abstract class ProcessDialog extends NeuClearDialog {
         cancel = new JButton(AgentMessages.getText("cancel"));
         bb.addGridded(cancel);
         cancel.addActionListener(closeAction);
-        builder.add(bb.getPanel(), cc.xyw(1, 5, 3));
+        builder.add(bb.getPanel(), cc.xyw(1, 7, 3));
 
         return builder.getPanel();
 
@@ -110,7 +113,12 @@ public abstract class ProcessDialog extends NeuClearDialog {
 
     }
 
+    public void processInfo(String info) {
+        processMessage.info(info);
+    }
+
     private final JPanel busyPanel;
     private JProgressBar progress;
+    private MessageLabel processMessage;
     private JButton cancel;
 }

@@ -37,6 +37,11 @@ public abstract class AbstractDialogRunner extends WaitForInput {
         dia.toFront();
     }
 
+    public void info(String error) {
+        dia.switchToMain();
+        dia.message.error(error);
+    }
+
     public void error(String error) {
         dia.switchToMain();
         dia.message.error(error);
