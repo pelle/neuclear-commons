@@ -31,11 +31,10 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: DefaultSigner.java,v 1.12 2004/04/22 23:59:51 pelle Exp $
+$Id: DefaultSigner.java,v 1.13 2004/04/23 23:32:01 pelle Exp $
 $Log: DefaultSigner.java,v $
-Revision 1.12  2004/04/22 23:59:51  pelle
-Added various statistics to Ledger as well as AssetController
-Improved look and feel in the web app.
+Revision 1.13  2004/04/23 23:32:01  pelle
+Fixed bug in DefaultSigner
 
 Revision 1.11  2004/04/15 20:03:52  pelle
 Added license screen to Personal Signer.
@@ -105,11 +104,6 @@ public final class DefaultSigner implements BrowsableSigner {
         prefs = Preferences.userNodeForPackage(DefaultSigner.class);
         this.agent = agent;
         filename = prefs.get(KEYSTORE, CryptoTools.DEFAULT_KEYSTORE);
-//        loadSigner();
-    }
-
-    private Signer loadSigner() throws UserCancellationException {
-
         File file = new File(filename);
         if (file.exists() && file.length() == 0)
             file.delete(); // Delete empty file
@@ -118,17 +112,7 @@ public final class DefaultSigner implements BrowsableSigner {
         } catch (BackingStoreException e) {
             e.printStackTrace();
         }
-        return loadSigner(file, this.agent, false);
-    }
-
-    private JCESigner getSigner() {
-        try {
-            if (signer == null)
-                signer = (JCESigner) loadSigner();
-        } catch (UserCancellationException e) {
-            return null;
-        }
-        return signer;
+        signer = loadSigner(file, agent, false);
     }
 
     private JCESigner loadSigner(final File file, final InteractiveAgent agent, final boolean wrong) throws UserCancellationException {
@@ -153,27 +137,27 @@ public final class DefaultSigner implements BrowsableSigner {
     }
 
     public final byte[] sign(final String name, final byte[] data) throws NonExistingSignerException, UserCancellationException {
-        return getSigner().sign(name, data);
+        return signer.sign(name, data);
     }
 
     public final byte[] sign(final String name, final byte[] data, boolean incorrect) throws UserCancellationException, NonExistingSignerException {
-        return getSigner().sign(name, data, incorrect);
+        return signer.sign(name, data, incorrect);
     }
 
     public final boolean canSignFor(final String name) {
-        return getSigner().canSignFor(name);
+        return signer.canSignFor(name);
     }
 
     public final int getKeyType(final String name) {
-        return getSigner().getKeyType(name);
+        return signer.getKeyType(name);
     }
 
     public final PublicKey generateKey(final String alias) throws UserCancellationException {
-        return getSigner().generateKey(alias);
+        return signer.generateKey(alias);
     }
 
     public final PublicKey getPublicKey(final String name) throws NonExistingSignerException {
-        return getSigner().getPublicKey(name);
+        return signer.getPublicKey(name);
     }
 
     public byte[] sign(byte data[], SetPublicKeyCallBack callback) throws UserCancellationException {
@@ -181,11 +165,11 @@ public final class DefaultSigner implements BrowsableSigner {
     }
 
     public byte[] sign(String name, char pass[], byte data[], SetPublicKeyCallBack callback) throws InvalidPassphraseException {
-        return getSigner().sign(name, pass, data, callback);
+        return signer.sign(name, pass, data, callback);
     }
 
     public void createKeyPair(String alias, char passphrase[]) throws CryptoException {
-        getSigner().createKeyPair(alias, passphrase);
+        signer.createKeyPair(alias, passphrase);
     }
 
     public InteractiveAgent getAgent() {
@@ -219,11 +203,11 @@ public final class DefaultSigner implements BrowsableSigner {
     }
 
     public Iterator iterator() throws KeyStoreException {
-        return getSigner().iterator();
+        return signer.iterator();
     }
 
     private String filename;
-    private JCESigner signer = null;
+    private final JCESigner signer;
     private final InteractiveAgent agent;
     private Preferences prefs;
     private static final String KEYSTORE = "KEYSTORE";
