@@ -115,11 +115,17 @@ public class IconTools {
         return HELP;
     }
 
-    public static Icon loadIcon(String name) {
+    public static ImageIcon getLogo() {
+        if (LOGO == null)
+            LOGO = loadIcon("org/neuclear/commons/crypto/passphraseagents/neuclear.png");
+        return LOGO;
+    }
+
+    public static ImageIcon loadIcon(String name) {
         return loadIcon(IconTools.class, name);
     }
 
-    public static Icon loadIcon(Class cls, String name) {
+    public static ImageIcon loadIcon(Class cls, String name) {
         final URL imageurl = cls.getClassLoader().getResource(name);
         if (imageurl != null) {
             final ImageIcon icon = new ImageIcon(imageurl);
@@ -148,5 +154,6 @@ public class IconTools {
     private static Icon OPEN;
 
     private static Icon HELP;
+    private static ImageIcon LOGO;
 
 }

@@ -73,7 +73,8 @@ public class KeyStorePanel extends JPanel {
         toolbar.add(save);
         toolbar.addSeparator();
 
-        newId = new JButton(new NewPersonalityAction(signer));
+        newPersonality = new NewPersonalityAction(signer);
+        newId = new JButton(newPersonality);
         newId.setText("");
         toolbar.add(newId);
         add(toolbar, BorderLayout.NORTH);
@@ -82,7 +83,7 @@ public class KeyStorePanel extends JPanel {
         list.setBorder(BorderFactory.createLoweredBevelBorder());
         add(list, BorderLayout.CENTER);
 //        nad = new NewAliasDialog(this);
-
+        fillAliasList();
 
         newId.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent actionEvent) {
@@ -116,6 +117,10 @@ public class KeyStorePanel extends JPanel {
 
     public Action[] getFileActions() {
         return new Action[]{};
+    }
+
+    public Action[] getActions() {
+        return new Action[]{newPersonality};
     }
 
     public JLabel getLabel() {
@@ -197,6 +202,8 @@ public class KeyStorePanel extends JPanel {
     public ListModel getModel() {
         return list.getModel();
     }
+
+    private NewPersonalityAction newPersonality;
 
 
 }
