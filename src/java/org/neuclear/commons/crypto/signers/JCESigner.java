@@ -1,6 +1,9 @@
 /*
- * $Id: JCESigner.java,v 1.24 2004/04/14 00:10:52 pelle Exp $
+ * $Id: JCESigner.java,v 1.25 2004/04/20 23:32:05 pelle Exp $
  * $Log: JCESigner.java,v $
+ * Revision 1.25  2004/04/20 23:32:05  pelle
+ * All unit tests (junit and cactus) work. The AssetControllerServlet is operational.
+ *
  * Revision 1.24  2004/04/14 00:10:52  pelle
  * Added a MessageLabel for handling errors, validation and info
  * Save works well now.
@@ -496,18 +499,18 @@ public class JCESigner implements BrowsableSigner {
     }
 
     public Iterator iterator() throws KeyStoreException {
-        final Enumeration enum = ks.aliases();
+        final Enumeration enumerator = ks.aliases();
         return new Iterator() {
             public void remove() {
 
             }
 
             public boolean hasNext() {
-                return enum.hasMoreElements();
+                return enumerator.hasMoreElements();
             }
 
             public Object next() {
-                return enum.nextElement();
+                return enumerator.nextElement();
             }
 
         };
