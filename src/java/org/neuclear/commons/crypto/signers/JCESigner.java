@@ -1,6 +1,12 @@
 /*
- * $Id: JCESigner.java,v 1.7 2003/11/21 04:43:41 pelle Exp $
+ * $Id: JCESigner.java,v 1.8 2003/11/22 00:22:52 pelle Exp $
  * $Log: JCESigner.java,v $
+ * Revision 1.8  2003/11/22 00:22:52  pelle
+ * All unit tests in commons, id and xmlsec now work.
+ * AssetController now successfully processes payments in the unit test.
+ * Payment Web App has working form that creates a TransferRequest presents it to the signer
+ * and forwards it to AssetControlServlet. (Which throws an XML Parser Exception) I think the XMLReaderServlet is bust.
+ *
  * Revision 1.7  2003/11/21 04:43:41  pelle
  * EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
  * Otherwise You will Finaliate.
@@ -137,7 +143,7 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
             else
                 ki = KeyStore.getInstance(type, provider);
             ki.load(in, agent.getPassPhrase("KeyStore Passphrase for" + name));
-            System.out.println("Successfully loaded JCESigner: " + name + " type: " + ki.getType() + " size: " + ki.size());
+//            System.out.println("Successfully loaded JCESigner: " + name + " type: " + ki.getType() + " size: " + ki.size());
             return ki;
         } catch (KeyStoreException e) {
             throw new NeuClearException(e);

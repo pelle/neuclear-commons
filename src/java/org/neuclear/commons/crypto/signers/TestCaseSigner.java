@@ -26,8 +26,14 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: TestCaseSigner.java,v 1.6 2003/11/21 04:43:41 pelle Exp $
+$Id: TestCaseSigner.java,v 1.7 2003/11/22 00:22:52 pelle Exp $
 $Log: TestCaseSigner.java,v $
+Revision 1.7  2003/11/22 00:22:52  pelle
+All unit tests in commons, id and xmlsec now work.
+AssetController now successfully processes payments in the unit test.
+Payment Web App has working form that creates a TransferRequest presents it to the signer
+and forwards it to AssetControlServlet. (Which throws an XML Parser Exception) I think the XMLReaderServlet is bust.
+
 Revision 1.6  2003/11/21 04:43:41  pelle
 EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
 Otherwise You will Finaliate.
@@ -103,7 +109,7 @@ public final class TestCaseSigner extends JCESigner {
 
     private static InputStream getKeyStore() {
         final URL url = TestCaseSigner.class.getClassLoader().getResource(KEYSTORE);
-        System.out.println("loading keystore from: " + url.toString());
+//        System.out.println("loading keystore from: " + url.toString());
         return TestCaseSigner.class.getClassLoader().getResourceAsStream(KEYSTORE);
 
 
