@@ -1,6 +1,10 @@
 /*
- * $Id: SimpleSigner.java,v 1.1 2003/11/11 21:17:47 pelle Exp $
+ * $Id: SimpleSigner.java,v 1.2 2003/11/12 18:54:42 pelle Exp $
  * $Log: SimpleSigner.java,v $
+ * Revision 1.2  2003/11/12 18:54:42  pelle
+ * Updated SimpleSignerStoreTest to use a StoredPassPhraseAgent eliminating the popup during testing.
+ * Created SigningBenchmark for running comparative performance benchmarks on various key algorithms.
+ *
  * Revision 1.1  2003/11/11 21:17:47  pelle
  * Further vital reshuffling.
  * org.neudist.crypto.* and org.neudist.utils.* have been moved to respective areas under org.neuclear.commons
@@ -77,11 +81,9 @@
 package org.neuclear.commons.crypto.signers;
 
 import org.neuclear.commons.NeuClearException;
-import org.neuclear.commons.crypto.passphraseagents.PassPhraseAgent;
 import org.neuclear.commons.crypto.CryptoException;
 import org.neuclear.commons.crypto.CryptoTools;
-import org.neuclear.commons.crypto.signers.InvalidPassphraseException;
-import org.neuclear.commons.crypto.signers.NonExistingSignerException;
+import org.neuclear.commons.crypto.passphraseagents.PassPhraseAgent;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -153,6 +155,18 @@ public class SimpleSigner implements Signer {
     }
 
     /**
+     * Adds the given key to the store. Uses the PassPhrase
+     * agent to ask for PassPhrase.
+     * 
+     * @param name The name to store it as
+     * @param key  The PrivateKey itself.
+     */
+
+    public void addKey(String name, PrivateKey key) throws GeneralSecurityException, IOException {
+        addKey(name, agent.getPassPhrase(name), key);
+    }
+
+    /**
      * Adds the given key to the store.
      * 
      * @param name       The name to store it as
@@ -182,12 +196,13 @@ public class SimpleSigner implements Signer {
 
     /**
      * Checks the key type of the given alias
-     * @param name
+     * 
+     * @param name 
      * @return KEY_NONE,KEY_RSA,KEY_DSA
-     * @throws CryptoException
+     * @throws CryptoException 
      */
     public int getKeyType(String name) throws CryptoException {
-        return (canSignFor(name))?KEY_RSA:KEY_NONE; // We always use RSA here
+        return (canSignFor(name)) ? KEY_RSA : KEY_NONE; // We always use RSA here
     }
 
     static final protected String getDigestedName(String name) {
