@@ -62,19 +62,19 @@ public class KeyStorePanel extends JPanel {
 
         openAction = new OpenKeyStoreAction(signer);
         open = new JButton(openAction);
-        open.setText("");
+        open.setText(null);
         open.putClientProperty(Options.IS_NARROW_KEY, Boolean.TRUE);
         toolbar.add(open);
         saveAction = new SaveKeyStoreAction(signer);
         save = new JButton(saveAction);
-        save.setText("");
+        save.setText(null);
         save.putClientProperty(Options.IS_NARROW_KEY, Boolean.TRUE);
         toolbar.add(save);
         toolbar.addSeparator();
 
         newPersonality = new NewPersonalityAction(this);
         newId = new JButton(newPersonality);
-        newId.setText("");
+        newId.setText(null);
         toolbar.add(newId);
         add(toolbar, BorderLayout.NORTH);
 
