@@ -30,8 +30,12 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /*
-$Id: KeyStoreDialog.java,v 1.4 2004/04/14 00:10:51 pelle Exp $
+$Id: KeyStoreDialog.java,v 1.5 2004/04/14 23:39:57 pelle Exp $
 $Log: KeyStoreDialog.java,v $
+Revision 1.5  2004/04/14 23:39:57  pelle
+Fixed a few things in the ServletSignerFactory
+Added testkeys.jks where it should be.
+
 Revision 1.4  2004/04/14 00:10:51  pelle
 Added a MessageLabel for handling errors, validation and info
 Save works well now.
@@ -336,6 +340,7 @@ public class KeyStoreDialog {
             } catch (Exception e) {
                 message.error(e);
             }
+            KeyboardFocusManager.getCurrentKeyboardFocusManager().clearGlobalFocusOwner();
 
         }
 

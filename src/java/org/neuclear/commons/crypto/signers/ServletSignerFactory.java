@@ -48,10 +48,11 @@ public final class ServletSignerFactory {
         if (map.containsKey(hash))
             return (Signer) map.get(hash);
 
+        System.out.println("using keystore: " + keystore);
         final PassPhraseAgent coreagent = getAgent(agenttype);
         final PassPhraseAgent agent = createWrapperAgent(keeppassphrase, coreagent, serviceid);
         // If keystore is "test" setup the TestCaseSigner otherwise use the JCESigner
-        final Signer signer = createSigner(keystore, (InteractiveAgent) agent);
+        final Signer signer = createSigner(keystore, agent);
         map.put(hash, signer);
         return signer;
     }
@@ -62,7 +63,7 @@ public final class ServletSignerFactory {
         return coreagent;
     }
 
-    private static final BrowsableSigner createSigner(final String keystore, final InteractiveAgent agent) throws GeneralSecurityException, NeuClearException, FileNotFoundException {
+    private static final BrowsableSigner createSigner(final String keystore, final PassPhraseAgent agent) throws GeneralSecurityException, NeuClearException, FileNotFoundException {
         if (!Utility.isEmpty(keystore)) {
             if (keystore.toLowerCase().equals("test"))
                 return new TestCaseSigner(agent);
@@ -70,7 +71,9 @@ public final class ServletSignerFactory {
             if (!keystore.toLowerCase().equals("default"))
                 return new JCESigner(keystore, "jks", "SUN", agent);
         }
-        return new DefaultSigner(agent);
+        if (agent instanceof InteractiveAgent)
+            return new DefaultSigner((InteractiveAgent) agent);
+        throw new NeuClearException("DefaultSigner requires an interactive agent");
     }
 
     private static final PassPhraseAgent getAgent(final String agenttype) {
