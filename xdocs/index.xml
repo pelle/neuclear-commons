@@ -40,7 +40,9 @@
                 <li>Added new interactive signing model with the BrowsableSigner interface</li>
                 <li>New SetPublicKeyCallback method for returning the public key in interactive applications</li>
             </ul>
-
+            <p>For a complete list see
+                <a href="http://jira.neuclear.org/secure/ReleaseNote.jspa?projectId=10021&styleName=Html&version=10061">Changelog</a>
+            </p>
         </section>
         <section name="[23 March, 2004] New release 0.6">
             <p>
