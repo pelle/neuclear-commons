@@ -1,6 +1,12 @@
 /*
- * $Id: CryptoTools.java,v 1.3 2003/11/19 23:32:50 pelle Exp $
+ * $Id: CryptoTools.java,v 1.4 2003/11/20 23:41:36 pelle Exp $
  * $Log: CryptoTools.java,v $
+ * Revision 1.4  2003/11/20 23:41:36  pelle
+ * Getting all the tests to work in id
+ * Removing usage of BC in CryptoTools as it was causing issues.
+ * First version of EntityLedger that will use OFB's EntityEngine. This will allow us to support a vast amount databases without
+ * writing SQL. (Yipee)
+ *
  * Revision 1.3  2003/11/19 23:32:50  pelle
  * Signers now can generatekeys via the generateKey() method.
  * Refactored the relationship between SignedNamedObject and NamedObjectBuilder a bit.
@@ -361,9 +367,9 @@ public class CryptoTools {
 
     public static Cipher getCipher(byte key[], boolean doencrypt) throws CryptoException {
         try {
-            Cipher cipher = Cipher.getInstance("AES", "BC");
+            Cipher cipher = Cipher.getInstance("AES");
             KeySpec keyspec = new SecretKeySpec(key, "AES");
-            SecretKeyFactory kf = SecretKeyFactory.getInstance("AES", "BC");
+            SecretKeyFactory kf = SecretKeyFactory.getInstance("AES");
             Key skey = kf.generateSecret(keyspec);
             cipher.init(doencrypt ? Cipher.ENCRYPT_MODE : Cipher.DECRYPT_MODE, skey);
             return cipher;
@@ -374,8 +380,6 @@ public class CryptoTools {
         } catch (InvalidKeySpecException e) {
             rethrowException(e);
         } catch (InvalidKeyException e) {
-            rethrowException(e);
-        } catch (NoSuchProviderException e) {
             rethrowException(e);
         }
         return null;
@@ -405,11 +409,11 @@ public class CryptoTools {
     public static Signature getSignatureCipher(PrivateKey key) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException {
         Signature sig = null;
         if (key instanceof RSAPrivateKey)
-            sig = Signature.getInstance("SHA1withRSA", "BC"); // Set up signature object.
+            sig = Signature.getInstance("SHA1withRSA"); // Set up signature object.
         else if (key instanceof DSAPrivateKey)
-            sig = Signature.getInstance("SHA1withDSA", "BC");
+            sig = Signature.getInstance("SHA1withDSA");
         else if (key instanceof ECPrivateKey)
-            sig = Signature.getInstance("SHA1withECDSA", "BC");
+            sig = Signature.getInstance("SHA1withECDSA");
 
         sig.initSign(key); // Initialize with my private signing key.
         return sig;
@@ -419,10 +423,10 @@ public class CryptoTools {
         try {
             Signature sig = null;
             if (pk instanceof DSAPublicKey) {
-                sig = Signature.getInstance("SHA1withDSA", "BC"); // Set up signature object.
+                sig = Signature.getInstance("SHA1withDSA"); // Set up signature object.
                 sigvalue = convertXMLDSIGtoASN1(sigvalue);
             } else if (pk instanceof RSAPublicKey) {
-                sig = Signature.getInstance("SHA1withRSA", "BC");
+                sig = Signature.getInstance("SHA1withRSA");
             }
             sig.initVerify(pk); // Initialize with my private signing key.
             sig.update(value);
@@ -584,16 +588,13 @@ public class CryptoTools {
 
     public static PublicKey createPK(String mod, String exp) throws CryptoException {
         try {
-            KeyFactory rsaFactory = KeyFactory.getInstance("RSA", "BC");
+            KeyFactory rsaFactory = KeyFactory.getInstance("RSA");
             RSAPublicKeySpec rsaKeyspec = new RSAPublicKeySpec(new BigInteger(Base64.decode(mod)), new BigInteger(Base64.decode(exp)));
             return rsaFactory.generatePublic(rsaKeyspec);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace(System.err);
             throw new CryptoException(e);
         } catch (InvalidKeySpecException e) {
-            e.printStackTrace(System.err);
-            throw new CryptoException(e);
-        } catch (NoSuchProviderException e) {
             e.printStackTrace(System.err);
             throw new CryptoException(e);
         }

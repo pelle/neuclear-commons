@@ -130,6 +130,7 @@
                 src/java
             </directory>
             <includes>*.jks</includes>
+            <includes>*.xml</includes>
 <!--            <targetPath>org/neuclear/commons/crypto/signers</targetPath>-->
         </resource>
     </resources>
