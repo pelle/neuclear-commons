@@ -69,8 +69,11 @@ public final class ServletSignerFactory {
             if (keystore.toLowerCase().equals("test"))
                 return new TestCaseSigner(agent);
 
-            if (!keystore.toLowerCase().equals("default"))
-                return new JCESigner(config.getServletContext().getRealPath(keystore), "jks", "SUN", agent);
+            if (!keystore.toLowerCase().equals("default")) {
+                final String path = config.getServletContext().getRealPath(keystore);
+                System.out.println("Using signer: " + path);
+                return new JCESigner(path, "jks", "SUN", agent);
+            }
         }
         if (agent instanceof InteractiveAgent)
             return new DefaultSigner((InteractiveAgent) agent);
