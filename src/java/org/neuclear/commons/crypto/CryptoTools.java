@@ -1,6 +1,9 @@
 /*
- * $Id: CryptoTools.java,v 1.23 2004/05/21 19:24:05 pelle Exp $
+ * $Id: CryptoTools.java,v 1.24 2004/08/26 01:06:36 pelle Exp $
  * $Log: CryptoTools.java,v $
+ * Revision 1.24  2004/08/26 01:06:36  pelle
+ * Fixed a bug in CryptoTools with regards to seeding the srng
+ *
  * Revision 1.23  2004/05/21 19:24:05  pelle
  * Changed name of Neuclear Personal Signer to NeuClear Personal Trader
  * More changes from Personality to Account
@@ -308,7 +311,6 @@ import java.security.spec.KeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Date;
-import java.util.Random;
 
 // TODO Implement some code to automatically BC Provider if not installed
 
@@ -629,7 +631,7 @@ public final class CryptoTools {
         return big.toString(32);
     }
 
-    private static synchronized Random getRandomInstance() {
+    private static synchronized SecureRandom getRandomInstance() {
         if (randSource == null)
             try {
                 randSource = SecureRandom.getInstance("SHA1PRNG");
@@ -663,16 +665,16 @@ public final class CryptoTools {
 
     /**
      * Adapted from BouncyCastle's JDKKeyStore class
-     * 
-     * @param algorithm      
-     * @param mode           
-     * @param password       
-     * @param salt           
-     * @param iterationCount 
-     * @param provider       
-     * @return 
+     *
+     * @param algorithm
+     * @param mode
+     * @param password
+     * @param salt
+     * @param iterationCount
+     * @param provider
+     * @return
      * @throws java.security.GeneralSecurityException
-     *          
+     *
      */
     public static Cipher makePBECipher(final String algorithm,
                                        final int mode,
@@ -694,14 +696,14 @@ public final class CryptoTools {
     /**
      * Adapted from BouncyCastle's JDKKeyStore class.<p>
      * This one is setup with some meaningful JCE and Algorithm Defaults
-     * 
-     * @param mode           
-     * @param password       
-     * @param salt           
-     * @param iterationCount 
-     * @return 
+     *
+     * @param mode
+     * @param password
+     * @param salt
+     * @param iterationCount
+     * @return
      * @throws java.security.GeneralSecurityException
-     *          
+     *
      */
     public static Cipher makePBECipher(final int mode,
                                        final char[] password,
@@ -714,12 +716,12 @@ public final class CryptoTools {
     /**
      * Adapted from BouncyCastle's JDKKeyStore class.<p>
      * This one is setup with some meaningful JCE and Algorithm Defaults as well as general simple defaults
-     * 
-     * @param mode     
-     * @param password 
-     * @return 
+     *
+     * @param mode
+     * @param password
+     * @return
      * @throws java.security.GeneralSecurityException
-     *          
+     *
      */
     public static Cipher makePBECipher(final int mode,
                                        final char[] password) throws GeneralSecurityException {
@@ -787,7 +789,7 @@ public final class CryptoTools {
         if (kg == null) {
             kg = KeyPairGenerator.getInstance("RSA");
 
-            kg.initialize(2048, new SecureRandom("Bear it all with NeuDist".getBytes()));
+            kg.initialize(1024, getRandomInstance());
         }
         return kg;
 
@@ -797,7 +799,7 @@ public final class CryptoTools {
         if (tkg == null) {
             tkg = KeyPairGenerator.getInstance("RSA");
 
-            tkg.initialize(512, new SecureRandom("Bear it all with NeuDist".getBytes()));
+            tkg.initialize(512, getRandomInstance());
         }
         return tkg;
 
@@ -807,7 +809,7 @@ public final class CryptoTools {
         if (tdkg == null) {
             tdkg = KeyPairGenerator.getInstance("DSA");
 
-            tdkg.initialize(512, new SecureRandom("Bear it all with NeuDist".getBytes()));
+            tdkg.initialize(512, getRandomInstance());
         }
         return tdkg;
 
@@ -821,7 +823,7 @@ public final class CryptoTools {
         if (null == dkg) {
             dkg = KeyPairGenerator.getInstance(algorithm);
 
-            dkg.initialize(1024, new SecureRandom("Hay que brincar!".getBytes())); //I guess the seed won't be hardcoded for long... Pelle?
+            dkg.initialize(1024, getRandomInstance());
         }
         return dkg;
     }
@@ -835,7 +837,7 @@ public final class CryptoTools {
      * <p/>
      * The JAVA JCE DSA Signature algorithm creates ASN.1 encoded (r,s) value
      * pairs; the XML Signature requires the core BigInteger values.
-     * 
+     *
      * @see <A HREF="http://www.w3.org/TR/xmldsig-core/#dsa-sha1">6.4.1 DSA</A>
      */
     public static byte[] convertASN1toXMLDSIG(final byte[] asn1Bytes) throws IOException {
@@ -870,7 +872,7 @@ public final class CryptoTools {
      * <p/>
      * The JAVA JCE DSA Signature algorithm creates ASN.1 encoded (r,s) value
      * pairs; the XML Signature requires the core BigInteger values.
-     * 
+     *
      * @see <A HREF="http://www.w3.org/TR/xmldsig-core/#dsa-sha1">6.4.1 DSA</A>
      */
     public static byte[] convertXMLDSIGtoASN1(final byte[] xmldsigBytes) throws IOException {

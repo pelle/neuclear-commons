@@ -1,6 +1,9 @@
 /*
-  $Id: CryptoToolsTest.java,v 1.3 2004/04/09 20:02:55 pelle Exp $
+  $Id: CryptoToolsTest.java,v 1.4 2004/08/26 01:06:37 pelle Exp $
   $Log: CryptoToolsTest.java,v $
+  Revision 1.4  2004/08/26 01:06:37  pelle
+  Fixed a bug in CryptoTools with regards to seeding the srng
+
   Revision 1.3  2004/04/09 20:02:55  pelle
   Added PrivateKey wrapping and unwrapping to CryptoTools with the methods:
   byte [] wrapKey(char passphrase[], PrivateKey key)
@@ -102,6 +105,7 @@ import junit.framework.TestSuite;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.util.HashSet;
 
 
 /**
@@ -171,6 +175,94 @@ public final class CryptoToolsTest extends TestCase {
         byte[] sig = CryptoTools.sign(priv, data);
         assertNotNull(sig);
         assertTrue(CryptoTools.verify(kp.getPublic(), data, sig));
+    }
+
+    public final void testRSAKeyClash() throws NoSuchAlgorithmException {
+        testRSAKeyClash(5); // To bring the JIT up to speed
+        final int iterations = 10;
+        final long start = System.currentTimeMillis();
+        testRSAKeyClash(iterations);
+        final long dur = System.currentTimeMillis() - start;
+        System.out.println("Total Duration " + dur / 1000 + "s");
+        System.out.println("KPG Duration " + dur / iterations + "ms");
+
+    }
+
+    public final void testRSAKeyClash(final int iterations) throws NoSuchAlgorithmException {
+        HashSet set = new HashSet();
+        for (int i = 0; i < iterations; i++) {
+            if ((i % 10) == 0)
+                System.out.print(".");
+            String key = CryptoTools.encodeBase32(CryptoTools.digest(CryptoTools.createKeyPair("RSA").getPublic().getEncoded()));
+            assertFalse(set.contains(key));
+            set.add(key);
+        }
+    }
+
+    public final void testTinyRSAKeyClash() throws NoSuchAlgorithmException {
+        testTinyRSAKeyClash(5); // To bring the JIT up to speed
+        final int iterations = 10;
+        final long start = System.currentTimeMillis();
+        testTinyRSAKeyClash(iterations);
+        final long dur = System.currentTimeMillis() - start;
+        System.out.println("Total Duration " + dur / 1000 + "s");
+        System.out.println("KPG Duration " + dur / iterations + "ms");
+
+    }
+
+    public final void testTinyRSAKeyClash(final int iterations) throws NoSuchAlgorithmException {
+        HashSet set = new HashSet();
+        for (int i = 0; i < iterations; i++) {
+            if ((i % 10) == 0)
+                System.out.print(".");
+            String key = CryptoTools.encodeBase32(CryptoTools.digest(CryptoTools.createTinyRSAKeyPair().getPublic().getEncoded()));
+            assertFalse(set.contains(key));
+            set.add(key);
+        }
+    }
+
+    public final void testTinyDSAKeyClash() throws NoSuchAlgorithmException {
+        testTinyDSAKeyClash(5); // To bring the JIT up to speed
+        final int iterations = 10;
+        final long start = System.currentTimeMillis();
+        testTinyDSAKeyClash(iterations);
+        final long dur = System.currentTimeMillis() - start;
+        System.out.println("Total Duration " + dur / 1000 + "s");
+        System.out.println("KPG Duration " + dur / iterations + "ms");
+
+    }
+
+    public final void testTinyDSAKeyClash(final int iterations) throws NoSuchAlgorithmException {
+        HashSet set = new HashSet();
+        for (int i = 0; i < iterations; i++) {
+            if ((i % 10) == 0)
+                System.out.print(".");
+            String key = CryptoTools.encodeBase32(CryptoTools.digest(CryptoTools.createTinyDSAKeyPair().getPublic().getEncoded()));
+            assertFalse(set.contains(key));
+            set.add(key);
+        }
+    }
+
+    public final void testDSAKeyClash() throws NoSuchAlgorithmException {
+        testDSAKeyClash(5); // To bring the JIT up to speed
+        final int iterations = 10;
+        final long start = System.currentTimeMillis();
+        testDSAKeyClash(iterations);
+        final long dur = System.currentTimeMillis() - start;
+        System.out.println("Total Duration " + dur / 1000 + "s");
+        System.out.println("KPG Duration " + dur / iterations + "ms");
+
+    }
+
+    public final void testDSAKeyClash(final int iterations) throws NoSuchAlgorithmException {
+        HashSet set = new HashSet();
+        for (int i = 0; i < iterations; i++) {
+            if ((i % 10) == 0)
+                System.out.print(".");
+            String key = CryptoTools.encodeBase32(CryptoTools.digest(CryptoTools.createKeyPair("DSA").getPublic().getEncoded()));
+            assertFalse(set.contains(key));
+            set.add(key);
+        }
     }
 
 }

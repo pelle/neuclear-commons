@@ -23,7 +23,7 @@ public class BanHostFilter implements Filter {
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         reloadBannedList();
-        System.out.println("Filtering request from " + request.getRemoteHost());
+//        System.out.println("Filtering request from " + request.getRemoteHost());
         if (!banned.contains(request.getRemoteAddr()))
             chain.doFilter(request, response);
         else {
