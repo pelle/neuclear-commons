@@ -5,7 +5,9 @@ import org.neuclear.commons.NeuClearException;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
+import javax.naming.InitialContext;
 import javax.sql.XADataSource;
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -15,10 +17,20 @@ import java.sql.SQLException;
  * Date: Aug 6, 2003
  * Time: 3:38:50 PM
  */
-public final class XAConnectionSource implements ConnectionSource {
+public class XAConnectionSource implements ConnectionSource {
     public XAConnectionSource(final String name, final String driver, final String url, final String user, final String password) throws SQLException, NeuClearException, NamingException {
+
         Context ctx = SQLTools.loadDefaultContext();
         SQLTools.getTransactionManager();
+        try {
+            DataSource ds = (DataSource) ctx.lookup("java:comp/env/" + name);
+            if (ds!=null){
+                xads=(XADataSource) ds;
+                return;
+            }
+        } catch (Exception e) {
+            ;//ignore and create new datasource
+        }
         try {
             Class.forName(driver).newInstance();
         } catch (InstantiationException e) {
@@ -36,7 +48,7 @@ public final class XAConnectionSource implements ConnectionSource {
         ((StandardXADataSource) xads).setPassword(password);
 
 
-        ctx.bind(name, xads);
+        ctx.rebind(name, xads);
 
     }
 
@@ -45,7 +57,7 @@ public final class XAConnectionSource implements ConnectionSource {
         return xads.getXAConnection().getConnection();
     }
 
-    private final XADataSource xads;
+    private XADataSource xads;
 //    private XAConnection xaConnection;
 
 

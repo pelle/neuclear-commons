@@ -16,7 +16,7 @@ import java.sql.DriverManager;
  * Date: Aug 6, 2003
  * Time: 3:38:50 PM
  */
-public final class SimpleConnectionSource implements ConnectionSource {
+public class SimpleConnectionSource implements ConnectionSource {
     public SimpleConnectionSource(final String driver, final String url, final String user, final String password) throws SQLException, NeuClearException, NamingException {
         try {
             Class.forName(driver).newInstance();

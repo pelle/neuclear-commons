@@ -3,7 +3,7 @@
 
     <name>NeuClear Commons</name>
     <id>neuclear-commons</id>
-    <currentVersion>0.5.1</currentVersion>
+    <currentVersion>0.6-SNAPSHOT</currentVersion>
     <inceptionYear>2003</inceptionYear>
     <package>org.neuclear.commons</package>
     <logo>/images/logo.gif</logo>
@@ -73,6 +73,10 @@
             <jar>mysql-connector-java-3.0.8-stable-bin.jar</jar>
         </dependency>
         <dependency>
+            <id>hsqldb</id>
+            <version>1.7.1</version>
+        </dependency>
+        <dependency>
             <id>picocontainer</id>
             <version>1.0-beta-1</version>
         </dependency>
@@ -119,7 +123,10 @@
             <id>jta-spec</id>
             <version>1.0.1</version>
         </dependency>
-
+        <dependency>
+            <id>commons-logging</id>
+            <version>1.0.3</version>
+        </dependency>
 
     </dependencies>
     <build>
