@@ -1,5 +1,9 @@
-/* $Id: Base64.java,v 1.3 2004/01/10 00:01:40 pelle Exp $
+/* $Id: Base64.java,v 1.4 2004/02/19 00:27:34 pelle Exp $
  * $Log: Base64.java,v $
+ * Revision 1.4  2004/02/19 00:27:34  pelle
+ * Discovered several incompatabilities with the xmlsig implementation. Have been working on getting it working.
+ * Currently there is still a problem with enveloping signatures and it seems enveloped signatures done via signers.
+ *
  * Revision 1.3  2004/01/10 00:01:40  pelle
  * Implemented new Schema for Transfer*
  * Working on it for Exchange*, so far all Receipts are implemented.
@@ -157,7 +161,7 @@ public final class Base64 {
 
 
     public static String encodeClean(final byte[] bytes) {
-        return LINE_SEPARATOR+ encode(bytes)+LINE_SEPARATOR;
+        return LINE_SEPARATOR+ encode(bytes,76)+LINE_SEPARATOR;
     }
 
 
