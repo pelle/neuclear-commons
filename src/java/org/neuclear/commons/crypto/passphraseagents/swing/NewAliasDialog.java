@@ -15,8 +15,13 @@ import java.awt.event.*;
 import java.util.ResourceBundle;
 
 /*
-$Id: NewAliasDialog.java,v 1.13 2004/05/17 18:54:09 pelle Exp $
+$Id: NewAliasDialog.java,v 1.14 2004/05/21 19:24:04 pelle Exp $
 $Log: NewAliasDialog.java,v $
+Revision 1.14  2004/05/21 19:24:04  pelle
+Changed name of Neuclear Personal Signer to NeuClear Personal Trader
+More changes from Personality to Account
+Moved hibernates.properties out from the jar file and to the test directory and where ever it gets used, to avoid conflicts between multiple files.
+
 Revision 1.13  2004/05/17 18:54:09  pelle
 NewAliasDialog now uses BannerLabel
 IdentityListModel is now stored using xstream
@@ -108,7 +113,7 @@ public class NewAliasDialog implements Runnable {
 
         banner = new com.l2fprod.common.swing.BannerPanel();
         banner.setIcon(IconTools.getLogo());
-        banner.setTitle("Create Personality");
+        banner.setTitle("Create Account");
         banner.setSubtitle("Choose a <b>name</b> and enter your <b>password</b> twice. The name will only be known to you.");
 
         message = new MessageLabel();
@@ -271,7 +276,7 @@ public class NewAliasDialog implements Runnable {
 
         builder.setDefaultDialogBorder();
 
-        builder.addSeparator("Creating Keys", cc.xyw(1, 1, 3));
+        builder.addSeparator("Creating Account Keys", cc.xyw(1, 1, 3));
         builder.add(progress, cc.xyw(1, 3, 3));
         ButtonBarBuilder bb = new ButtonBarBuilder();
         bb.addGlue();

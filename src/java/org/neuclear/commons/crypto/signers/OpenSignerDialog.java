@@ -79,7 +79,7 @@ public class OpenSignerDialog extends JDialog {
         banner = new com.l2fprod.common.swing.BannerPanel();
         banner.setIcon(IconTools.getLogo());
         banner.setTitle(TITLE);
-        banner.setSubtitle("Select a <b>Personality</b> file or leave as is. Enter your <b>password</b> and youre in.");
+        banner.setSubtitle("Select an <b>Accounts</b> file or leave as is. Enter your <b>password</b> and youre in.");
         Container contents = getContentPane();
 //        contents.setLayout(new BorderLayout());
 //        contents.add(banner,BorderLayout.NORTH);
@@ -140,7 +140,7 @@ public class OpenSignerDialog extends JDialog {
         });
         find.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-                prepFileChooser(filefield.getText(), "Select Personalities File");
+                prepFileChooser(filefield.getText(), "Select Accounts File");
                 int result = fc.showOpenDialog(dia);
                 if (result == JFileChooser.APPROVE_OPTION)
                     filefield.setText(fc.getSelectedFile().getAbsolutePath());
@@ -185,7 +185,7 @@ public class OpenSignerDialog extends JDialog {
         builder.setDefaultDialogBorder();
 
         builder.add(banner, cc.xyw(1, 1, 5));
-        builder.addLabel("Personalities File:", cc.xy(1, 3)).setLabelFor(filefield);
+        builder.addLabel("Accounts File:", cc.xy(1, 3)).setLabelFor(filefield);
         builder.add(filefield, cc.xy(3, 3));
         builder.add(find, cc.xy(5, 3));
 
@@ -226,7 +226,7 @@ public class OpenSignerDialog extends JDialog {
 
     public void save(JCESigner signer, boolean force) throws UserCancellationException {
         if (!force) {
-            prepFileChooser(filename, "Select Personalities File");
+            prepFileChooser(filename, "Select Accounts File");
             int result = fc.showSaveDialog(dia);
             if (result == JFileChooser.APPROVE_OPTION)
                 filename = fc.getSelectedFile().getAbsolutePath();
@@ -262,7 +262,7 @@ public class OpenSignerDialog extends JDialog {
 
     private final InteractiveAgent agent;
     private Dialog dia = this;
-    public static final String TITLE = "Open Personalities File";
+    public static final String TITLE = "Open Accounts File";
     private static final String KEYSTORE = "KEYSTORE";
 
     class DialogRunner extends WaitForInput {

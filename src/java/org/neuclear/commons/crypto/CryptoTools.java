@@ -1,6 +1,11 @@
 /*
- * $Id: CryptoTools.java,v 1.22 2004/04/19 18:45:26 pelle Exp $
+ * $Id: CryptoTools.java,v 1.23 2004/05/21 19:24:05 pelle Exp $
  * $Log: CryptoTools.java,v $
+ * Revision 1.23  2004/05/21 19:24:05  pelle
+ * Changed name of Neuclear Personal Signer to NeuClear Personal Trader
+ * More changes from Personality to Account
+ * Moved hibernates.properties out from the jar file and to the test directory and where ever it gets used, to avoid conflicts between multiple files.
+ *
  * Revision 1.22  2004/04/19 18:45:26  pelle
  * Changed default signer store to use correct path seperators.
  *
@@ -943,7 +948,7 @@ public final class CryptoTools {
 
     private static SecureRandom randSource;
 
-    public final static String DEFAULT_KEYSTORE = System.getProperty("user.home") + File.separatorChar + ".neuclear" + File.separatorChar + "identities.jks";
+    public final static String DEFAULT_KEYSTORE = System.getProperty("user.home") + File.separatorChar + ".neuclear" + File.separatorChar + "accounts.jks";
     public static final int RAND_BIT_LENGTH = 128;
     private static final long YPLUS20 = 20 * 365 * 24 * 60 * 60;
 }

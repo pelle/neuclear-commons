@@ -81,7 +81,8 @@ public class KeyStorePanel extends JPanel {
         list = new JList();
         if (signer instanceof PersonalSigner)
             list.setModel((ListModel) signer);
-        list.setBorder(BorderFactory.createLoweredBevelBorder());
+//        list.setBorder(BorderFactory.createLoweredBevelBorder());
+        list.setCellRenderer(new KeyStoreListCellRenderer());
         add(list, BorderLayout.CENTER);
 //        nad = new NewAliasDialog(this);
         fillAliasList();
