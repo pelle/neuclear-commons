@@ -1,4 +1,4 @@
-package org.neuclear.commons.crypto.passphraseagents;
+package org.neuclear.commons.swing;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -30,22 +30,29 @@ import java.util.prefs.Preferences;
  * Date: Apr 16, 2004
  * Time: 11:46:54 AM
  */
-public class AgentMessages {
+public class Messages {
     /**
      */
-    private AgentMessages() {
+    private Messages() {
+        this(null, "cryptodialogs");
     }
 
-    private static ResourceBundle bundle;
-
-    /**
-     */
-    public synchronized static ResourceBundle getMessages() {
-        if (bundle == null) {
-            bundle = createBundle();
-        }
-        return bundle;
+    protected Messages(Messages parent, String name) {
+        this.name = name;
+        this.parent = parent;
+        this.bundle = ResourceBundle.getBundle(name);
     }
+
+    public final String getString(String key) {
+        final String value = bundle.getString(key);
+        if (value == null && parent != null)
+            return parent.getString(key);
+        return value;
+    }
+
+    private final String name;
+    private final Messages parent;
+    private final ResourceBundle bundle;
 
     public static String getTitle(String id) {
         return getComponentText(id, "title");
@@ -87,21 +94,29 @@ public class AgentMessages {
         return getMessages().getString(id);
     }
 
+    public static String getText(Class ref, String id) {
+        return getMessages().getString(id);
+    }
+
+    public static String getText(Object object, String id) {
+        return getText(object.getClass(), id);
+    }
+
     public static synchronized void updateBundle() {
         bundle = createBundle();
     }
 
 
-    private static ResourceBundle createBundle() {
+    private static ResourceBundle createBundle(Class ref) {
 //        try {
 //            return ResourceBundle.getBundle("cryptodialogs", getLocale(), AgentMessages.class.getClassLoader());
 //        } catch (Exception e) {
-        return ResourceBundle.getBundle("cryptodialogs", new Locale("en", "US"), AgentMessages.class.getClassLoader());
+        return ResourceBundle.getBundle("cryptodialogs");
 //        }
     }
 
     private static Preferences getPrefs() {
-        return Preferences.userNodeForPackage(AgentMessages.class);
+        return Preferences.userNodeForPackage(Messages.class);
     }
 
     private static Locale getLocale() {

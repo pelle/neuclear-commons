@@ -5,9 +5,9 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.l2fprod.common.swing.UIUtilities;
-import org.neuclear.commons.crypto.passphraseagents.AgentMessages;
 import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
 import org.neuclear.commons.crypto.signers.*;
+import org.neuclear.commons.swing.Messages;
 import org.neuclear.commons.swing.SwingTools;
 import org.neuclear.commons.swing.WaitForInput;
 
@@ -24,8 +24,11 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /*
-$Id: KeyStoreDialog.java,v 1.16 2004/05/18 19:19:03 pelle Exp $
+$Id: KeyStoreDialog.java,v 1.17 2004/06/03 23:13:17 pelle Exp $
 $Log: KeyStoreDialog.java,v $
+Revision 1.17  2004/06/03 23:13:17  pelle
+Changes to Messages. Does not compile.
+
 Revision 1.16  2004/05/18 19:19:03  pelle
 Added Swing package to commons.
 NeuClearDialog is a standard Abstract Dialog Class for modal dialogs.
@@ -117,7 +120,7 @@ public class KeyStoreDialog {
         SwingTools.setLAF();
         prefs = Preferences.userNodeForPackage(DefaultSigner.class);
 //        AgentMessages.updateLocale("es", "ES");
-        caps = AgentMessages.getMessages();
+        caps = Messages.getMessages();
         keys = new KeyStorePanel(signer);
         cache = new HashMap();
         sign = new JButton(caps.getString("sign"));

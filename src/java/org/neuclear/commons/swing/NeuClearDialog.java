@@ -21,7 +21,6 @@ package org.neuclear.commons.swing;
  */
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
-import org.neuclear.commons.crypto.passphraseagents.AgentMessages;
 import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
 import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
 import org.neuclear.commons.crypto.passphraseagents.swing.MessageLabel;
@@ -45,18 +44,18 @@ public abstract class NeuClearDialog extends JDialog {
         this.id = id;
         SwingTools.setLAF();
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-        setTitle(AgentMessages.getTitle(id));
-        ok = new JButton(AgentMessages.getOK(id));
-        ok.setToolTipText(AgentMessages.getOKToolTip(id));
+        setTitle(Messages.getTitle(id));
+        ok = new JButton(Messages.getOK(id));
+        ok.setToolTipText(Messages.getOKToolTip(id));
         ok.setIcon(okIcon);
         ok.setEnabled(false);
-        cancel = new JButton(AgentMessages.getText("cancel"));
+        cancel = new JButton(Messages.getText("cancel"));
         cancel.setIcon(IconTools.getCancel());
         message = new MessageLabel();
         banner = new com.l2fprod.common.swing.BannerPanel();
         banner.setIcon(IconTools.getLogo());
-        banner.setTitle(AgentMessages.getTitle(id));
-        banner.setSubtitle(AgentMessages.getDescription(id));
+        banner.setTitle(Messages.getTitle(id));
+        banner.setSubtitle(Messages.getDescription(id));
         contents = new JPanel();
         contents.setLayout(new BorderLayout());
         getContentPane().setLayout(new BorderLayout());

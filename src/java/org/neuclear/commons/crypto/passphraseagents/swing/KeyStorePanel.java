@@ -22,12 +22,12 @@ package org.neuclear.commons.crypto.passphraseagents.swing;
 
 import com.jgoodies.plaf.HeaderStyle;
 import com.jgoodies.plaf.Options;
-import org.neuclear.commons.crypto.passphraseagents.AgentMessages;
 import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
 import org.neuclear.commons.crypto.passphraseagents.swing.actions.NewPersonalityAction;
 import org.neuclear.commons.crypto.passphraseagents.swing.actions.OpenKeyStoreAction;
 import org.neuclear.commons.crypto.passphraseagents.swing.actions.SaveKeyStoreAction;
 import org.neuclear.commons.crypto.signers.*;
+import org.neuclear.commons.swing.Messages;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionListener;
@@ -51,7 +51,7 @@ public class KeyStorePanel extends JPanel {
         prefs = Preferences.userNodeForPackage(DefaultSigner.class);
 
 //        AgentMessages.updateLocale("es", "ES");
-        caps = AgentMessages.getMessages();
+        caps = Messages.getMessages();
 
         setLayout(new BorderLayout());
         toolbar = new JToolBar();

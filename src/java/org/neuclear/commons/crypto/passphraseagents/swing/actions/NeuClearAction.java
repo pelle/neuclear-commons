@@ -1,6 +1,6 @@
 package org.neuclear.commons.crypto.passphraseagents.swing.actions;
 
-import org.neuclear.commons.crypto.passphraseagents.AgentMessages;
+import org.neuclear.commons.swing.Messages;
 
 import javax.swing.*;
 import java.util.ResourceBundle;
@@ -23,8 +23,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: NeuClearAction.java,v 1.2 2004/05/27 19:51:26 pelle Exp $
+$Id: NeuClearAction.java,v 1.3 2004/06/03 23:13:16 pelle Exp $
 $Log: NeuClearAction.java,v $
+Revision 1.3  2004/06/03 23:13:16  pelle
+Changes to Messages. Does not compile.
+
 Revision 1.2  2004/05/27 19:51:26  pelle
 The beginnings of the Create Account Page
 
@@ -46,5 +49,5 @@ public abstract class NeuClearAction extends AbstractAction {
     }
 
     protected final String name;
-    protected final static ResourceBundle caps = AgentMessages.getMessages();
+    protected final static ResourceBundle caps = Messages.getMessages();
 }

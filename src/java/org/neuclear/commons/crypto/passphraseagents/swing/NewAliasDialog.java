@@ -7,16 +7,19 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.plaf.Options;
 import com.l2fprod.common.swing.BannerPanel;
 import org.neuclear.commons.crypto.CryptoException;
-import org.neuclear.commons.crypto.passphraseagents.AgentMessages;
 import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
+import org.neuclear.commons.swing.Messages;
 
 import javax.swing.*;
 import java.awt.event.*;
 import java.util.ResourceBundle;
 
 /*
-$Id: NewAliasDialog.java,v 1.14 2004/05/21 19:24:04 pelle Exp $
+$Id: NewAliasDialog.java,v 1.15 2004/06/03 23:13:17 pelle Exp $
 $Log: NewAliasDialog.java,v $
+Revision 1.15  2004/06/03 23:13:17  pelle
+Changes to Messages. Does not compile.
+
 Revision 1.14  2004/05/21 19:24:04  pelle
 Changed name of Neuclear Personal Signer to NeuClear Personal Trader
 More changes from Personality to Account
@@ -97,7 +100,7 @@ public class NewAliasDialog implements Runnable {
             // Likely PlasticXP is not in the class path; ignore.
         }
         this.ksPanel = agent;
-        caps = AgentMessages.getMessages();
+        caps = Messages.getMessages();
 
         ok = new JButton(caps.getString("create"));
         ok.setIcon(IconTools.getOK());

@@ -5,7 +5,6 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.l2fprod.common.swing.BannerPanel;
-import org.neuclear.commons.crypto.passphraseagents.AgentMessages;
 import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
 import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
 import org.neuclear.commons.crypto.passphraseagents.swing.MessageLabel;
@@ -58,8 +57,8 @@ public abstract class ProcessDialog extends NeuClearDialog {
         builder.setDefaultDialogBorder();
 
         BannerPanel banner = new BannerPanel();
-        banner.setTitle(AgentMessages.getProcessTitle(id));
-        banner.setSubtitle(AgentMessages.getProcessDescription(id));
+        banner.setTitle(Messages.getProcessTitle(id));
+        banner.setSubtitle(Messages.getProcessDescription(id));
         builder.add(banner, cc.xyw(1, 1, 3));
         processMessage = new MessageLabel();
         builder.add(processMessage, cc.xyw(1, 3, 3));
@@ -72,7 +71,7 @@ public abstract class ProcessDialog extends NeuClearDialog {
         bb.addGlue();
         bb.addUnrelatedGap();
 //        bb.addGridded(ok);
-        cancel = new JButton(AgentMessages.getText("cancel"));
+        cancel = new JButton(Messages.getText("cancel"));
         bb.addGridded(cancel);
         cancel.addActionListener(closeAction);
         builder.add(bb.getPanel(), cc.xyw(1, 7, 3));
