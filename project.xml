@@ -1,139 +1,137 @@
 <?xml version="1.0"?>
 <project>
 
-  <name>NeuClear Commons</name>
-  <id>neuclear-commons</id>
-  <currentVersion>0.5-SNAPSHOT</currentVersion>
-  <inceptionYear>2003</inceptionYear>
-  <package>org.neuclear.commons</package>
-  <logo>/images/logo.gif</logo>
-  <shortDescription>NeuClear Common Tools API</shortDescription>
-	<organization>
-		<name>Antilles Software Ventures SA</name>
-		<url>http://neubia.com/</url>
+    <name>NeuClear Commons</name>
+    <id>neuclear-commons</id>
+    <currentVersion>0.5-SNAPSHOT</currentVersion>
+    <inceptionYear>2003</inceptionYear>
+    <package>org.neuclear.commons</package>
+    <logo>/images/logo.gif</logo>
+    <shortDescription>NeuClear Common Tools API</shortDescription>
+    <organization>
+        <name>Antilles Software Ventures SA</name>
+        <url>http://neubia.com/</url>
 
-<!--	  <logo>/images/neubiasmallnotext.png</logo>-->
-	</organization>
-  <description>
+        <!--	  <logo>/images/neubiasmallnotext.png</logo>-->
+    </organization>
+    <description>
 	Tools used throughout NeuClear
-  </description>
+    </description>
 
-  <url>http://neuclear.org/commons/</url>
+    <url>http://neuclear.org/commons/</url>
 
     <repository>
-     <connection>
+        <connection>
          scm:cvs:pserver:anonymous@cvs.neuclear.sourceforge.net:/cvsroot/neuclear:neuclear-commons
-     </connection>
-     <url>
+        </connection>
+        <url>
       http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/neuclear/neuclear-commons/
-    </url>
-  </repository>
+        </url>
+    </repository>
 
-  <siteAddress>neuclear.org</siteAddress>
-  <siteDirectory>/home/sites/neuclear.org/public_html/commons/</siteDirectory>
+    <siteAddress>neuclear.org</siteAddress>
+    <siteDirectory>/home/sites/neuclear.org/public_html/commons/</siteDirectory>
     <issueTrackingUrl>http://jira.neuclear.org:8080/</issueTrackingUrl>
     <mailingLists>
-      <mailingList>
-        <name>NeuClear Announce</name>
-        <subscribe>http://lists.sourceforge.net/lists/listinfo/neuclear-announce</subscribe>
-        <unsubscribe>http://lists.sourceforge.net/lists/listinfo/neuclear-announce</unsubscribe>
-        <archive>http://sourceforge.net/mailarchive/forum.php?forum=neuclear-announce</archive>
-      </mailingList>
-      <mailingList>
-        <name>NeuClear General</name>
-        <subscribe>http://lists.sourceforge.net/lists/listinfo/neuclear-general</subscribe>
-        <unsubscribe>http://lists.sourceforge.net/lists/listinfo/neuclear-general</unsubscribe>
-        <archive>http://sourceforge.net/mailarchive/forum.php?forum=neuclear-general</archive>
-      </mailingList>
         <mailingList>
-          <name>NeuClear Develop</name>
-          <subscribe>http://lists.sourceforge.net/lists/listinfo/neuclear-develop</subscribe>
-          <unsubscribe>http://lists.sourceforge.net/lists/listinfo/neuclear-develop</unsubscribe>
-          <archive>http://sourceforge.net/mailarchive/forum.php?forum=neuclear-develop</archive>
+            <name>NeuClear Announce</name>
+            <subscribe>http://lists.sourceforge.net/lists/listinfo/neuclear-announce</subscribe>
+            <unsubscribe>http://lists.sourceforge.net/lists/listinfo/neuclear-announce</unsubscribe>
+            <archive>http://sourceforge.net/mailarchive/forum.php?forum=neuclear-announce</archive>
+        </mailingList>
+        <mailingList>
+            <name>NeuClear General</name>
+            <subscribe>http://lists.sourceforge.net/lists/listinfo/neuclear-general</subscribe>
+            <unsubscribe>http://lists.sourceforge.net/lists/listinfo/neuclear-general</unsubscribe>
+            <archive>http://sourceforge.net/mailarchive/forum.php?forum=neuclear-general</archive>
+        </mailingList>
+        <mailingList>
+            <name>NeuClear Develop</name>
+            <subscribe>http://lists.sourceforge.net/lists/listinfo/neuclear-develop</subscribe>
+            <unsubscribe>http://lists.sourceforge.net/lists/listinfo/neuclear-develop</unsubscribe>
+            <archive>http://sourceforge.net/mailarchive/forum.php?forum=neuclear-develop</archive>
         </mailingList>
     </mailingLists>
 
 
-  <developers>
+    <developers>
 
-     <developer>
-      <name>Pelle Braendgaard</name>
-      <id>pelle</id>
-      <email>pelle@neubia.com</email>
-      <organization>Antilles Software Ventures SA</organization>
-    </developer>
+        <developer>
+            <name>Pelle Braendgaard</name>
+            <id>pelle</id>
+            <email>pelle@neubia.com</email>
+            <organization>Antilles Software Ventures SA</organization>
+        </developer>
 
-  </developers>
+    </developers>
 
 
-  <!-- Need to mark these as compile-time/run-time -->
-   <dependencies>
-       <dependency>
-           <id>mysql</id>
-           <jar>mysql-connector-java-3.0.8-stable-bin.jar</jar>
-       </dependency>
-       <dependency>
-           <id>picocontainer</id>
-           <version>1.0-beta-1</version>
-       </dependency>
-       <dependency>
-           <id>nanocontainer</id>
-           <version>1.0-alpha-PRESPLIT-1</version>
-       </dependency>
-       <dependency>
-          <id>servletapi</id>
-          <name>servletapi</name>
-          <version>2.2</version>
+    <!-- Need to mark these as compile-time/run-time -->
+    <dependencies>
+        <dependency>
+            <id>mysql</id>
+            <jar>mysql-connector-java-3.0.8-stable-bin.jar</jar>
+        </dependency>
+        <dependency>
+            <id>picocontainer</id>
+            <version>1.0-beta-1</version>
+        </dependency>
+        <dependency>
+            <id>nanocontainer</id>
+            <version>1.0-alpha-PRESPLIT-1</version>
+        </dependency>
+        <dependency>
+            <id>servletapi</id>
+            <name>servletapi</name>
+            <version>2.3</version>
         </dependency>
         <dependency>
             <id>jline</id>
             <version>0.8.1</version>
         </dependency>
 
-   <dependency>
-      <id>junit</id>
-      <name>junit</name>
-      <version>3.8.1</version>
-    </dependency>
-       <dependency>
-          <id>bouncycastle</id>
-          <name>bouncycastle</name>
-          <jar>bouncycastle-jce-jdk13-112.jar</jar>
-    <!--	<jar>bcprov-jdk14-118.jar</jar>-->
-          <properties>
+        <dependency>
+            <id>junit</id>
+            <name>junit</name>
+            <version>3.8.1</version>
+        </dependency>
+        <dependency>
+            <id>bouncycastle</id>
+            <version>120</version>
+            <jar>bcprov-jdk14-120.jar</jar>
+            <properties>
                 <war.bundle.jar>false</war.bundle.jar>
-          </properties>
+            </properties>
         </dependency>
 
-  </dependencies>
-  <build>
+    </dependencies>
+    <build>
 
-      <sourceDirectory>src/java</sourceDirectory>
+        <sourceDirectory>src/java</sourceDirectory>
 
-    <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
-    <integrationUnitTestSourceDirectory/>
+        <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
+        <integrationUnitTestSourceDirectory/>
 
-    <aspectSourceDirectory/>
+        <aspectSourceDirectory/>
 
-    <!-- Unit test cases -->
-    <unitTest>
-      <includes>
-        <include>**/*Test.java</include>
-      </includes>
-      <excludes>
-        <exclude>**/Abstract*Test.java</exclude>
-      </excludes>
-    </unitTest>
-    <resources>
-        <resource>
-            <directory>
+        <!-- Unit test cases -->
+        <unitTest>
+            <includes>
+                <include>**/*Test.java</include>
+            </includes>
+            <excludes>
+                <exclude>**/Abstract*Test.java</exclude>
+            </excludes>
+        </unitTest>
+        <resources>
+            <resource>
+                <directory>
                 src/java
-            </directory>
-            <includes>*.jks</includes>
-            <includes>*.xml</includes>
-<!--            <targetPath>org/neuclear/commons/crypto/signers</targetPath>-->
-        </resource>
-    </resources>
-  </build>
+                </directory>
+                <includes>*.jks</includes>
+                <includes>*.xml</includes>
+            </resource>
+        </resources>
+    </build>
 </project>
 
