@@ -1,6 +1,9 @@
 /*
- * $Id: CryptoTools.java,v 1.1 2003/11/11 21:17:48 pelle Exp $
+ * $Id: CryptoTools.java,v 1.2 2003/11/18 23:34:55 pelle Exp $
  * $Log: CryptoTools.java,v $
+ * Revision 1.2  2003/11/18 23:34:55  pelle
+ * Payment Web Application is getting there.
+ *
  * Revision 1.1  2003/11/11 21:17:48  pelle
  * Further vital reshuffling.
  * org.neudist.crypto.* and org.neudist.utils.* have been moved to respective areas under org.neuclear.commons
@@ -178,9 +181,11 @@ import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.security.*;
@@ -190,6 +195,7 @@ import java.security.interfaces.DSAPublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
+import java.security.spec.KeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Random;
@@ -338,6 +344,28 @@ public class CryptoTools {
             cipher.doFinal(cipherText, outputLen);
             return cipherText;
         } catch (InvalidCipherTextException e) {
+            rethrowException(e);
+        }
+        return null;
+    }
+
+    public static Cipher getCipher(byte key[], boolean doencrypt) throws CryptoException {
+        try {
+            Cipher cipher = Cipher.getInstance("AES", "BC");
+            KeySpec keyspec = new SecretKeySpec(key, "AES");
+            SecretKeyFactory kf = SecretKeyFactory.getInstance("AES", "BC");
+            Key skey = kf.generateSecret(keyspec);
+            cipher.init(doencrypt ? Cipher.ENCRYPT_MODE : Cipher.DECRYPT_MODE, skey);
+            return cipher;
+        } catch (NoSuchAlgorithmException e) {
+            rethrowException(e);
+        } catch (NoSuchPaddingException e) {
+            rethrowException(e);
+        } catch (InvalidKeySpecException e) {
+            rethrowException(e);
+        } catch (InvalidKeyException e) {
+            rethrowException(e);
+        } catch (NoSuchProviderException e) {
             rethrowException(e);
         }
         return null;
@@ -674,6 +702,10 @@ public class CryptoTools {
         System.arraycopy(xmldsigBytes, 40 - k, asn1Bytes, (6 + j + l) - k, k);
 
         return asn1Bytes;
+    }
+
+    {
+        ensureProvider();
     }
 
     private static final String RSA = "RSA", DSA = "DSA";

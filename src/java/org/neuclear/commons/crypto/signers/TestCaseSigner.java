@@ -2,6 +2,7 @@ package org.neuclear.commons.crypto.signers;
 
 import org.neuclear.commons.NeuClearException;
 import org.neuclear.commons.crypto.passphraseagents.AlwaysTheSamePassphraseAgent;
+import org.neuclear.commons.crypto.passphraseagents.PassPhraseAgent;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -25,8 +26,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: TestCaseSigner.java,v 1.4 2003/11/18 15:07:18 pelle Exp $
+$Id: TestCaseSigner.java,v 1.5 2003/11/18 23:34:55 pelle Exp $
 $Log: TestCaseSigner.java,v $
+Revision 1.5  2003/11/18 23:34:55  pelle
+Payment Web Application is getting there.
+
 Revision 1.4  2003/11/18 15:07:18  pelle
 Changes to JCE Implementation
 Working on getting all tests working including store tests
@@ -65,6 +69,10 @@ public class TestCaseSigner extends JCESigner {
         this(KEYSTORE, getKeyStore(), "neuclear");
     }
 
+    public TestCaseSigner(PassPhraseAgent agent) throws GeneralSecurityException, NeuClearException {
+        this(KEYSTORE, getKeyStore(), agent);
+    }
+
     /**
      * Creates a TestCaseSigner in the given location. The keystore must
      * be a SUN JKS format file and the passphrase for the keystore and all
@@ -76,11 +84,14 @@ public class TestCaseSigner extends JCESigner {
      * @throws GeneralSecurityException 
      */
     public TestCaseSigner(String name, InputStream in, String passphrase) throws NeuClearException, GeneralSecurityException {
+        this(name, in, new AlwaysTheSamePassphraseAgent(passphrase));
+    }
+
+    public TestCaseSigner(String name, InputStream in, PassPhraseAgent agent) throws NeuClearException, GeneralSecurityException {
         super(name,
                 in,
                 "jks", "SUN",
-                //new GuiDialogAgent()
-                new AlwaysTheSamePassphraseAgent(passphrase)
+                agent
         );
     }
 
