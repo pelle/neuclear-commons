@@ -20,8 +20,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: Base32Tests.java,v 1.7 2004/03/03 23:24:25 pelle Exp $
+$Id: Base32Tests.java,v 1.8 2004/03/04 21:54:14 pelle Exp $
 $Log: Base32Tests.java,v $
+Revision 1.8  2004/03/04 21:54:14  pelle
+Fixed Base32 encoding. I now use a more elegant understandable approach using BigInteger. It is however 2-3 times slower than Tyler's approach. I'm trying to cut down on the amount of dependencies, and dont want to import another jar for just one method.
+
 Revision 1.7  2004/03/03 23:24:25  pelle
 Added a "test" alias to testkeys.jks
 
@@ -50,9 +53,7 @@ Added user creatable Identity for Public Keys
 */
 
 /**
- * User: pelleb
- * Date: Jan 16, 2004
- * Time: 9:52:41 PM
+ * Tests of Base32 Encode. I'm testing against data produced by Tyler Close http://www.waterken.com's implementation
  */
 public class Base32Tests extends TestCase {
     public Base32Tests(String string) {
@@ -82,37 +83,40 @@ public class Base32Tests extends TestCase {
     }
 
     public void testSHA1vsDecodedTyler() throws CryptoException {
-        for (int i=0;i<TESTSTRINGS.length;i++){
-            assertTrue("TESTSTRINGS["+i+"]",CryptoTools.equalByteArrays(CryptoTools.digest(TESTSTRINGS[i]),Base32.decode(TYLER_SHA1_OUTPUT[i])));
+        for (int i = 0; i < TESTSTRINGS.length; i++) {
+            assertTrue("TESTSTRINGS[" + i + "]", CryptoTools.equalByteArrays(CryptoTools.digest(TESTSTRINGS[i]), Base32.decode(TYLER_SHA1_OUTPUT[i])));
         }
     }
+
     public void testSHA1vsDecodedOwn() throws CryptoException {
-        for (int i=0;i<TESTSTRINGS.length;i++){
-            byte[] hash=Base32.encode(CryptoTools.digest(TESTSTRINGS[i])).getBytes();
-            assertTrue("TESTSTRINGS["+i+"]",CryptoTools.equalByteArrays(CryptoTools.digest(TESTSTRINGS[i]),Base32.decode(hash)));
+        for (int i = 0; i < TESTSTRINGS.length; i++) {
+            String hash = Base32.encode(CryptoTools.digest(TESTSTRINGS[i]));
+            assertEquals("TESTSTRINGS[" + i + "]", new String(CryptoTools.digest(TESTSTRINGS[i])), new String(Base32.decode(hash)));
         }
     }
+
     public void testSHA1HomevsTyler() throws CryptoException {
-        for (int i=0;i<TESTSTRINGS.length;i++){
-            assertEquals("TESTSTRINGS["+i+"]",Base32.encode(CryptoTools.digest(TESTSTRINGS[i])),TYLER_SHA1_OUTPUT);
+        for (int i = 0; i < TESTSTRINGS.length; i++) {
+            assertEquals("TESTSTRINGS[" + i + "]", TYLER_SHA1_OUTPUT[i], Base32.encode(CryptoTools.digest(TESTSTRINGS[i])));
         }
     }
 
     public void testBase32vsTyler() throws CryptoException {
 
-        for (int i=0;i<TESTSTRINGS.length;i++){
+        for (int i = 0; i < TESTSTRINGS.length; i++) {
             final String encoded = Base32.encode(TESTSTRINGS[i]);
-            assertEquals("TESTSTRINGS["+i+"]",TYLER_OUTPUT[i],encoded);
+            assertEquals("TESTSTRINGS[" + i + "]", TYLER_OUTPUT[i], encoded);
         }
     }
 
     public void testDecodeTyler() throws CryptoException {
 
-        for (int i=0;i<TESTSTRINGS.length;i++){
+        for (int i = 0; i < TESTSTRINGS.length; i++) {
             final byte decoded[] = Base32.decode(TYLER_OUTPUT[i]);
-            assertEquals("TESTSTRINGS["+i+"]",TESTSTRINGS[i].getBytes(),decoded);
+            assertEquals("TESTSTRINGS[" + i + "]", TESTSTRINGS[i].getBytes(), decoded);
         }
     }
+
     public void assertEquals(String description, byte a[], byte b[]) {
         assertEquals(description + " length", a.length, b.length);
         for (int i = 0; i < a.length; i++)
@@ -129,6 +133,41 @@ public class Base32Tests extends TestCase {
         }
     }
 */
+
+    /**
+     * Silly Microbenchmark
+     *
+     * @throws CryptoException
+     */
+    public void testBenchmark() throws CryptoException {
+        System.out.println("BigInteger encoding benchmarks:");
+        final int ITERATIONS = 100000;
+        final Runtime runtime = Runtime.getRuntime();
+        long start = System.currentTimeMillis();
+        long memstart = runtime.freeMemory();
+        for (int i = 0; i < ITERATIONS; i++) {
+            final String encoded = Base32.encode(TESTSTRINGS[i % TESTSTRINGS.length]);
+            assertEquals("TESTSTRINGS[" + i + "]", TYLER_OUTPUT[i % TESTSTRINGS.length], encoded);
+        }
+        long dur = System.currentTimeMillis() - start;
+        long memuse = memstart - runtime.freeMemory();
+        System.out.println(ITERATIONS + " iterations took: " + dur + "ms");
+        System.out.println(ITERATIONS + " iterations used: " + memuse + " bytes");
+/*
+        System.out.println("\nWaterken encoding benchmarks:");
+        start=System.currentTimeMillis();
+        memstart=runtime.freeMemory();
+        for (int i=0;i<ITERATIONS;i++){
+            final String encoded = com.waterken.url.Base32.encode(TESTSTRINGS[i%TESTSTRINGS.length].getBytes());
+            assertEquals("TESTSTRINGS["+i+"]",TYLER_OUTPUT[i%TESTSTRINGS.length],encoded);
+        }
+        dur=System.currentTimeMillis()-start;
+        memuse=memstart-runtime.freeMemory();
+        System.out.println(ITERATIONS+" iterations took: "+dur+"ms");
+        System.out.println(ITERATIONS+" iterations used: "+memuse+" bytes");
+*/
+
+    }
 
     static final String TESTSTRINGS[] = new String[]{
         "",
@@ -147,7 +186,7 @@ public class Base32Tests extends TestCase {
         new String(CryptoTools.digest("0123456"))
 
     };
-    static final String TYLER_OUTPUT[]=new String[]{
+    static final String TYLER_OUTPUT[] = new String[]{
         "",
         "ga",
         "gayq",
@@ -164,7 +203,7 @@ public class Base32Tests extends TestCase {
         "h47qqpz7h4cd6hb7cq7t6pz7ha7wwx3x"
     };
 
-    static final String TYLER_SHA1_OUTPUT[]=new String[]{
+    static final String TYLER_SHA1_OUTPUT[] = new String[]{
         "3i42h3s6nnfq2msvx7xzkyayscx5qbyj",
         "wzmj7rvlbxecz4jathi4fvakxgkoqqim",
         "3x7bmm2f2m4bsowcxxayh6hj3t7zas2d",
