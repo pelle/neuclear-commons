@@ -1,6 +1,11 @@
 /*
- * $Id: CryptoTools.java,v 1.14 2004/02/19 15:29:10 pelle Exp $
+ * $Id: CryptoTools.java,v 1.15 2004/03/05 23:43:06 pelle Exp $
  * $Log: CryptoTools.java,v $
+ * Revision 1.15  2004/03/05 23:43:06  pelle
+ * New Channels package with nio based channels for various crypto related tasks such as digests, signing, verifying and encoding.
+ * DigestsChannel, SigningChannel and VerifyingChannel are complete, but not tested.
+ * AbstractEncodingChannel will be used for a Base64/Base32 Channel as well as possibly an xml canonicalization channel in the xmlsig library.
+ *
  * Revision 1.14  2004/02/19 15:29:10  pelle
  * Various cleanups and corrections
  *
@@ -251,6 +256,7 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.*;
 import java.security.cert.Certificate;
@@ -497,6 +503,17 @@ public final class CryptoTools {
             rethrowException(e);
         }
         return false;
+    }
+
+    public static byte[] digest(final InputStream is) throws IOException {
+        Digest digest = new org.bouncycastle.crypto.digests.SHA1Digest();
+        byte buf[] = new byte[digest.getDigestSize()];
+        int length = 0;
+        while ((length = is.read(buf)) >= 0)
+            digest.update(buf, 0, length);
+        digest.doFinal(buf, 0);
+        is.close();
+        return buf;
     }
 
     public static byte[] digest(final byte[] value) {
