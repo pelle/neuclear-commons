@@ -24,8 +24,11 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /*
-$Id: KeyStoreDialog.java,v 1.12 2004/05/06 21:40:29 pelle Exp $
+$Id: KeyStoreDialog.java,v 1.13 2004/05/11 15:38:04 pelle Exp $
 $Log: KeyStoreDialog.java,v $
+Revision 1.13  2004/05/11 15:38:04  pelle
+Removed a few compilation errors
+
 Revision 1.12  2004/05/06 21:40:29  pelle
 More swing refactorings
 
@@ -88,9 +91,8 @@ The XMLSig classes have also been updated to support this.
  * Time: 9:55:37 AM
  */
 public class KeyStoreDialog {
-    public KeyStoreDialog(BrowsableSigner signer) {
+    public KeyStoreDialog() {
         SwingTools.setLAF();
-        this.signer = signer;
         prefs = Preferences.userNodeForPackage(DefaultSigner.class);
 //        AgentMessages.updateLocale("es", "ES");
         caps = AgentMessages.getMessages();
@@ -222,7 +224,11 @@ public class KeyStoreDialog {
         return new DialogRunner(data, cb);
     }
 
-    private final BrowsableSigner signer;
+    public void setSigner(BrowsableSigner signer) {
+        this.signer = signer;
+    }
+
+    private BrowsableSigner signer;
     private String lastSelected;
     private final JButton sign;
     private final JButton cancel;
@@ -307,7 +313,8 @@ public class KeyStoreDialog {
 
     public static void main(String args[]) {
         try {
-            final KeyStoreDialog dia = new KeyStoreDialog(new TestCaseSigner());
+            final KeyStoreDialog dia = new KeyStoreDialog();
+            dia.setSigner(new TestCaseSigner());
             dia.frame.show();
 
         } catch (InvalidPassphraseException e) {

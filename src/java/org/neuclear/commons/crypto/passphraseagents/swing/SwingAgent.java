@@ -13,8 +13,11 @@ import java.io.File;
 import java.security.PublicKey;
 
 /*
-$Id: SwingAgent.java,v 1.12 2004/05/06 21:40:30 pelle Exp $
+$Id: SwingAgent.java,v 1.13 2004/05/11 15:38:04 pelle Exp $
 $Log: SwingAgent.java,v $
+Revision 1.13  2004/05/11 15:38:04  pelle
+Removed a few compilation errors
+
 Revision 1.12  2004/05/06 21:40:30  pelle
 More swing refactorings
 
@@ -67,9 +70,9 @@ The XMLSig classes have also been updated to support this.
  * Time: 9:55:37 AM
  */
 public class SwingAgent implements InteractiveAgent {
-    public SwingAgent(BrowsableSigner signer) {
+    public SwingAgent() {
         SwingTools.setLAF();
-        ksd = new KeyStoreDialog(signer);
+        ksd = new KeyStoreDialog();
         simple = new SimpleDialog();
         np = new NewPassphraseDialog();
         queue = new RunnableQueue();
@@ -85,11 +88,12 @@ public class SwingAgent implements InteractiveAgent {
     private final JFileChooser fc;
 
     public static void main(final String[] args) {
-        final InteractiveAgent dia = new SwingAgent(null);
+        final SwingAgent dia = new SwingAgent();
         try {
             CryptoTools.ensureProvider();
 //                System.out.println(dia.getPassPhrase("test"));
             final BrowsableSigner signer = new DefaultSigner(dia);
+            dia.setSigner(signer);
             while (true) {
                 byte sig[] = signer.sign("testdata".getBytes(), new SetPublicKeyCallBack() {
                     public void setPublicKey(PublicKey pub) {
@@ -107,6 +111,10 @@ public class SwingAgent implements InteractiveAgent {
 
 
         System.exit(0);
+    }
+
+    public void setSigner(BrowsableSigner signer) {
+        ksd.setSigner(signer);
     }
 
     /**
@@ -129,7 +137,7 @@ public class SwingAgent implements InteractiveAgent {
      * The User is asked to pick a name by the PassPhraseAgent. The PassPhraseAgent can query the given signer for
      * a list of included aliases or even create a new keypair.
      *
-     * @return 
+     * @return
      * @throws org.neuclear.commons.crypto.passphraseagents.UserCancellationException
      *
      */

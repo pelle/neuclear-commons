@@ -5,6 +5,7 @@ import org.neuclear.commons.crypto.CryptoException;
 import org.neuclear.commons.crypto.CryptoTools;
 import org.neuclear.commons.crypto.passphraseagents.InteractiveAgent;
 import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
+import org.neuclear.commons.crypto.passphraseagents.swing.SwingAgent;
 
 import java.io.*;
 import java.security.KeyStoreException;
@@ -31,8 +32,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: DefaultSigner.java,v 1.13 2004/04/23 23:32:01 pelle Exp $
+$Id: DefaultSigner.java,v 1.14 2004/05/11 15:38:04 pelle Exp $
 $Log: DefaultSigner.java,v $
+Revision 1.14  2004/05/11 15:38:04  pelle
+Removed a few compilation errors
+
 Revision 1.13  2004/04/23 23:32:01  pelle
 Fixed bug in DefaultSigner
 
@@ -113,6 +117,14 @@ public final class DefaultSigner implements BrowsableSigner {
             e.printStackTrace();
         }
         signer = loadSigner(file, agent, false);
+
+        if (agent instanceof SwingAgent)
+            ((SwingAgent) agent).setSigner(this);
+    }
+
+    public DefaultSigner() throws UserCancellationException {
+        this(new SwingAgent());
+
     }
 
     private JCESigner loadSigner(final File file, final InteractiveAgent agent, final boolean wrong) throws UserCancellationException {
