@@ -3,7 +3,7 @@
 
   <name>NeuClear Commons</name>
   <id>neuclear-commons</id>
-  <currentVersion>0.4</currentVersion>
+  <currentVersion>0.5-SNAPSHOT</currentVersion>
   <inceptionYear>2003</inceptionYear>
   <package>org.neuclear.commons</package>
   <logo>/images/logo.gif</logo>
@@ -120,15 +120,15 @@
         <exclude>**/Abstract*Test.java</exclude>
       </excludes>
     </unitTest>
-
-    <!-- J A R  R E S O U R C E S -->
-    <!-- Resources that are packaged up inside the JAR file -->
-
-    <jarResources>
-    </jarResources>
-
-    <jars>
-    </jars>
+    <resources>
+        <resource>
+            <directory>
+                src/testdata/keys
+            </directory>
+            <includes>*.jks</includes>
+            <targetPath>org/neuclear/commons/crypto/signers</targetPath>
+        </resource>
+    </resources>
   </build>
 </project>
 

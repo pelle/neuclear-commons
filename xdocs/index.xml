@@ -14,7 +14,16 @@
                 bits and pieces that dont quite fit neatly elsewhere.
             </p>
 		</section>
-        <section name="Released 0.3">
+        <section name="[11 November, 2003] Released 0.4">
+            <p>
+                This release is very quick after 0.3, but we deemed it necessary
+                to move a bunch of crypto code from <a href="http://neuclear.org/id/">NeuClear ID</a>
+                and <a href="http://neuclear.org/xmlsig/">NeuClear XMLSig</a> to here.
+                If you are using any of the CVS modules as well as the latest release 0.10 of
+                XMLSig please update to this release.
+            </p>
+        </section>
+        <section name="[10 November, 2003] Released 0.3">
             <p>
                 The first file release of NeuClear Commons has been released. Click the download link to
                 download.

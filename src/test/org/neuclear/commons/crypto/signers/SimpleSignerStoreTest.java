@@ -1,5 +1,9 @@
-/* $Id: SimpleSignerStoreTest.java,v 1.1 2003/11/12 18:54:42 pelle Exp $
+/* $Id: SimpleSignerStoreTest.java,v 1.2 2003/11/12 23:47:50 pelle Exp $
  * $Log: SimpleSignerStoreTest.java,v $
+ * Revision 1.2  2003/11/12 23:47:50  pelle
+ * Much work done in creating good test environment.
+ * PaymentReceiverTest works, but needs a abit more work in its environment to succeed testing.
+ *
  * Revision 1.1  2003/11/12 18:54:42  pelle
  * Updated SimpleSignerStoreTest to use a StoredPassPhraseAgent eliminating the popup during testing.
  * Created SigningBenchmark for running comparative performance benchmarks on various key algorithms.
@@ -82,7 +86,7 @@ import org.neuclear.commons.NeuClearException;
 import org.neuclear.commons.configuration.ConfigurationException;
 import org.neuclear.commons.crypto.CryptoException;
 import org.neuclear.commons.crypto.CryptoTools;
-import org.neuclear.commons.crypto.passphraseagents.StoredPassphraseAgent;
+import org.neuclear.commons.crypto.passphraseagents.AlwaysTheSamePassphraseAgent;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -93,7 +97,7 @@ import java.security.SecureRandom;
 
 /**
  * @author pelleb
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class SimpleSignerStoreTest extends TestCase {
     public SimpleSignerStoreTest(String name) throws GeneralSecurityException, NeuClearException, ConfigurationException {
@@ -106,8 +110,8 @@ public class SimpleSignerStoreTest extends TestCase {
      */
     public static SimpleSigner getSignerStoreInstance() throws NeuClearException, GeneralSecurityException, ConfigurationException {
 
-        return new SimpleSigner("src/testdata/keys",
-                new StoredPassphraseAgent("bob", "bob")
+        return new SimpleSigner("src/testdata/keys/simple.ser",
+                new AlwaysTheSamePassphraseAgent("neuclear")
         );
     }
 
@@ -128,7 +132,7 @@ public class SimpleSignerStoreTest extends TestCase {
     public void testAddKey() throws NeuClearException, GeneralSecurityException, IOException {
         boolean success = false;
         try {
-            store.addKey("root", "root".toCharArray(), root.getPrivate());
+            store.addKey("root", root.getPrivate());
             success = true;
         } catch (GeneralSecurityException e) {
             e.printStackTrace();

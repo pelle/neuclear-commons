@@ -23,8 +23,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: SigningBenchmark.java,v 1.1 2003/11/12 18:54:42 pelle Exp $
+$Id: SigningBenchmark.java,v 1.2 2003/11/12 23:47:50 pelle Exp $
 $Log: SigningBenchmark.java,v $
+Revision 1.2  2003/11/12 23:47:50  pelle
+Much work done in creating good test environment.
+PaymentReceiverTest works, but needs a abit more work in its environment to succeed testing.
+
 Revision 1.1  2003/11/12 18:54:42  pelle
 Updated SimpleSignerStoreTest to use a StoredPassPhraseAgent eliminating the popup during testing.
 Created SigningBenchmark for running comparative performance benchmarks on various key algorithms.
@@ -102,7 +106,7 @@ public class SigningBenchmark {
 
     }
 
-    private static int ITERATIONS = 10;
+    private static int ITERATIONS = 100;
     private KeyPairGenerator kpg;
 
     private KeyPair kp;

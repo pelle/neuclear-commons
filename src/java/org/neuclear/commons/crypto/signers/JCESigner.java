@@ -1,6 +1,10 @@
 /*
- * $Id: JCESigner.java,v 1.1 2003/11/11 21:17:47 pelle Exp $
+ * $Id: JCESigner.java,v 1.2 2003/11/12 23:47:50 pelle Exp $
  * $Log: JCESigner.java,v $
+ * Revision 1.2  2003/11/12 23:47:50  pelle
+ * Much work done in creating good test environment.
+ * PaymentReceiverTest works, but needs a abit more work in its environment to succeed testing.
+ *
  * Revision 1.1  2003/11/11 21:17:47  pelle
  * Further vital reshuffling.
  * org.neudist.crypto.* and org.neudist.utils.* have been moved to respective areas under org.neuclear.commons
@@ -74,46 +78,38 @@
 package org.neuclear.commons.crypto.signers;
 
 import org.neuclear.commons.NeuClearException;
-import org.neuclear.commons.crypto.passphraseagents.PassPhraseAgent;
 import org.neuclear.commons.crypto.CryptoException;
 import org.neuclear.commons.crypto.CryptoTools;
-import org.neuclear.commons.crypto.signers.InvalidPassphraseException;
+import org.neuclear.commons.crypto.passphraseagents.PassPhraseAgent;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.security.*;
-import java.security.interfaces.RSAPublicKey;
 import java.security.interfaces.DSAPublicKey;
+import java.security.interfaces.RSAPublicKey;
 
 /**
  * Wrapper around JCE KeyStore
  */
 public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, PublicKeySource {
 
+    public JCESigner(String filename, String type, String provider, PassPhraseAgent agent) throws NeuClearException, GeneralSecurityException, FileNotFoundException {
+        this(filename, new FileInputStream(new File(filename)), type, provider, agent);
+    }
 
-    public JCESigner(String filename, String type, String provider, PassPhraseAgent agent) throws NeuClearException, GeneralSecurityException {
+    protected JCESigner(String name, InputStream in, String type, String provider, PassPhraseAgent agent) throws NeuClearException, GeneralSecurityException {
+
         this.agent = agent;
         try {
-            if (filename == null)
-                throw new NeuClearException("Filename not given for JCESigner");
-            File file = new File(filename);
             if (provider == null)
                 ks = KeyStore.getInstance(type);
             else
                 ks = KeyStore.getInstance(type, provider);
-            if (file.exists()) {
-                System.out.println("NEUDIST: Loading KeyStore");
+            ks.load(in, agent.getPassPhrase("KeyStore Passphrase for" + name));
 
-                FileInputStream in = new FileInputStream(file);
-
-                ks.load(in, agent.getPassPhrase("KeyStore Passphrase for: " + file.getAbsolutePath()));
-            } else
-                throw new NeuClearException("KeyStore: " + file.getPath() + " doesnt exist");
         } catch (IOException e) {
             throw new NeuClearException(e);
         }
-
+        System.out.println("Successfully loaded JCESigner: " + name);
     }
 
     private PrivateKey getKey(String name, char passphrase[]) throws InvalidPassphraseException, NonExistingSignerException, IOException {
@@ -136,7 +132,8 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
      * @param name Alias of private key to be used within KeyStore
      * @param data Data to be signed
      * @return The signature
-     * @throws org.neuclear.commons.crypto.signers.InvalidPassphraseException if the passphrase doesn't match
+     * @throws org.neuclear.commons.crypto.signers.InvalidPassphraseException
+     *          if the passphrase doesn't match
      */
     public byte[] sign(String name, byte data[]) throws CryptoException {
 
@@ -157,16 +154,17 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
 
     /**
      * Checks the key type of the given alias
-     * @param name
+     * 
+     * @param name 
      * @return KEY_NONE,KEY_RSA,KEY_DSA
-     * @throws CryptoException
+     * @throws CryptoException 
      */
     public int getKeyType(String name) throws CryptoException {
         try {
             if (ks.isKeyEntry(name)) {
-                PublicKey pk=getPublicKey(name);
+                PublicKey pk = getPublicKey(name);
                 if (pk instanceof RSAPublicKey)
-                   return KEY_RSA;
+                    return KEY_RSA;
                 if (pk instanceof DSAPublicKey)
                     return KEY_DSA;
                 return KEY_OTHER;

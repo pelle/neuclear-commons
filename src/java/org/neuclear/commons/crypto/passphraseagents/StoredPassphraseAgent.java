@@ -18,8 +18,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: StoredPassphraseAgent.java,v 1.1 2003/11/11 21:17:46 pelle Exp $
+$Id: StoredPassphraseAgent.java,v 1.2 2003/11/12 23:47:50 pelle Exp $
 $Log: StoredPassphraseAgent.java,v $
+Revision 1.2  2003/11/12 23:47:50  pelle
+Much work done in creating good test environment.
+PaymentReceiverTest works, but needs a abit more work in its environment to succeed testing.
+
 Revision 1.1  2003/11/11 21:17:46  pelle
 Further vital reshuffling.
 org.neudist.crypto.* and org.neudist.utils.* have been moved to respective areas under org.neuclear.commons
@@ -43,17 +47,17 @@ public class StoredPassphraseAgent implements PassPhraseAgent {
 
     public StoredPassphraseAgent(String name, String passphrase) {
         this.name = name;
-        this.passphrase = passphrase.toCharArray();
+        this.passphrase = passphrase;
         System.out.println("StoredPassphraseAgent started.\nDO NOT USE FOR PRODUCTION SERVERS");
     }
 
     public char[] getPassPhrase(String name) {
         if (name.equals(this.name))
-            return passphrase;
+            return passphrase.toCharArray();
         else
             return new char[0];
     }
 
     private final String name;
-    private final char[] passphrase;
+    private final String passphrase;
 }
