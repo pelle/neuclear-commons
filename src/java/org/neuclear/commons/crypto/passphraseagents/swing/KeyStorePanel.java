@@ -74,7 +74,7 @@ public class KeyStorePanel extends JPanel {
 
         newPersonality = new NewPersonalityAction(this);
         newId = new JButton(newPersonality);
-        newId.setText(null);
+//        newId.setText(null);
         toolbar.add(newId);
         add(toolbar, BorderLayout.NORTH);
 
@@ -117,7 +117,7 @@ public class KeyStorePanel extends JPanel {
     }
 
     public Action[] getFileActions() {
-        return new Action[]{openAction, saveAction};
+        return new Action[]{newPersonality, openAction, saveAction};
     }
 
     public Action[] getActions() {
