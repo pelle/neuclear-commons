@@ -1,5 +1,13 @@
-/* $Id: ServletTools.java,v 1.2 2003/11/21 04:43:41 pelle Exp $
+/* $Id: ServletTools.java,v 1.3 2003/12/12 19:27:38 pelle Exp $
  * $Log: ServletTools.java,v $
+ * Revision 1.3  2003/12/12 19:27:38  pelle
+ * All the Cactus tests now for signing servlet.
+ * Added working AuthenticationFilterTest
+ * Returned original functionality to DemoSigningServlet.
+ * This is set up to use the test keys stored in neuclear-commons.
+ * SigningServlet should now work for general use. It uses the default
+ * keystore. Will add configurability later. It also uses the GUIDialogAgent.
+ *
  * Revision 1.2  2003/11/21 04:43:41  pelle
  * EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
  * Otherwise You will Finaliate.
@@ -39,8 +47,8 @@ import java.io.PrintWriter;
 
 /**
  * @author pelleb
- * @version $Revision: 1.2 $
- **/
+ * @version $Revision: 1.3 $
+ */
 public final class ServletTools {
 
     public static String getAbsoluteURL(final HttpServletRequest request, final String item) {
@@ -50,11 +58,13 @@ public final class ServletTools {
     }
 
     public static void printHeader(final PrintWriter out, final HttpServletRequest request, final String title) {
-        out.println("<html><head><title>NeuDist Local Signing Service</title>");
+        out.print("<html><head><title>");
+        out.print(title);
+        out.println("</title>");
         //out.println("<LINK rel=\"STYLESHEET\" type=\"text/css\" href=\"style/neuclear.css\">");
         out.println("<style type=\"text/css\">");
         out.println("body, th, td, input, select, textarea, h2 small {\n font-family: Verdana, Helvetica, Arial, sans-serif;\n }\n code, pre {\n font-family: 'Andale Mono', Courier, monospace;\n font-size: small;\n background-color: lightgrey;\n}");
-        out.println("</style></head><body bgcolor=\"#FFFFFF\"><div id=\"banner\"><table bgcolor=\"#026A32\" width=\"100%\"><tr><td><h3 style=\"color: white\">");
+        out.println("</style></head><body bgcolor=\"#FFFFFF\"><div id=\"banner\"><table bgcolor=\"#0000ff\" width=\"100%\"><tr><td><h3 style=\"color: white\">");
         out.println(title);
         out.println("</h3></td><td align=\"right\"><img src=\"images/logo.gif\"></td></tr></table></div>");
 
