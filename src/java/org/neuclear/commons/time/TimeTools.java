@@ -1,6 +1,10 @@
 /*
- * $Id: TimeTools.java,v 1.6 2003/12/24 00:25:41 pelle Exp $
+ * $Id: TimeTools.java,v 1.7 2003/12/31 00:39:29 pelle Exp $
  * $Log: TimeTools.java,v $
+ * Revision 1.7  2003/12/31 00:39:29  pelle
+ * Added Drivers for handling different Database dialects in the entity model.
+ * Added Statement pattern to ledger, simplifying the statement writing process.
+ *
  * Revision 1.6  2003/12/24 00:25:41  pelle
  * Created a kind of poor man's version of ofbiz.org's EntityEngine. It doesnt use xml to configure it, but code.
  * Should mainly be used to create tables. Can also insert rows, but hasnt been thoroughly tested.
@@ -128,6 +132,9 @@ public final class TimeTools {
     public static String formatTimeStamp(final Date time) {
         return getDateFormatter().format(time);
     }
+    public static String formatTimeStampShort(final Date time) {
+        return DFS.format(time);
+    }
 
     private static SimpleDateFormat getDateFormatter() {
         return DF;
@@ -147,6 +154,13 @@ public final class TimeTools {
     {
         DF.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
+//    private static final String SHORT_DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss,SSSzzz";
+    private static final SimpleDateFormat DFS = new SimpleDateFormat();
+
+    {
+//        DFS.setTimeZone(TimeZone.getTimeZone("GMT"));
+    }
+
 
     /**
      * Really just a simple placeholder.

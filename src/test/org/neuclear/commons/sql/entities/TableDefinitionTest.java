@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 import org.neuclear.commons.sql.ConnectionSource;
 import org.neuclear.commons.sql.DefaultConnectionSource;
 import org.neuclear.commons.sql.TestCaseConnectionSource;
+import org.neuclear.commons.sql.entities.drivers.DDLDriver;
 import org.neuclear.commons.NeuClearException;
 import org.neuclear.commons.time.TimeTools;
 
@@ -31,8 +32,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: TableDefinitionTest.java,v 1.3 2003/12/29 22:40:38 pelle Exp $
+$Id: TableDefinitionTest.java,v 1.4 2003/12/31 00:39:29 pelle Exp $
 $Log: TableDefinitionTest.java,v $
+Revision 1.4  2003/12/31 00:39:29  pelle
+Added Drivers for handling different Database dialects in the entity model.
+Added Statement pattern to ledger, simplifying the statement writing process.
+
 Revision 1.3  2003/12/29 22:40:38  pelle
 Added LedgerServlet and friends
 
@@ -56,14 +61,15 @@ SQLLedger now uses this to create its tables. It is not fully working yet, but w
 public class TableDefinitionTest extends TestCase{
     public TableDefinitionTest(String string) throws SQLException, NamingException, IOException, NeuClearException {
         super(string);
+        driver=new DDLDriver();
     }
     public void testSimpleTable(){
         EntityModel table=new EntityModel("accounts", true);
         String correct="CREATE TABLE accounts (\n" +
-                "id VARCHAR(50),\n" +
+                "id VARCHAR(50) NOT NULL,\n" +
                 "PRIMARY KEY(id)\n)";
-        System.out.println(table.createDDL());
-        assertEquals(correct,table.createDDL());
+        System.out.println(table.createDDL(driver));
+        assertEquals(correct,table.createDDL(driver));
     }
 
     public void testComplexTable(){
@@ -76,13 +82,13 @@ public class TableDefinitionTest extends TestCase{
         String correct="CREATE TABLE transaction (\n" +
                 "id IDENTITY,\n" +
                 "created TIMESTAMP,\n" +
-                "from VARCHAR(50),\n" +
-                "to VARCHAR(50),\n" +
+                "from VARCHAR(50) NOT NULL,\n" +
+                "to VARCHAR(50) NOT NULL,\n" +
                 "amount DECIMAL,\n" +
                 "comment VARCHAR(100)\n" +
                 ")";
-        System.out.println(table.createDDL());
-        assertEquals(correct,table.createDDL());
+        System.out.println(table.createDDL(driver));
+        assertEquals(correct,table.createDDL(driver));
     }
     public void testRelationalTable(){
         EntityModel accounts=new EntityModel("accounts", true);
@@ -95,8 +101,8 @@ public class TableDefinitionTest extends TestCase{
         String correct="CREATE TABLE transaction (\n" +
                 "id IDENTITY,\n" +
                 "created TIMESTAMP,\n" +
-                "sender VARCHAR(50),\n" +
-                "to VARCHAR(50),\n" +
+                "sender VARCHAR(50) NOT NULL,\n" +
+                "to VARCHAR(50) NOT NULL,\n" +
                 "amount DECIMAL,\n" +
                 "comment VARCHAR(100),\n" +
                 "FOREIGN KEY (sender) REFERENCES accounts(id) ON DELETE CASCADE,\n" +
@@ -104,8 +110,8 @@ public class TableDefinitionTest extends TestCase{
                 "FOREIGN KEY (to) REFERENCES accounts(id) ON DELETE CASCADE\n" +
 //                "INDEX toidx (to),\n" +
                 ")";
-        System.out.println(table.createDDL());
-        assertEquals(correct,table.createDDL());
+        System.out.println(table.createDDL(driver));
+        assertEquals(correct,table.createDDL(driver));
     }
 
     public void testCreateTableStructure() throws SQLException, IOException, NamingException, NeuClearException {
@@ -126,7 +132,7 @@ public class TableDefinitionTest extends TestCase{
         table.addReference("recipient",accounts);
         table.addMoney();
         table.addComment();
-        table.create(con);
+        table.create(con,driver);
 /*        Entity entity=table.insertEntity(con,new Object[] {
             "created",TimeTools.now(),
             "sender",new Object[]{
@@ -143,4 +149,6 @@ public class TableDefinitionTest extends TestCase{
         con.commit();
         con.close();
     }
+
+    private DDLDriver driver;
 }

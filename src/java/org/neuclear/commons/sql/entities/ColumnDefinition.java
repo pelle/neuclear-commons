@@ -18,8 +18,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: ColumnDefinition.java,v 1.1 2003/12/24 00:25:40 pelle Exp $
+$Id: ColumnDefinition.java,v 1.2 2003/12/31 00:39:29 pelle Exp $
 $Log: ColumnDefinition.java,v $
+Revision 1.2  2003/12/31 00:39:29  pelle
+Added Drivers for handling different Database dialects in the entity model.
+Added Statement pattern to ledger, simplifying the statement writing process.
+
 Revision 1.1  2003/12/24 00:25:40  pelle
 Created a kind of poor man's version of ofbiz.org's EntityEngine. It doesnt use xml to configure it, but code.
 Should mainly be used to create tables. Can also insert rows, but hasnt been thoroughly tested.
@@ -39,7 +43,7 @@ public abstract class ColumnDefinition {
         this.model=table;
         this.name=name;
     }
-    public abstract String createDDL();
+
 
     public final EntityModel getModel(){
         return model;
@@ -64,12 +68,24 @@ public abstract class ColumnDefinition {
 
     private final String name;
     private final EntityModel model;
-    public static final int FIELD_URI=0;
+    public static final int FIELD_DEFAULT=0;
     public static final int FIELD_COMMENT=1;
     public static final int FIELD_MONEY=2;
-    public static final int FIELD_TIMESTAMP=3;
+    public static final int FIELD_URI=3;
     public static final int FIELD_ID=4;
     public static final int FIELD_BOOLEAN=5;
+    public static final int FIELD_TIMESTAMP=6;
+    public static final int FIELD_TIME=7;
+    public static final int FIELD_DATE=8;
+    public static final int FIELD_NAME=9;
+    public static final int FIELD_INTEGER=10;
+    public static final int FIELD_CHARACTER=11;
+    public static final int FIELD_SHORT=12;
+    public static final int FIELD_LONG=13;
+    public static final int FIELD_BYTE=14;
+
+
+
 
 
 }
