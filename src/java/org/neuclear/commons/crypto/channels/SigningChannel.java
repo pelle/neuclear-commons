@@ -21,8 +21,13 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: SigningChannel.java,v 1.1 2004/03/05 23:43:06 pelle Exp $
+$Id: SigningChannel.java,v 1.2 2004/03/08 17:13:54 pelle Exp $
 $Log: SigningChannel.java,v $
+Revision 1.2  2004/03/08 17:13:54  pelle
+Added CipherChannel and the beginnings of a Base32EncodingChannel.
+The AbstractCryptoChannel now is implemented with a pipe. You can get a readable channel with the source() method.
+To pipe a ReadableByteChannel or another instance of AbstractCryptoChannel into the channel you can now use the pipe() methods.
+
 Revision 1.1  2004/03/05 23:43:06  pelle
 New Channels package with nio based channels for various crypto related tasks such as digests, signing, verifying and encoding.
 DigestsChannel, SigningChannel and VerifyingChannel are complete, but not tested.
@@ -37,23 +42,35 @@ AbstractEncodingChannel will be used for a Base64/Base32 Channel as well as poss
  */
 
 public class SigningChannel extends AbstractSignatureChannel {
-    public SigningChannel(Signature sig, PrivateKey key) throws InvalidKeyException {
+    public SigningChannel(Signature sig, PrivateKey key) throws InvalidKeyException, IOException {
         super(sig);
         sig.initSign(key);
     }
 
-    public SigningChannel(String alg, PrivateKey key) throws NoSuchAlgorithmException, InvalidKeyException {
+    public SigningChannel(String alg, PrivateKey key) throws NoSuchAlgorithmException, InvalidKeyException, IOException {
         super(alg);
         sig.initSign(key);
     }
 
-    public SigningChannel(PrivateKey key) throws NoSuchAlgorithmException, InvalidKeyException {
+    public SigningChannel(PrivateKey key) throws NoSuchAlgorithmException, InvalidKeyException, IOException {
         sig.initSign(key);
     }
 
+    public void close() throws IOException {
+        try {
+            signature = sig.sign();
+            write(signature);
+        } catch (SignatureException e) {
+            throw new IOException(e.getLocalizedMessage());
+        }
+        super.close();
+    }
+
     public byte[] getSignature() throws SignatureException, IOException {
-        byte signature[] = sig.sign();
         close();
+        source().close();        
         return signature;
     }
+
+    private byte[] signature;
 }

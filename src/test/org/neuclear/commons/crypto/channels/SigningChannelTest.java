@@ -3,7 +3,7 @@ package org.neuclear.commons.crypto.channels;
 import junit.framework.TestCase;
 import org.neuclear.commons.crypto.CryptoTools;
 import org.neuclear.commons.crypto.CryptoException;
-import org.neuclear.commons.test.JunitTools;
+
 
 import java.security.*;
 import java.nio.ByteBuffer;

@@ -26,12 +26,12 @@ public class DigestChannelTest extends TestCase {
         super(name);
     }
 
-    public void testDigest() throws NoSuchAlgorithmException, IOException {
+    public void testDigest() throws NoSuchAlgorithmException, IOException, CryptoException {
         for (int i=0;i<TESTSTRINGS.length;i++){
             assertDigestEquals(TESTSTRINGS[i]);
         }
     }
-    public void testFileDigest() throws NoSuchAlgorithmException, IOException {
+    public void testFileDigest() throws NoSuchAlgorithmException, IOException, CryptoException {
         File cd=new File("src/java/org/neuclear/commons/crypto");
         File files[]=cd.listFiles();
         System.out.println("Testing Digests on: "+files.length+" files");
@@ -40,7 +40,7 @@ public class DigestChannelTest extends TestCase {
             assertDigestEquals(files[i]);
         }
     }
-    public String getChannelDigest(String data) throws NoSuchAlgorithmException, IOException {
+    public String getChannelDigest(String data) throws NoSuchAlgorithmException, IOException, CryptoException {
         DigestChannel ch=new DigestChannel();
         ByteBuffer buf=ByteBuffer.wrap(data.getBytes());
         ch.write(buf);
@@ -49,12 +49,12 @@ public class DigestChannelTest extends TestCase {
     public String getNormalDigest(String data){
         return new String(CryptoTools.digest(data));
     }
-    public void assertDigestEquals(String data) throws NoSuchAlgorithmException, IOException {
+    public void assertDigestEquals(String data) throws NoSuchAlgorithmException, IOException, CryptoException {
         String digest=getChannelDigest(data);
         assertEquals("Digest Length",20,digest.length());
         assertEquals("Digest Match",getNormalDigest(data),digest);
     }
-    public String getChannelDigest(File file) throws NoSuchAlgorithmException, IOException {
+    public String getChannelDigest(File file) throws NoSuchAlgorithmException, IOException, CryptoException {
         DigestChannel ch=new DigestChannel();
         FileChannel fch=new FileInputStream(file).getChannel();
         fch.transferTo(0,fch.size(),ch);
@@ -72,7 +72,7 @@ public class DigestChannelTest extends TestCase {
         in.close();
         return new String(dig.digest());
     }
-    public void assertDigestEquals(File file) throws NoSuchAlgorithmException, IOException {
+    public void assertDigestEquals(File file) throws NoSuchAlgorithmException, IOException, CryptoException {
         String digest=getChannelDigest(file);
         assertEquals("Digest Length",20,digest.length());
         assertEquals("Digest Match",getNormalDigest(file),digest);

@@ -29,7 +29,7 @@
         </url>
     </repository>
 
-    <siteAddress>neuclear.org</siteAddress>
+    <siteAddress>www.neuclear.org</siteAddress>
     <siteDirectory>/home/sites/neuclear.org/public_html/commons/</siteDirectory>
     <issueTrackingUrl>http://jira.neuclear.org:8080/</issueTrackingUrl>
     <mailingLists>

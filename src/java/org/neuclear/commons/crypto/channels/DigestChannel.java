@@ -1,5 +1,7 @@
 package org.neuclear.commons.crypto.channels;
 
+import org.neuclear.commons.crypto.CryptoException;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
@@ -24,8 +26,13 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: DigestChannel.java,v 1.2 2004/03/06 20:50:28 pelle Exp $
+$Id: DigestChannel.java,v 1.3 2004/03/08 17:13:54 pelle Exp $
 $Log: DigestChannel.java,v $
+Revision 1.3  2004/03/08 17:13:54  pelle
+Added CipherChannel and the beginnings of a Base32EncodingChannel.
+The AbstractCryptoChannel now is implemented with a pipe. You can get a readable channel with the source() method.
+To pipe a ReadableByteChannel or another instance of AbstractCryptoChannel into the channel you can now use the pipe() methods.
+
 Revision 1.2  2004/03/06 20:50:28  pelle
 Added Unit tests for DigestChannel and SigningChannel.
 The SigningChannel passes for Signing on straight signing of byte arrays as well as from Files
@@ -43,16 +50,16 @@ AbstractEncodingChannel will be used for a Base64/Base32 Channel as well as poss
  * WritableByteChannel for producing SHA! Digests from ByteBuffers
  */
 public class DigestChannel extends AbstractCryptoChannel {
-    public DigestChannel() throws NoSuchAlgorithmException {
+    public DigestChannel() throws NoSuchAlgorithmException, IOException {
         this("SHA1");
 
     }
 
-    public DigestChannel(MessageDigest digest) throws NoSuchAlgorithmException {
+    public DigestChannel(MessageDigest digest) throws IOException {
         this.digest = digest;
     }
 
-    public DigestChannel(String alg) throws NoSuchAlgorithmException {
+    public DigestChannel(String alg) throws NoSuchAlgorithmException, IOException {
         this(MessageDigest.getInstance(alg));
     }
 
@@ -68,15 +75,28 @@ public class DigestChannel extends AbstractCryptoChannel {
         return count;
     }
 
+    public void close() throws IOException {
+        bytes=digest.digest();
+        write(bytes);
+        super.close();
+    }
+
     /**
      * Call this to get the Digest
      *
      * @return
      */
-    public byte[] getDigest() {
-        return digest.digest();
+    public byte[] getDigest() throws CryptoException {
+        try {
+            close();
+            source().close();
+            return bytes;
+        } catch (IOException e) {
+            throw new CryptoException(e);
+        }
     }
 
     private final MessageDigest digest;
     private byte[] bytes;
+
 }

@@ -21,8 +21,13 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: VerifyingChannel.java,v 1.1 2004/03/05 23:43:06 pelle Exp $
+$Id: VerifyingChannel.java,v 1.2 2004/03/08 17:13:54 pelle Exp $
 $Log: VerifyingChannel.java,v $
+Revision 1.2  2004/03/08 17:13:54  pelle
+Added CipherChannel and the beginnings of a Base32EncodingChannel.
+The AbstractCryptoChannel now is implemented with a pipe. You can get a readable channel with the source() method.
+To pipe a ReadableByteChannel or another instance of AbstractCryptoChannel into the channel you can now use the pipe() methods.
+
 Revision 1.1  2004/03/05 23:43:06  pelle
 New Channels package with nio based channels for various crypto related tasks such as digests, signing, verifying and encoding.
 DigestsChannel, SigningChannel and VerifyingChannel are complete, but not tested.
@@ -35,23 +40,23 @@ AbstractEncodingChannel will be used for a Base64/Base32 Channel as well as poss
  */
 
 public class VerifyingChannel extends AbstractSignatureChannel {
-    public VerifyingChannel(Signature sig, PublicKey key) throws InvalidKeyException {
+    public VerifyingChannel(Signature sig, PublicKey key) throws InvalidKeyException, IOException {
         super(sig);
         sig.initVerify(key);
     }
 
-    public VerifyingChannel(String alg, PublicKey key) throws NoSuchAlgorithmException, InvalidKeyException {
+    public VerifyingChannel(String alg, PublicKey key) throws NoSuchAlgorithmException, InvalidKeyException, IOException {
         super(alg);
         sig.initVerify(key);
     }
 
-    public VerifyingChannel(PublicKey key) throws NoSuchAlgorithmException, InvalidKeyException {
+    public VerifyingChannel(PublicKey key) throws NoSuchAlgorithmException, InvalidKeyException, IOException {
         sig.initVerify(key);
     }
 
     public boolean verify(byte signature[]) throws SignatureException, IOException {
-        boolean verified = sig.verify(signature);
         close();
-        return verified;
+        source().close();        
+        return sig.verify(signature);
     }
 }
