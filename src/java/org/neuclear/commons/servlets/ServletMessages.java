@@ -32,14 +32,17 @@ public class ServletMessages {
     private ServletMessages() {
     };
 
-    public static ResourceBundle getMessages(HttpServletRequest request) {
+    public static ResourceBundle getMessages(String name, HttpServletRequest request) {
         final Locale locale = request.getLocale();
         System.out.println("locale " + locale.getLanguage());
-        if (!bundles.containsKey(locale.getLanguage())) {
-            ResourceBundle messages = ResourceBundle.getBundle("ledgermessages", locale);
-            bundles.put(locale.getLanguage(), messages);
+        System.out.println("encoding " + System.getProperty("file.encoding"));
+        final String key = name + "_" + locale.getLanguage();
+        if (!bundles.containsKey(key)) {
+            System.setProperty("file.encoding", "UTF-8");
+            ResourceBundle messages = ResourceBundle.getBundle(name, locale);
+            bundles.put(key, messages);
         }
-        return (ResourceBundle) bundles.get(locale.getLanguage());
+        return (ResourceBundle) bundles.get(key);
     }
 
     private static final Map bundles = Collections.synchronizedMap(new HashMap());

@@ -1,5 +1,9 @@
-/* $Id: ServletTools.java,v 1.11 2004/06/06 21:26:47 pelle Exp $
+/* $Id: ServletTools.java,v 1.12 2004/06/19 20:44:31 pelle Exp $
  * $Log: ServletTools.java,v $
+ * Revision 1.12  2004/06/19 20:44:31  pelle
+ * Added support for more resource bundles in ServletMessages
+ * Cleaned up a few things in ServletTools.
+ *
  * Revision 1.11  2004/06/06 21:26:47  pelle
  * Localized LedgerBrowserServlet to Spanish
  *
@@ -82,7 +86,7 @@ import java.io.PrintWriter;
 
 /**
  * @author pelleb
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public final class ServletTools {
     private ServletTools() {
@@ -96,12 +100,13 @@ public final class ServletTools {
 
 
     public static void printHeader(final PrintWriter out, final HttpServletRequest request, final String title, final String sub) {
+
         out.print("<html><head><title>");
         out.print(title);
         out.println("</title>");
-        out.println("<LINK rel=\"stylesheet\" type=\"text/css\" href=\"");
-        out.println(getAbsoluteURL(request, "/styles.css"));
-        out.println("\">");
+//        out.println("<LINK rel=\"stylesheet\" type=\"text/css\" href=\"");
+//        out.println(getAbsoluteURL(request, "/styles.css"));
+//        out.println("\">");
         out.println("</head><body><div id=\"banner\">");
         out.println(title);
         out.println("</div>\n<div id=\"subtitle\">");
