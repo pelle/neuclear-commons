@@ -28,7 +28,7 @@ public class SigningChannelTest extends TestCase {
 
     public void testSign() throws NoSuchAlgorithmException, IOException, SignatureException, InvalidKeyException, CryptoException {
         for (int i=0;i<TESTSTRINGS.length;i++){
-            assertSignatureEquals(TESTSTRINGS[i]);
+            assertSignatureEquals(TESTSTRINGS[i].getBytes());
         }
 
     }
@@ -43,42 +43,50 @@ public class SigningChannelTest extends TestCase {
         }
     }
 
-    public String getChannelSignature(String data) throws NoSuchAlgorithmException, IOException, InvalidKeyException, SignatureException {
+    public byte [] getChannelSignature(byte[] data) throws NoSuchAlgorithmException, IOException, InvalidKeyException, SignatureException {
         SigningChannel ch=new SigningChannel(kp.getPrivate());
-        ByteBuffer buf=ByteBuffer.wrap(data.getBytes());
+        ByteBuffer buf=ByteBuffer.wrap(data);
         ch.write(buf);
-        return new String(ch.getSignature());
+        return ch.getSignature();
     }
-    public String getNormalSignature(String data) throws CryptoException {
-        return new String(CryptoTools.sign(kp,data.getBytes()));
+    public byte [] getNormalSignature(byte[] data) throws CryptoException {
+        return CryptoTools.sign(kp,data);
     }
-    public boolean verifyChannelSignature(String data,String sig) throws NoSuchAlgorithmException, IOException, InvalidKeyException, SignatureException {
+    public boolean verifyChannelSignature(byte[] data,byte[] sig) throws NoSuchAlgorithmException, IOException, InvalidKeyException, SignatureException {
         VerifyingChannel ch=new VerifyingChannel(kp.getPublic());
-        ByteBuffer buf=ByteBuffer.wrap(data.getBytes());
+        ByteBuffer buf=ByteBuffer.wrap(data);
         ch.write(buf);
-        return ch.verify(sig.getBytes());
+        return ch.verify(sig);
     }
-    public boolean verifyNormalSignature(String data,String sig) throws CryptoException {
-        return CryptoTools.verify(kp.getPublic(),data.getBytes(),sig.getBytes());
+    public boolean verifyNormalSignature(byte[] data,byte[] sig) throws CryptoException {
+        return CryptoTools.verify(kp.getPublic(),data,sig);
     }
-    public void assertSignatureEquals(String data) throws NoSuchAlgorithmException, IOException, SignatureException, InvalidKeyException, CryptoException {
-        String sig=getChannelSignature(data);
-        assertEquals("Signature Match",getNormalSignature(data),sig);
+    public void assertSignatureEquals(byte[] data) throws NoSuchAlgorithmException, IOException, SignatureException, InvalidKeyException, CryptoException {
+        byte[] sig=getChannelSignature(data);
+        assertEquals("Signature Match",new String(getNormalSignature(data)),new String(sig));
         assertTrue("Signature Channel Verify",verifyChannelSignature(data,sig));
         assertTrue("Signature Channel Normal",verifyNormalSignature(data,sig));
     }
     public void assertSignatureEquals(File file) throws NoSuchAlgorithmException, IOException, SignatureException, InvalidKeyException, CryptoException {
-        String sig=getChannelSignature(file);
-        assertEquals("Signature Match",getNormalSignature(file),sig);
+        byte[] sig=getChannelSignature(file);
+        assertEquals("Signature Match",new String(getNormalSignature(file)),new String(sig));
+        assertTrue("Signature Channel Verify",verifyChannelSignature(file,sig));
+        assertTrue("Signature Channel Normal",verifyNormalSignature(file,sig));
     }
 
-    public String getChannelSignature(File file) throws NoSuchAlgorithmException, IOException, InvalidKeyException, SignatureException {
+    public byte[] getChannelSignature(File file) throws NoSuchAlgorithmException, IOException, InvalidKeyException, SignatureException {
         SigningChannel ch=new SigningChannel(kp.getPrivate());
         FileChannel fch=new FileInputStream(file).getChannel();
         fch.transferTo(0,fch.size(),ch);
-        return new String(ch.getSignature());
+        return ch.getSignature();
     }
-    public String getNormalSignature(File file) throws NoSuchAlgorithmException, IOException, SignatureException, InvalidKeyException {
+    public boolean verifyChannelSignature(File file,byte[] sig) throws NoSuchAlgorithmException, IOException, InvalidKeyException, SignatureException {
+        VerifyingChannel ch=new VerifyingChannel(kp.getPublic());
+        FileChannel fch=new FileInputStream(file).getChannel();
+        fch.transferTo(0,fch.size(),ch);
+        return ch.verify(sig);
+    }
+    public byte[] getNormalSignature(File file) throws NoSuchAlgorithmException, IOException, SignatureException, InvalidKeyException {
         Signature sig=Signature.getInstance("SHA1withRSA");
         sig.initSign(kp.getPrivate());
 
@@ -89,7 +97,20 @@ public class SigningChannelTest extends TestCase {
                      sig.update(buffer,0,numread);
         }
         in.close();
-        return new String(sig.sign());
+        return sig.sign();
+    }
+    public boolean verifyNormalSignature(File file,byte sigb[]) throws NoSuchAlgorithmException, IOException, SignatureException, InvalidKeyException {
+        Signature sig=Signature.getInstance("SHA1withRSA");
+        sig.initVerify(kp.getPublic());
+
+        BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
+        int numread=0;
+        byte buffer[]=new byte[1024];
+        while ((numread=in.read(buffer, 0, buffer.length)) >= 0) {
+                     sig.update(buffer,0,numread);
+        }
+        in.close();
+        return sig.verify(sigb);
     }
 
     /**
@@ -102,7 +123,7 @@ public class SigningChannelTest extends TestCase {
         final Runtime runtime = Runtime.getRuntime();
         long start = System.currentTimeMillis();
         for (int i = 0; i < ITERATIONS; i++) {
-            getChannelSignature(TESTSTRINGS[i % TESTSTRINGS.length]);
+            getChannelSignature(TESTSTRINGS[i % TESTSTRINGS.length].getBytes());
         }
         long dur = System.currentTimeMillis() - start;
         System.out.println(ITERATIONS + " iterations took: " + dur + "ms");
@@ -110,7 +131,7 @@ public class SigningChannelTest extends TestCase {
         System.out.println("\nNormal Signing benchmarks:");
         start=System.currentTimeMillis();
         for (int i=0;i<ITERATIONS;i++){
-            getNormalSignature(TESTSTRINGS[i % TESTSTRINGS.length]);
+            getNormalSignature(TESTSTRINGS[i % TESTSTRINGS.length].getBytes());
         }
         dur=System.currentTimeMillis()-start;
         System.out.println(ITERATIONS+" iterations took: "+dur+"ms");
