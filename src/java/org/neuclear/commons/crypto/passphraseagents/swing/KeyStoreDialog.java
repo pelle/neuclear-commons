@@ -5,6 +5,7 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.plaf.Options;
+import org.neuclear.commons.crypto.passphraseagents.AgentMessages;
 import org.neuclear.commons.crypto.signers.BrowsableSigner;
 import org.neuclear.commons.crypto.signers.DefaultSigner;
 import org.neuclear.commons.crypto.signers.InvalidPassphraseException;
@@ -22,16 +23,18 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.net.URL;
 import java.security.KeyStoreException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /*
-$Id: KeyStoreDialog.java,v 1.7 2004/04/15 20:03:51 pelle Exp $
+$Id: KeyStoreDialog.java,v 1.8 2004/04/16 18:12:39 pelle Exp $
 $Log: KeyStoreDialog.java,v $
+Revision 1.8  2004/04/16 18:12:39  pelle
+Added AgentMessages to support localization.
+added us and spanish locales
+Implemented localization for KeyStoreDialog
+
 Revision 1.7  2004/04/15 20:03:51  pelle
 Added license screen to Personal Signer.
 Added Sign document menu to  Personal Signer.
@@ -76,6 +79,9 @@ The XMLSig classes have also been updated to support this.
  * Time: 9:55:37 AM
  */
 public class KeyStoreDialog {
+    /**
+     * @jira NEU-30 Allow Identity Objects to be described in XHTML
+     */
     public KeyStoreDialog() {
         try {
             UIManager.setLookAndFeel("com.jgoodies.plaf.plastic.PlasticXPLookAndFeel");
@@ -84,14 +90,16 @@ public class KeyStoreDialog {
             // Likely PlasticXP is not in the class path; ignore.
         }
         prefs = Preferences.userNodeForPackage(DefaultSigner.class);
+        AgentMessages.updateLocale("es", "ES");
+        caps = AgentMessages.getMessages();
         cache = new HashMap();
-        sign = new JButton("Sign");
+        sign = new JButton(caps.getString("sign"));
         sign.setEnabled(false);
-        cancel = new JButton("Cancel");
-        newId = new JButton("New ID ...");
+        cancel = new JButton(caps.getString("cancel"));
+        newId = new JButton(caps.getString("newid"));
         message = new MessageLabel();
-        save = new JButton("Save keys ...");
-        remember = new JCheckBox("remember passphrase in current session", prefs.getBoolean(REMEMBER_PASSPHRASE, false));
+        save = new JButton(caps.getString("savekeys"));
+        remember = new JCheckBox(caps.getString("remember"), prefs.getBoolean(REMEMBER_PASSPHRASE, false));
         list = new JList();
         list.setBorder(BorderFactory.createLoweredBevelBorder());
         passphrase = new JPasswordField();
@@ -105,7 +113,7 @@ public class KeyStoreDialog {
         } else
             icon = new JLabel("NeuClear");
 
-        frame.setTitle("NeuClear Signing Agent");
+        frame.setTitle("NeuClear " + caps.getString("signingagent"));
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frame.getContentPane().add(buildPanel());
         frame.pack();
@@ -223,9 +231,9 @@ public class KeyStoreDialog {
 
         builder.add(icon, cc.xyw(1, 5, 1, CellConstraints.LEFT, CellConstraints.TOP));
         icon.setLabelFor(list);
-        builder.addSeparator("Identities", cc.xyw(1, 3, 3));
+        builder.addSeparator(caps.getString("identities"), cc.xyw(1, 3, 3));
         builder.add(list, cc.xyw(3, 5, 1));
-        builder.addLabel("Passphrase:", cc.xy(1, 7)).setLabelFor(passphrase);
+        builder.addLabel(caps.getString("passphrase"), cc.xy(1, 7)).setLabelFor(passphrase);
         builder.add(passphrase, cc.xy(3, 7));
         builder.add(remember, cc.xy(3, 9));
         builder.add(message, cc.xyw(1, 11, 3));
@@ -363,5 +371,6 @@ public class KeyStoreDialog {
 
     private static final String DEFAULT_ALIAS = "DEFAULT_ALIAS";
     private static final String REMEMBER_PASSPHRASE = "REMEMBER_PASSPHRASE";
+    private ResourceBundle caps;
 
 }
