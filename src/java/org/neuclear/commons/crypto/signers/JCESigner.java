@@ -1,6 +1,10 @@
 /*
- * $Id: JCESigner.java,v 1.4 2003/11/18 00:01:02 pelle Exp $
+ * $Id: JCESigner.java,v 1.5 2003/11/18 15:07:18 pelle Exp $
  * $Log: JCESigner.java,v $
+ * Revision 1.5  2003/11/18 15:07:18  pelle
+ * Changes to JCE Implementation
+ * Working on getting all tests working including store tests
+ *
  * Revision 1.4  2003/11/18 00:01:02  pelle
  * The sample signing web application for logging in and out is now working.
  * There had been an issue in the canonicalizer when dealing with the embedded object of the SignatureRequest object.
@@ -91,6 +95,7 @@ import org.neuclear.commons.crypto.passphraseagents.PassPhraseAgent;
 
 import java.io.*;
 import java.security.*;
+import java.security.cert.CertificateException;
 import java.security.interfaces.DSAPublicKey;
 import java.security.interfaces.RSAPublicKey;
 
@@ -103,24 +108,38 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
         this(filename, new FileInputStream(new File(filename)), type, provider, agent);
     }
 
-    protected JCESigner(String name, InputStream in, String type, String provider, PassPhraseAgent agent) throws NeuClearException, GeneralSecurityException {
-
-        this.agent = agent;
-        try {
-            if (provider == null)
-                ks = KeyStore.getInstance(type);
-            else
-                ks = KeyStore.getInstance(type, provider);
-            ks.load(in, agent.getPassPhrase("KeyStore Passphrase for" + name));
-
-            cache = new KeyCache(ks);
-            System.out.println("Successfully loaded JCESigner: " + name + " type: " + ks.getType() + " size: " + ks.size());
-        } catch (IOException e) {
-            throw new NeuClearException(e);
-        }
-
+    protected JCESigner(String name, InputStream in, String type, String provider, PassPhraseAgent agent) throws NeuClearException {
+           this(loadKeyStore(provider, type, in, agent, name),agent);
     }
 
+    private static KeyStore loadKeyStore(String provider, String type, InputStream in, PassPhraseAgent agent, String name) throws NeuClearException {
+        try {
+            KeyStore ki=null;
+            if (provider == null)
+                ki = KeyStore.getInstance(type);
+            else
+                ki = KeyStore.getInstance(type, provider);
+            ki.load(in, agent.getPassPhrase("KeyStore Passphrase for" + name));
+            System.out.println("Successfully loaded JCESigner: " + name + " type: " + ki.getType() + " size: " + ki.size());
+            return ki;
+        } catch (KeyStoreException e) {
+            throw new NeuClearException(e);
+        } catch (NoSuchProviderException e) {
+            throw new NeuClearException(e);
+        } catch (IOException e) {
+            throw new NeuClearException(e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new NeuClearException(e);
+        } catch (CertificateException e) {
+            throw new NeuClearException(e);
+        }
+    }
+
+    public JCESigner(KeyStore ks,PassPhraseAgent agent) {
+        this.agent = agent;
+        this.ks = ks;
+        cache = new KeyCache(ks);
+    }
     private PrivateKey getKey(String name, char passphrase[]) throws InvalidPassphraseException, NonExistingSignerException, IOException {
         try {
             PrivateKey key = (PrivateKey) cache.getKey(name, passphrase);

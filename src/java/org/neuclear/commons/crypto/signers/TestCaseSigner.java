@@ -25,8 +25,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: TestCaseSigner.java,v 1.3 2003/11/18 00:01:02 pelle Exp $
+$Id: TestCaseSigner.java,v 1.4 2003/11/18 15:07:18 pelle Exp $
 $Log: TestCaseSigner.java,v $
+Revision 1.4  2003/11/18 15:07:18  pelle
+Changes to JCE Implementation
+Working on getting all tests working including store tests
+
 Revision 1.3  2003/11/18 00:01:02  pelle
 The sample signing web application for logging in and out is now working.
 There had been an issue in the canonicalizer when dealing with the embedded object of the SignatureRequest object.
