@@ -20,8 +20,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: KeyResolverFactory.java,v 1.1 2004/01/07 23:11:27 pelle Exp $
+$Id: KeyResolverFactory.java,v 1.2 2004/01/14 16:34:07 pelle Exp $
 $Log: KeyResolverFactory.java,v $
+Revision 1.2  2004/01/14 16:34:07  pelle
+New model of references and signatures now pretty much works.
+I am still not 100% sure on the created enveloping signatures. I need to do more testing.
+
 Revision 1.1  2004/01/07 23:11:27  pelle
 XMLSig now has various added features:
 -  KeyInfo supports X509v3 (untested)
@@ -56,6 +60,6 @@ public class KeyResolverFactory {
         return instance;
     }
 
-    public final static String DEFAULT="org.neuclear.commons.crypto.keyresolvers.Sha1Resolver";
+    public final static String DEFAULT="org.neuclear.commons.crypto.keyresolvers.NullResolver";
     private static KeyResolver instance;
 }
