@@ -27,7 +27,7 @@ public class ServletSignerFactoryTest extends ServletTestCase {
 
     public void testConfigDemo() throws ServletException, IOException, GeneralSecurityException, NeuClearException {
         config.setInitParameter("keystore","test");
-        config.setInitParameter("passphraseagent","servlet");
+        config.setInitParameter("passphraseagent","signers");
         Signer signer=ServletSignerFactory.getInstance().createSigner(config);
         assertTrue(signer instanceof TestCaseSigner);
         assertEquals(signer, ServletSignerFactory.getInstance().createSigner(config));

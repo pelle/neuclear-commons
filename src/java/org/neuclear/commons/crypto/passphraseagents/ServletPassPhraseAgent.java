@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * PassPhraseAgent for use in server environments.
- * You set the passphrase first by passing it a servlet request. It fetches the passphrase from the paramater "passphrase"<p>
+ * You set the passphrase first by passing it a signers request. It fetches the passphrase from the paramater "passphrase"<p>
  * <b>WARNING</b> The sequence of events is very important for the safe usage of this. The following is an example within a
  * standard <tt>doPost()</tt> method.
  * <ol>

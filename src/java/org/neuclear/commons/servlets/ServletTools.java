@@ -1,5 +1,8 @@
-/* $Id: ServletTools.java,v 1.7 2004/02/19 15:29:10 pelle Exp $
+/* $Id: ServletTools.java,v 1.8 2004/03/02 18:58:44 pelle Exp $
  * $Log: ServletTools.java,v $
+ * Revision 1.8  2004/03/02 18:58:44  pelle
+ * Further cleanups in neuclear-id. Moved everything under id.
+ *
  * Revision 1.7  2004/02/19 15:29:10  pelle
  * Various cleanups and corrections
  *
@@ -21,7 +24,7 @@
  * for getServiceid(), getTitle(), getSigner()
  *
  * Revision 1.3  2003/12/12 19:27:38  pelle
- * All the Cactus tests now for signing servlet.
+ * All the Cactus tests now for signing signers.
  * Added working AuthenticationFilterTest
  * Returned original functionality to DemoSigningServlet.
  * This is set up to use the test keys stored in neuclear-commons.
@@ -70,7 +73,7 @@ import java.io.PrintWriter;
 
 /**
  * @author pelleb
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public final class ServletTools {
     private ServletTools() {

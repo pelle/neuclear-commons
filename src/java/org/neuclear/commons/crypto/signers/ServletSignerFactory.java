@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Used to create Signers from servlet configuration parameters. It keeps a cache of Signers with similar parameters. Thus
+ * Used to create Signers from signers configuration parameters. It keeps a cache of Signers with similar parameters. Thus
  * if you have several Servlets with the same keystore parameters they will use the same instance of Signer<p>
  * The Configuration parameters are as follows:
  * <table border="2"><tr><th>parameter name</th><th>parameter value</th></tr>
@@ -22,9 +22,9 @@ import java.util.Map;
  * If you specify <tt>test</tt> the built in Test keystore will be used.</td></tr>
  * <tr><td>serviceid</td><td>The main service ID of the service. Ie. neu://superbux.com/ecurrency. This is only required (and used)
  * if you set <tt>keeppassphrase</tt> (see below)</td></tr>
- * <tr><td>passphraseagent</td><td>The type of passphraseagent to use. Valid options are <tt>servlet</tt>,
+ * <tr><td>passphraseagent</td><td>The type of passphraseagent to use. Valid options are <tt>signers</tt>,
  * <tt>gui</tt>(default) and <tt>console</tt></td></tr>
- * <tr><td>keeppassphrase</td><td>This asks for the service passphrase once at startup and remembers it through the lifetime of the servlet</td></tr>
+ * <tr><td>keeppassphrase</td><td>This asks for the service passphrase once at startup and remembers it through the lifetime of the signers</td></tr>
  * </table>
  * <p>
  * To use the factory. Do as follows within your servlets init() method:
@@ -76,7 +76,7 @@ public final class ServletSignerFactory {
         if (!Utility.isEmpty(agenttype)){
             if (agenttype.toLowerCase().equals("console"))
                 return new ConsoleAgent();
-            if (agenttype.toLowerCase().equals("servlet"))
+            if (agenttype.toLowerCase().equals("signers"))
                 return new ServletPassPhraseAgent();
             if (agenttype.toLowerCase().equals("test"))
                 return new AlwaysTheSamePassphraseAgent("neuclear");
