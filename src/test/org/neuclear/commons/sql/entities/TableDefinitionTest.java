@@ -4,6 +4,8 @@ import junit.framework.TestCase;
 import org.neuclear.commons.sql.ConnectionSource;
 import org.neuclear.commons.sql.DefaultConnectionSource;
 import org.neuclear.commons.sql.TestCaseConnectionSource;
+import org.neuclear.commons.sql.statements.StatementFactory;
+import org.neuclear.commons.sql.statements.SimpleStatementFactory;
 import org.neuclear.commons.sql.entities.drivers.DDLDriver;
 import org.neuclear.commons.NeuClearException;
 import org.neuclear.commons.time.TimeTools;
@@ -32,8 +34,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: TableDefinitionTest.java,v 1.4 2003/12/31 00:39:29 pelle Exp $
+$Id: TableDefinitionTest.java,v 1.5 2004/01/02 23:19:03 pelle Exp $
 $Log: TableDefinitionTest.java,v $
+Revision 1.5  2004/01/02 23:19:03  pelle
+Added StatementFactory pattern and refactored the ledger to use it.
+
 Revision 1.4  2003/12/31 00:39:29  pelle
 Added Drivers for handling different Database dialects in the entity model.
 Added Statement pattern to ledger, simplifying the statement writing process.
@@ -115,11 +120,11 @@ public class TableDefinitionTest extends TestCase{
     }
 
     public void testCreateTableStructure() throws SQLException, IOException, NamingException, NeuClearException {
-        final Connection con = new TestCaseConnectionSource().getConnection();
+        final StatementFactory fact = new SimpleStatementFactory(new TestCaseConnectionSource());
         try {
-            PreparedStatement stmt=con.prepareStatement("drop testtransaction");
+            PreparedStatement stmt=fact.prepareStatement("drop testtransaction");
             stmt.execute();
-            stmt=con.prepareStatement("drop testaccounts");
+            stmt=fact.prepareStatement("drop testaccounts");
             stmt.execute();
         } catch (Exception e) {
             ;
@@ -132,7 +137,7 @@ public class TableDefinitionTest extends TestCase{
         table.addReference("recipient",accounts);
         table.addMoney();
         table.addComment();
-        table.create(con,driver);
+        table.create(fact,driver);
 /*        Entity entity=table.insertEntity(con,new Object[] {
             "created",TimeTools.now(),
             "sender",new Object[]{
@@ -146,8 +151,6 @@ public class TableDefinitionTest extends TestCase{
         });
         assertNotNull(entity);
 */
-        con.commit();
-        con.close();
     }
 
     private DDLDriver driver;

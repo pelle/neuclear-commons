@@ -1,6 +1,7 @@
 package org.neuclear.commons.sql;
 
 import org.neuclear.commons.NeuClearException;
+import org.neuclear.commons.LowLevelException;
 
 import javax.naming.NamingException;
 import java.io.IOException;
@@ -15,8 +16,12 @@ import java.util.Properties;
  */
 public final class DefaultConnectionSource implements ConnectionSource {
 
-    public Connection getConnection() throws SQLException, IOException {
-        return SQLTools.getConnection();
+    public Connection getConnection() throws SQLException {
+        try {
+            return SQLTools.getConnection();
+        } catch (IOException e) {
+            throw new LowLevelException(e);
+        }
     }
 
 }

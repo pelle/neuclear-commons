@@ -53,7 +53,7 @@ public class XAConnectionSource implements ConnectionSource {
     }
 
 
-    public Connection getConnection() throws SQLException, IOException {
+    public Connection getConnection() throws SQLException {
         return xads.getXAConnection().getConnection();
     }
 

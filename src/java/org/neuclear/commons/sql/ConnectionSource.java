@@ -11,5 +11,5 @@ import java.io.IOException;
  * Time: 3:53:18 PM
  */
 public interface ConnectionSource {
-    Connection getConnection() throws SQLException, IOException;
+    Connection getConnection() throws SQLException;
 }

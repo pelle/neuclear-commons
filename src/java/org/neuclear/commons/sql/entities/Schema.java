@@ -1,6 +1,7 @@
 package org.neuclear.commons.sql.entities;
 
 import org.neuclear.commons.sql.entities.drivers.DDLDriver;
+import org.neuclear.commons.sql.statements.StatementFactory;
 
 import java.util.Set;
 import java.util.LinkedHashSet;
@@ -25,8 +26,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: Schema.java,v 1.2 2003/12/31 00:39:29 pelle Exp $
+$Id: Schema.java,v 1.3 2004/01/02 23:19:02 pelle Exp $
 $Log: Schema.java,v $
+Revision 1.3  2004/01/02 23:19:02  pelle
+Added StatementFactory pattern and refactored the ledger to use it.
+
 Revision 1.2  2003/12/31 00:39:29  pelle
 Added Drivers for handling different Database dialects in the entity model.
 Added Statement pattern to ledger, simplifying the statement writing process.
@@ -61,11 +65,11 @@ public class Schema {
         entities.add(model);
         return model;
     }
-    public final void create(Connection con){
+    public final void create(StatementFactory fact){
         Iterator iter=entities.iterator();
         while (iter.hasNext()) {
             EntityModel model = (EntityModel) iter.next();
-            model.create(con,driver);
+            model.create(fact,driver);
         }
     }
     private final DDLDriver driver;

@@ -33,7 +33,7 @@ public class SimpleConnectionSource implements ConnectionSource {
     }
 
 
-    public Connection getConnection() throws SQLException, IOException {
+    public Connection getConnection() throws SQLException {
         return DriverManager.getConnection(
                 url,
                 username,

@@ -24,8 +24,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: SQLContext.java,v 1.2 2003/12/14 20:52:54 pelle Exp $
+$Id: SQLContext.java,v 1.3 2004/01/02 23:19:03 pelle Exp $
 $Log: SQLContext.java,v $
+Revision 1.3  2004/01/02 23:19:03  pelle
+Added StatementFactory pattern and refactored the ledger to use it.
+
 Revision 1.2  2003/12/14 20:52:54  pelle
 Added ServletPassPhraseAgent which uses ThreadLocal to transfer the passphrase to the signer.
 Added ServletSignerFactory, which builds Signers for use within servlets based on parameters in the Servlets
@@ -54,9 +57,8 @@ public class SQLContext extends ThreadLocal implements ConnectionSource{
      * Gets the threads Connection or creates a new one if one doesnt exist.
      * @return
      * @throws SQLException
-     * @throws IOException
      */
-    public Connection getConnection() throws SQLException, IOException {
+    public Connection getConnection() throws SQLException {
         return (Connection)get();
     }
     /**
@@ -73,8 +75,6 @@ public class SQLContext extends ThreadLocal implements ConnectionSource{
         try {
             return source.getConnection();    //To change body of overriden methods use Options | File Templates.
         } catch (SQLException e) {
-            throw new org.neuclear.commons.LowLevelException(e);
-        } catch (IOException e) {
             throw new org.neuclear.commons.LowLevelException(e);
         }
     }

@@ -25,8 +25,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: JNDIConnectionSource.java,v 1.4 2003/12/01 15:44:53 pelle Exp $
+$Id: JNDIConnectionSource.java,v 1.5 2004/01/02 23:19:03 pelle Exp $
 $Log: JNDIConnectionSource.java,v $
+Revision 1.5  2004/01/02 23:19:03  pelle
+Added StatementFactory pattern and refactored the ledger to use it.
+
 Revision 1.4  2003/12/01 15:44:53  pelle
 Added XAConnectionSources and Transaction capability through jotm.
 
@@ -56,7 +59,7 @@ public final class JNDIConnectionSource implements ConnectionSource {
 
     }
 
-    public final Connection getConnection() throws SQLException, IOException {
+    public final Connection getConnection() throws SQLException {
         return ds.getConnection();
     }
 
