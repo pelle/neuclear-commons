@@ -56,7 +56,7 @@ public final class ServletSignerFactory {
         return signer;
     }
 
-    private static final PassPhraseAgent createWrapperAgent(final String keeppassphrase, final PassPhraseAgent coreagent, final String serviceid) throws UserCancelsException {
+    private static final PassPhraseAgent createWrapperAgent(final String keeppassphrase, final PassPhraseAgent coreagent, final String serviceid) throws UserCancellationException {
         if (!Utility.isEmpty(keeppassphrase)&&keeppassphrase.equals("1")&&coreagent instanceof InteractiveAgent)
             return new AskAtStartupAgent((InteractiveAgent)coreagent,serviceid);
         return coreagent;
@@ -76,7 +76,7 @@ public final class ServletSignerFactory {
     private static final PassPhraseAgent getAgent(final String agenttype) {
         if (!Utility.isEmpty(agenttype)){
             if (agenttype.toLowerCase().equals("console"))
-                return new CommandLineAgent();
+                return new ConsoleAgent();
             if (agenttype.toLowerCase().equals("servlet"))
                 return new ServletPassPhraseAgent();
             if (agenttype.toLowerCase().equals("test"))

@@ -2,7 +2,9 @@ package org.neuclear.commons.crypto.signers;
 
 import org.neuclear.commons.NeuClearException;
 import org.neuclear.commons.crypto.CryptoTools;
+import org.neuclear.commons.crypto.CryptoException;
 import org.neuclear.commons.crypto.passphraseagents.PassPhraseAgent;
+import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
 
 import java.io.FileNotFoundException;
 import java.security.GeneralSecurityException;
@@ -25,8 +27,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: DefaultSigner.java,v 1.3 2003/11/21 04:43:41 pelle Exp $
+$Id: DefaultSigner.java,v 1.4 2003/12/19 00:31:15 pelle Exp $
 $Log: DefaultSigner.java,v $
+Revision 1.4  2003/12/19 00:31:15  pelle
+Lots of usability changes through out all the passphrase agents and end user tools.
+
 Revision 1.3  2003/11/21 04:43:41  pelle
 EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
 Otherwise You will Finaliate.
@@ -62,7 +67,7 @@ as SmartCards for end user applications.
  * Time: 3:22:17 PM
  */
 public final class DefaultSigner extends JCESigner {
-    public DefaultSigner(final PassPhraseAgent agent) throws NeuClearException, GeneralSecurityException, FileNotFoundException {
+    public DefaultSigner(final PassPhraseAgent agent) throws  UserCancellationException,InvalidPassphraseException {
         super(CryptoTools.DEFAULT_KEYSTORE, "jks", "SUN", agent);
 
     }

@@ -26,14 +26,17 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: GuiDialogAgent.java,v 1.4 2003/12/16 23:16:40 pelle Exp $
+$Id: GuiDialogAgent.java,v 1.5 2003/12/19 00:31:15 pelle Exp $
 $Log: GuiDialogAgent.java,v $
+Revision 1.5  2003/12/19 00:31:15  pelle
+Lots of usability changes through out all the passphrase agents and end user tools.
+
 Revision 1.4  2003/12/16 23:16:40  pelle
 Work done on the SigningServlet. The two phase web model is now only an option.
 Allowing much quicker signing, using the GuiDialogueAgent.
 The screen has also been cleaned up and displays the xml to be signed.
 The GuiDialogueAgent now optionally remembers passphrases and has a checkbox to support this.
-The PassPhraseAgent's now have a UserCancelsException, which allows the agent to tell the application if the user specifically
+The PassPhraseAgent's now have a UserCancellationException, which allows the agent to tell the application if the user specifically
 cancels the signing process.
 
 Revision 1.3  2003/12/14 20:52:54  pelle
@@ -116,8 +119,11 @@ public final class GuiDialogAgent implements InteractiveAgent {
         text.add(new Label("Name: "));
         nameLabel = new Label();
         nameLabel.setForeground(Color.blue);
-
         text.add(nameLabel);
+        incorrectLabel = new Label();
+        incorrectLabel.setForeground(Color.red);
+        incorrectLabel.setVisible(false);
+        text.add(incorrectLabel);
         passphrase = new TextField();
         passphrase.setEchoChar('*');
         panel.add(passphrase, BorderLayout.CENTER);
@@ -162,13 +168,25 @@ public final class GuiDialogAgent implements InteractiveAgent {
 
     }
 
-    public synchronized char[] getPassPhrase(final String name) throws UserCancelsException {
+    public char[] getPassPhrase(final String name) throws UserCancellationException {
+        return getPassPhrase(name,false);
+    }
+    /**
+     * Asks for the passphrase.
+     * @param name
+     * @param incorrect true indicates the user entered an incorrect passphrase and should reenter it.
+     * @return
+     * @throws UserCancellationException
+     */
+    public synchronized char[] getPassPhrase(final String name,boolean incorrect) throws UserCancellationException {
         synchronized (passphrase) {//We dont want multiple agents popping up at the same time
             if (cache.containsKey(name))
                 passphrase.setText((String) cache.get(name));
             else
                 passphrase.setText("");
             isCancel=true;
+            incorrectLabel.setVisible(true);
+
             nameLabel.setText(name);
             frame.pack();
             frame.setVisible(true);
@@ -179,7 +197,7 @@ public final class GuiDialogAgent implements InteractiveAgent {
             }
             frame.setVisible(false);
             if(isCancel)
-                throw new UserCancelsException(name);
+                throw new UserCancellationException(name);
             final String phrase = passphrase.getText();
             if(remember.getState())
                 cache.put(name,phrase);
@@ -189,11 +207,11 @@ public final class GuiDialogAgent implements InteractiveAgent {
     }
 
     public static void main(final String[] args) {
-        final PassPhraseAgent dia = new GuiDialogAgent();
+        final InteractiveAgent dia = new GuiDialogAgent();
         try {
             System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("neu://pelle@test")));
-            System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("neu://pelle@test")));
-        } catch (UserCancelsException e) {
+            System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("neu://pelle@test",true)));
+        } catch (UserCancellationException e) {
             System.out.print("User Cancellation by: "+e.getName());
         }
 
@@ -204,6 +222,7 @@ public final class GuiDialogAgent implements InteractiveAgent {
     private final Button ok;
     private final Checkbox remember;
     private final Label nameLabel;
+    private final Label incorrectLabel;
     private final Frame frame;
     private final Map cache;
     private Image img;

@@ -17,8 +17,11 @@ import java.awt.event.ActionEvent;
  * User: pelleb
  * Date: Nov 19, 2003
  * Time: 8:57:03 AM
- * $Id: KeyGeneratorApplet.java,v 1.2 2003/11/21 04:43:40 pelle Exp $
+ * $Id: KeyGeneratorApplet.java,v 1.3 2003/12/19 00:31:15 pelle Exp $
  * $Log: KeyGeneratorApplet.java,v $
+ * Revision 1.3  2003/12/19 00:31:15  pelle
+ * Lots of usability changes through out all the passphrase agents and end user tools.
+ *
  * Revision 1.2  2003/11/21 04:43:40  pelle
  * EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
  * Otherwise You will Finaliate.
@@ -26,7 +29,7 @@ import java.awt.event.ActionEvent;
  * This should hopefully make everything more stable (and secure).
  *
  * Revision 1.1  2003/11/19 14:37:37  pelle
- * CommandLineAgent now masks the passphrase input using the JLine library which is now a dependency.
+ * ConsoleAgent now masks the passphrase input using the JLine library which is now a dependency.
  * And the beginnings of a KeyGeneratorApplet
  *
  */

@@ -1,6 +1,9 @@
 /*
- * $Id: Utility.java,v 1.3 2003/12/18 17:40:07 pelle Exp $
+ * $Id: Utility.java,v 1.4 2003/12/19 00:31:16 pelle Exp $
  * $Log: Utility.java,v $
+ * Revision 1.4  2003/12/19 00:31:16  pelle
+ * Lots of usability changes through out all the passphrase agents and end user tools.
+ *
  * Revision 1.3  2003/12/18 17:40:07  pelle
  * You can now create keys that get stored with a X509 certificate in the keystore. These can be saved as well.
  * IdentityCreator has been modified to allow creation of keys.
@@ -135,6 +138,8 @@ import java.io.PrintStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 public final class Utility {
     public static boolean isEmpty(final Object obj) {
@@ -220,6 +225,25 @@ public final class Utility {
     public static String readLine() throws IOException {
         BufferedReader reader=new BufferedReader(new InputStreamReader(System.in));
         return reader.readLine();
+    }
+
+    public static String getExecutable(Class reference){
+        Pattern p=Pattern.compile("\\.");
+        Matcher m=p.matcher(reference.getName());
+        String classfile=m.replaceAll("/")+".class";
+        String url=reference.getClassLoader().getResource(classfile).toExternalForm();
+        if (url.startsWith("jar:"))    {
+            Pattern r2=Pattern.compile(":([^:]*\\.jar)!");
+            Matcher m2=r2.matcher(url);
+            if(m2.matches()){
+                String path=m2.group(1);
+                String cd=System.getProperty("user.dir");
+                if (path.startsWith(cd))
+                    return "$ java -jar "+path.substring(cd.length());
+                return "$ java -jar "+path;
+            }
+        }
+        return "$ java "+reference.getName();
     }
 
 /*

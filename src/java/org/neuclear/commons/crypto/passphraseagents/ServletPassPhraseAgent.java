@@ -40,4 +40,8 @@ public class ServletPassPhraseAgent extends ThreadLocal implements InteractiveAg
     public void clear(){
         set(null);
     }
+
+    public char[] getPassPhrase(String name, boolean incorrect) throws UserCancellationException {
+        return getPassPhrase(name);
+    }
 }

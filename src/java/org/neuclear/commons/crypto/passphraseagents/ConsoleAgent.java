@@ -1,8 +1,12 @@
 package org.neuclear.commons.crypto.passphraseagents;
 
+import org.neuclear.commons.Utility;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Map;
+import java.util.HashMap;
 
 /*
 NeuClear Distributed Transaction Clearing Platform
@@ -22,14 +26,17 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: CommandLineAgent.java,v 1.4 2003/12/16 23:16:40 pelle Exp $
-$Log: CommandLineAgent.java,v $
+$Id: ConsoleAgent.java,v 1.1 2003/12/19 00:31:15 pelle Exp $
+$Log: ConsoleAgent.java,v $
+Revision 1.1  2003/12/19 00:31:15  pelle
+Lots of usability changes through out all the passphrase agents and end user tools.
+
 Revision 1.4  2003/12/16 23:16:40  pelle
 Work done on the SigningServlet. The two phase web model is now only an option.
 Allowing much quicker signing, using the GuiDialogueAgent.
 The screen has also been cleaned up and displays the xml to be signed.
 The GuiDialogueAgent now optionally remembers passphrases and has a checkbox to support this.
-The PassPhraseAgent's now have a UserCancelsException, which allows the agent to tell the application if the user specifically
+The PassPhraseAgent's now have a UserCancellationException, which allows the agent to tell the application if the user specifically
 cancels the signing process.
 
 Revision 1.3  2003/11/21 04:43:41  pelle
@@ -39,7 +46,7 @@ Anything that can be final has been made final throughout everyting. We've used 
 This should hopefully make everything more stable (and secure).
 
 Revision 1.2  2003/11/19 14:37:37  pelle
-CommandLineAgent now masks the passphrase input using the JLine library which is now a dependency.
+ConsoleAgent now masks the passphrase input using the JLine library which is now a dependency.
 And the beginnings of a KeyGeneratorApplet
 
 Revision 1.1  2003/11/11 21:17:46  pelle
@@ -65,27 +72,55 @@ as SmartCards for end user applications.
  * Date: Oct 29, 2003
  * Time: 11:53:29 AM
  */
-public final class CommandLineAgent implements InteractiveAgent {
-    public final char[] getPassPhrase(final String name) {
+public final class ConsoleAgent implements InteractiveAgent {
+    public ConsoleAgent() {
+        this.cache = new HashMap();
+    }
+
+    public char[] getPassPhrase(String name) throws UserCancellationException {
+         return getPassPhrase(name,false);  //To change body of implemented methods use Options | File Templates.
+     }
+
+    public final synchronized char[] getPassPhrase(final String name, boolean incorrect) throws UserCancellationException {
+        if (!incorrect&&cache.containsKey(name))
+            return ((String)cache.get(name)).toCharArray();
         final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("Please enter passphrase for: " + name);
+        if (incorrect)
+            System.out.println("entered passphrase was incorrect please try again");
+        System.out.println("Please enter passphrase for: " + name+" ('q' to quit)");
         System.out.print(": ");
         try {
-            //TODO Figure out how to mask input
-            return new jline.ConsoleReader().readLine(new Character((char)0)).toCharArray();
+            final String line = new jline.ConsoleReader().readLine(new Character((char)'*'));
+            if (line.equals("q"))
+                throw new UserCancellationException(name);
+            if (firstrun) {
+                System.out.println("Do you wish to remember your entered passphrases for this sesson?");
+                if(Utility.getAffirmative(false)) {
+                    remember=true;
+                }
+                firstrun=false;
+            }
+            if (remember)
+                cache.put(name,line);
+            return line.toCharArray();
         } catch (IOException e) {
             System.err.println("Couldnt read line. Returning empty passphrase");
             return "".toCharArray();
         }
     }
+    private final Map cache;
+    private boolean remember=false;
+    private boolean firstrun=true;
 
     public static void main(final String[] args) {
-        final PassPhraseAgent dia = new CommandLineAgent();
+        final InteractiveAgent dia = new ConsoleAgent();
         try {
             System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("neu://pelle@test")));
             System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("neu://pelle@test")));
-        } catch (UserCancelsException e) {
-            e.printStackTrace();
+            System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("neu://pelle@test")));
+            System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("neu://pelle@test",true)));
+        } catch (UserCancellationException e) {
+           System.out.println("user cancelled");
         }
 
         System.exit(0);

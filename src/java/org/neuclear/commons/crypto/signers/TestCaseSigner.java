@@ -1,6 +1,7 @@
 package org.neuclear.commons.crypto.signers;
 
 import org.neuclear.commons.NeuClearException;
+import org.neuclear.commons.LowLevelException;
 import org.neuclear.commons.crypto.passphraseagents.AlwaysTheSamePassphraseAgent;
 import org.neuclear.commons.crypto.passphraseagents.PassPhraseAgent;
 
@@ -26,8 +27,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: TestCaseSigner.java,v 1.8 2003/12/14 20:52:54 pelle Exp $
+$Id: TestCaseSigner.java,v 1.9 2003/12/19 00:31:16 pelle Exp $
 $Log: TestCaseSigner.java,v $
+Revision 1.9  2003/12/19 00:31:16  pelle
+Lots of usability changes through out all the passphrase agents and end user tools.
+
 Revision 1.8  2003/12/14 20:52:54  pelle
 Added ServletPassPhraseAgent which uses ThreadLocal to transfer the passphrase to the signer.
 Added ServletSignerFactory, which builds Signers for use within servlets based on parameters in the Servlets
@@ -82,15 +86,12 @@ public final class TestCaseSigner extends JCESigner {
      * Creates a TestCaseSigner with the keystore in:<br>
      * <tt>src/testdata/keys/testkeys.jks</tt><br>
      * The password for all keys should be "neuclear"
-     * 
-     * @throws NeuClearException        
-     * @throws GeneralSecurityException 
      */
-    public TestCaseSigner() throws NeuClearException, GeneralSecurityException {
-        this(KEYSTORE, getKeyStore(), "neuclear");
+    public TestCaseSigner() throws InvalidPassphraseException {
+            this(KEYSTORE, getKeyStore(), "neuclear");
     }
 
-    public TestCaseSigner(final PassPhraseAgent agent) throws GeneralSecurityException, NeuClearException {
+    public TestCaseSigner(final PassPhraseAgent agent) throws InvalidPassphraseException {
         this(KEYSTORE, getKeyStore(), agent);
     }
 
@@ -101,14 +102,13 @@ public final class TestCaseSigner extends JCESigner {
      * 
      * @param in         InputStream
      * @param passphrase The passphrase to use
-     * @throws NeuClearException        
-     * @throws GeneralSecurityException 
+     * @throws InvalidPassphraseException
      */
-    public TestCaseSigner(final String name, final InputStream in, final String passphrase) throws NeuClearException, GeneralSecurityException {
+    public TestCaseSigner(final String name, final InputStream in, final String passphrase) throws InvalidPassphraseException  {
         this(name, in, new AlwaysTheSamePassphraseAgent(passphrase));
     }
 
-    public TestCaseSigner(final String name, final InputStream in, final PassPhraseAgent agent) throws NeuClearException, GeneralSecurityException {
+    public TestCaseSigner(final String name, final InputStream in, final PassPhraseAgent agent) throws InvalidPassphraseException {
         super(name,
                 in,
                 "jks", "SUN",

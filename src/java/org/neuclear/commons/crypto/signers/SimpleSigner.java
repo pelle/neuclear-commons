@@ -1,6 +1,9 @@
 /*
- * $Id: SimpleSigner.java,v 1.7 2003/12/18 17:40:07 pelle Exp $
+ * $Id: SimpleSigner.java,v 1.8 2003/12/19 00:31:15 pelle Exp $
  * $Log: SimpleSigner.java,v $
+ * Revision 1.8  2003/12/19 00:31:15  pelle
+ * Lots of usability changes through out all the passphrase agents and end user tools.
+ *
  * Revision 1.7  2003/12/18 17:40:07  pelle
  * You can now create keys that get stored with a X509 certificate in the keystore. These can be saved as well.
  * IdentityCreator has been modified to allow creation of keys.
@@ -11,7 +14,7 @@
  * Allowing much quicker signing, using the GuiDialogueAgent.
  * The screen has also been cleaned up and displays the xml to be signed.
  * The GuiDialogueAgent now optionally remembers passphrases and has a checkbox to support this.
- * The PassPhraseAgent's now have a UserCancelsException, which allows the agent to tell the application if the user specifically
+ * The PassPhraseAgent's now have a UserCancellationException, which allows the agent to tell the application if the user specifically
  * cancels the signing process.
  *
  * Revision 1.5  2003/12/10 23:55:45  pelle

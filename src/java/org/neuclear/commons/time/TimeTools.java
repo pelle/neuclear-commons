@@ -1,6 +1,9 @@
 /*
- * $Id: TimeTools.java,v 1.3 2003/11/21 04:43:42 pelle Exp $
+ * $Id: TimeTools.java,v 1.4 2003/12/19 00:31:16 pelle Exp $
  * $Log: TimeTools.java,v $
+ * Revision 1.4  2003/12/19 00:31:16  pelle
+ * Lots of usability changes through out all the passphrase agents and end user tools.
+ *
  * Revision 1.3  2003/11/21 04:43:42  pelle
  * EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
  * Otherwise You will Finaliate.
@@ -118,7 +121,11 @@ public final class TimeTools {
     private static SimpleDateFormat getDateFormatter() {
         return DF;
     }
-
+    public static Date get2020(){
+        Calendar calendar=Calendar.getInstance();
+        calendar.set(2020,0,0,0,0,0);
+        return calendar.getTime();
+    }
     /**
      * Base ISO 8601 Date format yyyy-MM-ddTHH:mm:ss,SSSzzz i.e., 2002-12-25T14:32:12,333-500 for
      * the 25th day of December in the year 2002 at 2 pm 32 min 12 secs 333 mills -5 hours from GMT

@@ -1,6 +1,9 @@
 /*
- * $Id: CryptoTools.java,v 1.8 2003/12/18 17:40:07 pelle Exp $
+ * $Id: CryptoTools.java,v 1.9 2003/12/19 00:31:16 pelle Exp $
  * $Log: CryptoTools.java,v $
+ * Revision 1.9  2003/12/19 00:31:16  pelle
+ * Lots of usability changes through out all the passphrase agents and end user tools.
+ *
  * Revision 1.8  2003/12/18 17:40:07  pelle
  * You can now create keys that get stored with a X509 certificate in the keystore. These can be saved as well.
  * IdentityCreator has been modified to allow creation of keys.
@@ -223,6 +226,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.X509V3CertificateGenerator;
 import org.bouncycastle.jce.X509Principal;
 import org.bouncycastle.asn1.x509.X509Name;
+import org.neuclear.commons.time.TimeTools;
 
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
@@ -250,6 +254,8 @@ import java.util.Date;
 // TODO Implement some code to automatically BC Provider if not installed
 
 public final class CryptoTools {
+
+
     /**
      * Call this method at the beginning of an executable. To ensure that BouncyCastle gets installed properly.
      */
@@ -784,6 +790,7 @@ public final class CryptoTools {
         gen.setIssuerDN(x509);
         gen.setPublicKey(kp.getPublic());
         gen.setNotBefore(new Date());
+        gen.setNotAfter(TimeTools.get2020());
         gen.setSignatureAlgorithm("SHA1withRSA");
         gen.setSerialNumber(new BigInteger( digest(kp.getPublic().getEncoded())));
         return gen.generateX509Certificate(kp.getPrivate());
@@ -805,5 +812,5 @@ public final class CryptoTools {
 
     public final static String DEFAULT_KEYSTORE = System.getProperty("user.home") + "/.neuclear/keystore.jks";
     public static final int RAND_BIT_LENGTH = 128;
-
+    private static final long YPLUS20 = 20*365*24*60*60;
 }
