@@ -31,6 +31,7 @@
 
   <siteAddress>neuclear.org</siteAddress>
   <siteDirectory>/home/sites/neuclear.org/public_html/commons/</siteDirectory>
+    <issueTrackingUrl>http://jira.neuclear.org:8080/</issueTrackingUrl>
     <mailingLists>
       <mailingList>
         <name>NeuClear Announce</name>
