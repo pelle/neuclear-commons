@@ -1,6 +1,10 @@
 /*
- * $Id: CryptoTools.java,v 1.10 2004/01/09 16:34:32 pelle Exp $
+ * $Id: CryptoTools.java,v 1.11 2004/01/16 23:41:59 pelle Exp $
  * $Log: CryptoTools.java,v $
+ * Revision 1.11  2004/01/16 23:41:59  pelle
+ * Added Base32 class. The Base32 encoding used wasnt following the standards.
+ * Added user creatable Identity for Public Keys
+ *
  * Revision 1.10  2004/01/09 16:34:32  pelle
  * changed use of base36 encoding to base32 to ensure compatibility with other schemes.
  *
@@ -224,11 +228,10 @@ import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.modes.CBCBlockCipher;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.jce.X509Principal;
+import org.bouncycastle.jce.X509V3CertificateGenerator;
 import org.bouncycastle.jce.interfaces.ECPrivateKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.jce.X509V3CertificateGenerator;
-import org.bouncycastle.jce.X509Principal;
-import org.bouncycastle.asn1.x509.X509Name;
 import org.neuclear.commons.time.TimeTools;
 
 import javax.crypto.Cipher;
@@ -249,10 +252,8 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Random;
-import java.util.HashMap;
-import java.util.Vector;
 import java.util.Date;
+import java.util.Random;
 
 // TODO Implement some code to automatically BC Provider if not installed
 
@@ -499,6 +500,9 @@ public final class CryptoTools {
         final Digest dig = new org.bouncycastle.crypto.digests.SHA1Digest();
         return digest(dig, value);
     }
+    public static byte[] digest(final String value) {
+        return digest(value.getBytes());
+    }
 
     public static byte[] digest256(final byte[] value) {
         final Digest dig = new SHA256Digest();
@@ -672,6 +676,10 @@ public final class CryptoTools {
         return getKeyPairGenerator().generateKeyPair();
     }
 
+    public static KeyPair createTinyKeyPair() throws NoSuchAlgorithmException {
+        return getTinyKeyPairGenerator().generateKeyPair();
+    }
+
     public static KeyPair createKeyPair(final String algorithm)
             throws NoSuchAlgorithmException {
         return getKeyPairGenerator(algorithm).generateKeyPair();
@@ -682,6 +690,15 @@ public final class CryptoTools {
             kg = KeyPairGenerator.getInstance("RSA");
 
             kg.initialize(2048, new SecureRandom("Bear it all with NeuDist".getBytes()));
+        }
+        return kg;
+
+    }
+    public static KeyPairGenerator getTinyKeyPairGenerator() throws NoSuchAlgorithmException {
+        if (kg == null) {
+            kg = KeyPairGenerator.getInstance("RSA");
+
+            kg.initialize(512, new SecureRandom("Bear it all with NeuDist".getBytes()));
         }
         return kg;
 
