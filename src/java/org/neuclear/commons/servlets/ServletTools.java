@@ -1,5 +1,14 @@
-/* $Id: ServletTools.java,v 1.4 2003/12/15 23:32:40 pelle Exp $
+/* $Id: ServletTools.java,v 1.5 2003/12/16 15:04:43 pelle Exp $
  * $Log: ServletTools.java,v $
+ * Revision 1.5  2003/12/16 15:04:43  pelle
+ * Added SignedMessage contract for signing simple textual contracts.
+ * Added NeuSender, updated SmtpSender and Sender to take plain email addresses (without the mailto:)
+ * Added AbstractObjectCreationTest to make it quicker to write unit tests to verify
+ * NamedObjectBuilder/SignedNamedObject Pairs.
+ * Sample application has been expanded with a basic email application.
+ * Updated docs for sample web app.
+ * Added missing LGPL LICENSE.txt files to signer and sample app
+ *
  * Revision 1.4  2003/12/15 23:32:40  pelle
  * added ServletTools.getInitParam() which first tries the ServletConfig, then the context config.
  * All the web.xml's have been updated to support this. Also various further generalizations have been done throughout
@@ -55,7 +64,7 @@ import java.io.PrintWriter;
 
 /**
  * @author pelleb
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public final class ServletTools {
 
