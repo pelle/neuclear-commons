@@ -1,6 +1,7 @@
 package org.neuclear.commons.crypto.passphraseagents;
 
-import org.neuclear.commons.crypto.signers.Signer;
+import org.neuclear.commons.crypto.signers.BrowsableSigner;
+import org.neuclear.commons.crypto.signers.SetPublicKeyCallBack;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -59,7 +60,18 @@ public class ServletPassPhraseAgent extends ThreadLocal implements InteractiveAg
      * @return
      * @throws UserCancellationException
      */
-    public char[] getPassPhrase(Signer signer) throws UserCancellationException {
+    public char[] getPassPhrase(BrowsableSigner signer) throws UserCancellationException {
         return new char[0];
+    }
+
+    /**
+     * The User is asked to pick a name by the PassPhraseAgent. The PassPhraseAgent can query the given signer for
+     * a list of included aliases or even create a new keypair.
+     *
+     * @return
+     * @throws UserCancellationException
+     */
+    public byte[] sign(BrowsableSigner signer, byte data[], SetPublicKeyCallBack callback) throws UserCancellationException {
+        return new byte[0];
     }
 }

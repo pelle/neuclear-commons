@@ -1,6 +1,7 @@
 package org.neuclear.commons.crypto.passphraseagents;
 
-import org.neuclear.commons.crypto.signers.Signer;
+import org.neuclear.commons.crypto.signers.BrowsableSigner;
+import org.neuclear.commons.crypto.signers.SetPublicKeyCallBack;
 
 /*
 NeuClear Distributed Transaction Clearing Platform
@@ -20,8 +21,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: InteractiveAgent.java,v 1.4 2004/03/29 23:48:32 pelle Exp $
+$Id: InteractiveAgent.java,v 1.5 2004/04/07 17:22:10 pelle Exp $
 $Log: InteractiveAgent.java,v $
+Revision 1.5  2004/04/07 17:22:10  pelle
+Added support for the new improved interactive signing model. A new Agent is also available with SwingAgent.
+The XMLSig classes have also been updated to support this.
+
 Revision 1.4  2004/03/29 23:48:32  pelle
 InteractiveAgent now has a new method which allows signers to ask for a passphrase without specifying alias.
 The agents are passed a reference to the Signer, which they can use to browse aliases as well as create new key pairs.
@@ -64,7 +69,7 @@ public interface InteractiveAgent extends PassPhraseAgent {
      * @return
      * @throws UserCancellationException
      */
-    char[] getPassPhrase(final Signer signer) throws UserCancellationException;
+    byte[] sign(final BrowsableSigner signer, byte data[], SetPublicKeyCallBack callback) throws UserCancellationException;
 
 
 }

@@ -1,6 +1,7 @@
 package org.neuclear.commons.crypto.passphraseagents;
 
-import org.neuclear.commons.crypto.signers.Signer;
+import org.neuclear.commons.crypto.signers.BrowsableSigner;
+import org.neuclear.commons.crypto.signers.SetPublicKeyCallBack;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -28,8 +29,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: GuiDialogAgent.java,v 1.8 2004/03/29 23:48:32 pelle Exp $
+$Id: GuiDialogAgent.java,v 1.9 2004/04/07 17:22:10 pelle Exp $
 $Log: GuiDialogAgent.java,v $
+Revision 1.9  2004/04/07 17:22:10  pelle
+Added support for the new improved interactive signing model. A new Agent is also available with SwingAgent.
+The XMLSig classes have also been updated to support this.
+
 Revision 1.8  2004/03/29 23:48:32  pelle
 InteractiveAgent now has a new method which allows signers to ask for a passphrase without specifying alias.
 The agents are passed a reference to the Signer, which they can use to browse aliases as well as create new key pairs.
@@ -255,14 +260,25 @@ public final class GuiDialogAgent implements InteractiveAgent {
      * The User is asked to pick a name by the PassPhraseAgent. The PassPhraseAgent can query the given signer for
      * a list of included aliases or even create a new keypair.
      *
-     * @return 
+     * @return
      * @throws UserCancellationException
      */
-    public char[] getPassPhrase(Signer signer) throws UserCancellationException {
+    public char[] getPassPhrase(BrowsableSigner signer) throws UserCancellationException {
         nameLabel.setVisible(false);
         createNew.setVisible(true);
         aliasList.setVisible(true);
         return new char[0];
+    }
+
+    /**
+     * The User is asked to pick a name by the PassPhraseAgent. The PassPhraseAgent can query the given signer for
+     * a list of included aliases or even create a new keypair.
+     *
+     * @return
+     * @throws UserCancellationException
+     */
+    public byte[] sign(BrowsableSigner signer, byte data[], SetPublicKeyCallBack callback) throws UserCancellationException {
+        return new byte[0];
     }
 
     private final TextField passphrase;

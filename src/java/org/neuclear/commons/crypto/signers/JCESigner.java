@@ -1,6 +1,10 @@
 /*
- * $Id: JCESigner.java,v 1.18 2004/03/22 20:09:05 pelle Exp $
+ * $Id: JCESigner.java,v 1.19 2004/04/07 17:22:10 pelle Exp $
  * $Log: JCESigner.java,v $
+ * Revision 1.19  2004/04/07 17:22:10  pelle
+ * Added support for the new improved interactive signing model. A new Agent is also available with SwingAgent.
+ * The XMLSig classes have also been updated to support this.
+ *
  * Revision 1.18  2004/03/22 20:09:05  pelle
  * Added simple ledger for unit testing and in memory use
  *
@@ -170,11 +174,13 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.interfaces.DSAPublicKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.Enumeration;
+import java.util.Iterator;
 
 /**
  * Wrapper around JCE KeyStore
  */
-public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, PublicKeySource {
+public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, BrowsableSigner, PublicKeySource {
 
     /**
      * Constructs a JCESigner with the agent providing the keystore passphrase.
@@ -420,6 +426,27 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
         }
     }
 
+    public byte[] sign(byte data[], SetPublicKeyCallBack callback) throws UserCancellationException {
+        return ((InteractiveAgent) agent).sign(this, data, callback);
+    }
+
+    public byte[] sign(String name, char pass[], byte data[], SetPublicKeyCallBack callback) throws InvalidPassphraseException {
+        try {
+            if (callback != null)
+                callback.setPublicKey(getPublicKey(name));
+            return CryptoTools.sign(getKey(name, pass), data);
+        } catch (UnrecoverableKeyException e) {
+            throw new InvalidPassphraseException(name);
+        } catch (NoSuchAlgorithmException e) {
+            throw new LowLevelException(e);
+        } catch (KeyStoreException e) {
+            // Could try to reload it here but I wont for now
+            throw new LowLevelException(e);
+        } catch (CryptoException e) {
+            throw new LowLevelException(e);
+        }
+    }
+
     public void save() {
         try {
             save(filename);
@@ -438,6 +465,24 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
         } catch (Exception e) {
             throw new LowLevelException(e);
         }
+    }
+
+    public Iterator iterator() throws KeyStoreException {
+        final Enumeration enum = ks.aliases();
+        return new Iterator() {
+            public void remove() {
+
+            }
+
+            public boolean hasNext() {
+                return enum.hasMoreElements();
+            }
+
+            public Object next() {
+                return enum.nextElement();
+            }
+
+        };
     }
 
     private final KeyStore ks;

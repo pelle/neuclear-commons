@@ -1,7 +1,8 @@
 package org.neuclear.commons.crypto.passphraseagents;
 
 import org.neuclear.commons.Utility;
-import org.neuclear.commons.crypto.signers.Signer;
+import org.neuclear.commons.crypto.signers.BrowsableSigner;
+import org.neuclear.commons.crypto.signers.SetPublicKeyCallBack;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,8 +28,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: ConsoleAgent.java,v 1.4 2004/03/31 23:14:03 pelle Exp $
+$Id: ConsoleAgent.java,v 1.5 2004/04/07 17:22:09 pelle Exp $
 $Log: ConsoleAgent.java,v $
+Revision 1.5  2004/04/07 17:22:09  pelle
+Added support for the new improved interactive signing model. A new Agent is also available with SwingAgent.
+The XMLSig classes have also been updated to support this.
+
 Revision 1.4  2004/03/31 23:14:03  pelle
 misc changes
 
@@ -137,6 +142,7 @@ public final class ConsoleAgent implements InteractiveAgent {
         System.exit(0);
     }
 
+
     /**
      * The User is asked to pick a name by the PassPhraseAgent. The PassPhraseAgent can query the given signer for
      * a list of included aliases or even create a new keypair.
@@ -144,8 +150,19 @@ public final class ConsoleAgent implements InteractiveAgent {
      * @return
      * @throws UserCancellationException
      */
-    public char[] getPassPhrase(Signer signer) throws UserCancellationException {
+    public char[] getPassPhrase(BrowsableSigner signer) throws UserCancellationException {
         return new char[0];
+    }
+
+    /**
+     * The User is asked to pick a name by the PassPhraseAgent. The PassPhraseAgent can query the given signer for
+     * a list of included aliases or even create a new keypair.
+     *
+     * @return
+     * @throws UserCancellationException
+     */
+    public byte[] sign(BrowsableSigner signer, byte data[], SetPublicKeyCallBack callback) throws UserCancellationException {
+        return new byte[0];
     }
 
 }
