@@ -1,6 +1,13 @@
 /*
- * $Id: CryptoTools.java,v 1.6 2003/12/06 00:16:35 pelle Exp $
+ * $Id: CryptoTools.java,v 1.7 2003/12/10 23:55:45 pelle Exp $
  * $Log: CryptoTools.java,v $
+ * Revision 1.7  2003/12/10 23:55:45  pelle
+ * Did some cleaning up in the builders
+ * Fixed some stuff in IdentityCreator
+ * New maven goal to create executable jarapp
+ * We are close to 0.8 final of ID, 0.11 final of XMLSIG and 0.5 of commons.
+ * Will release shortly.
+ *
  * Revision 1.6  2003/12/06 00:16:35  pelle
  * Updated various areas in NSTools.
  * Updated URI Validation in particular to support new expanded format
@@ -24,7 +31,7 @@
  * Signers now can generatekeys via the generateKey() method.
  * Refactored the relationship between SignedNamedObject and NamedObjectBuilder a bit.
  * SignedNamedObject now contains the full xml which is returned with getEncoded()
- * This means that it is now possible to further send on or process a SignedNamedObject, leaving
+ * This means that it is now possible to further receive on or process a SignedNamedObject, leaving
  * NamedObjectBuilder for its original purposes of purely generating new Contracts.
  * NamedObjectBuilder.sign() now returns a SignedNamedObject which is the prefered way of processing it.
  * Updated all major interfaces that used the old model to use the new model.
