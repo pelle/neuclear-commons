@@ -3,7 +3,6 @@ package org.neuclear.commons.crypto.signers;
 import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
 
 import java.security.KeyStoreException;
-import java.security.PublicKey;
 import java.util.Iterator;
 
 /*
@@ -24,8 +23,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: BrowsableSigner.java,v 1.2 2004/04/07 17:22:10 pelle Exp $
+$Id: BrowsableSigner.java,v 1.3 2004/04/09 18:40:45 pelle Exp $
 $Log: BrowsableSigner.java,v $
+Revision 1.3  2004/04/09 18:40:45  pelle
+BrowsableSigner now inherits Signer and PublicKeySource, which means implementations only need to implement BrowsableSigner now.
+Added NewAliasDialog, which isnt yet complete.
+
 Revision 1.2  2004/04/07 17:22:10  pelle
 Added support for the new improved interactive signing model. A new Agent is also available with SwingAgent.
 The XMLSig classes have also been updated to support this.
@@ -42,10 +45,8 @@ The intention is to encapsulate most of the key management functionality within 
  * Signer Stores with interactive user interfaces can implement this to
  * provide an iterator of the keys held within.
  */
-public interface BrowsableSigner {
+public interface BrowsableSigner extends Signer, PublicKeySource {
     Iterator iterator() throws KeyStoreException;
-
-    PublicKey getPublicKey(String name) throws NonExistingSignerException;
 
     byte[] sign(byte data[], SetPublicKeyCallBack callback) throws UserCancellationException;
 

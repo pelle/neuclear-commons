@@ -1,6 +1,10 @@
 /*
- * $Id: JCESigner.java,v 1.19 2004/04/07 17:22:10 pelle Exp $
+ * $Id: JCESigner.java,v 1.20 2004/04/09 18:40:45 pelle Exp $
  * $Log: JCESigner.java,v $
+ * Revision 1.20  2004/04/09 18:40:45  pelle
+ * BrowsableSigner now inherits Signer and PublicKeySource, which means implementations only need to implement BrowsableSigner now.
+ * Added NewAliasDialog, which isnt yet complete.
+ *
  * Revision 1.19  2004/04/07 17:22:10  pelle
  * Added support for the new improved interactive signing model. A new Agent is also available with SwingAgent.
  * The XMLSig classes have also been updated to support this.
@@ -180,7 +184,7 @@ import java.util.Iterator;
 /**
  * Wrapper around JCE KeyStore
  */
-public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, BrowsableSigner, PublicKeySource {
+public class JCESigner implements BrowsableSigner {
 
     /**
      * Constructs a JCESigner with the agent providing the keystore passphrase.
