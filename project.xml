@@ -160,6 +160,47 @@
             </properties>
         </dependency>
         <dependency>
+            <id>hibernate</id>
+            <name>hibernate</name>
+            <version>2.1.2</version>
+        </dependency>
+        <dependency>
+            <id>odmg</id>
+            <version>3.0</version>
+            <properties>
+                <war.bundle>true</war.bundle>
+            </properties>
+        </dependency>
+        <dependency>
+            <id>cglib</id>
+            <version>2.0-rc2</version>
+            <properties>
+                <war.bundle>true</war.bundle>
+            </properties>
+        </dependency>
+        <dependency>
+            <id>commons-collections</id>
+            <version>2.1</version>
+        </dependency>
+        <dependency>
+            <id>mysql</id>
+            <jar>mysql-connector-java-3.0.8-stable-bin.jar</jar>
+        </dependency>
+        <dependency>
+            <id>ehcache</id>
+            <version>0.7</version>
+            <properties>
+                <war.bundle>true</war.bundle>
+            </properties>
+        </dependency>
+        <dependency>
+            <id>asm</id>
+            <version>1.4</version>
+            <properties>
+                <war.bundle>true</war.bundle>
+            </properties>
+        </dependency>
+        <dependency>
             <id>jta-spec</id>
             <version>1.0.1</version>
             <properties>
@@ -169,9 +210,6 @@
         <dependency>
             <id>commons-logging</id>
             <version>1.0.3</version>
-            <properties>
-                <war.bundle>true</war.bundle>
-            </properties>
         </dependency>
 
     </dependencies>

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping
+    PUBLIC "-//Hibernate/Hibernate Mapping DTD//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd">
+
+<hibernate-mapping package="org.neuclear.commons.crypto.signers.hibernate">
+
+    <class name="SQLStore" table="SQLStore">
+
+        <id name="alias" column="username">
+            <generator class="assigned"/>
+        </id>
+
+        <property name="privatekey">
+            <column name="privatekey" sql-type="blob" not-null="true"/>
+        </property>
+
+        <property name="publickey">
+            <column name="publickey" sql-type="blob" not-null="true"/>
+        </property>
+
+    </class>
+
+</hibernate-mapping>
