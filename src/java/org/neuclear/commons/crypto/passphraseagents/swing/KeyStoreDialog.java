@@ -19,13 +19,15 @@ import java.awt.event.*;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /*
-$Id: KeyStoreDialog.java,v 1.17 2004/06/03 23:13:17 pelle Exp $
+$Id: KeyStoreDialog.java,v 1.18 2004/06/04 19:09:56 pelle Exp $
 $Log: KeyStoreDialog.java,v $
+Revision 1.18  2004/06/04 19:09:56  pelle
+Updated the code now to use the new Messages class for localization support.
+
 Revision 1.17  2004/06/03 23:13:17  pelle
 Changes to Messages. Does not compile.
 
@@ -120,16 +122,15 @@ public class KeyStoreDialog {
         SwingTools.setLAF();
         prefs = Preferences.userNodeForPackage(DefaultSigner.class);
 //        AgentMessages.updateLocale("es", "ES");
-        caps = Messages.getMessages();
         keys = new KeyStorePanel(signer);
         cache = new HashMap();
-        sign = new JButton(caps.getString("sign"));
+        sign = new JButton(Messages.getText("sign"));
         sign.setIcon(IconTools.getSign());
         sign.setEnabled(false);
-        cancel = new JButton(caps.getString("cancel"));
+        cancel = new JButton(Messages.getText("cancel"));
         cancel.setIcon(IconTools.getCancel());
         message = new MessageLabel();
-        remember = new JCheckBox(caps.getString("remember"), prefs.getBoolean(REMEMBER_PASSPHRASE, false));
+        remember = new JCheckBox(Messages.getText("remember"), prefs.getBoolean(REMEMBER_PASSPHRASE, false));
         passphrase = new JPasswordField();
         frame = new JFrame();
 
@@ -141,7 +142,7 @@ public class KeyStoreDialog {
         } else
             icon = new JLabel("NeuClear");
 
-        frame.setTitle("NeuClear " + caps.getString("signingagent"));
+        frame.setTitle("NeuClear " + Messages.getText("signingagent"));
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         final Component contents = buildPanel();
         frame.getContentPane().add(contents);
@@ -222,10 +223,10 @@ public class KeyStoreDialog {
         builder.setDefaultDialogBorder();
 
         builder.add(icon, cc.xyw(1, 3, 1, CellConstraints.LEFT, CellConstraints.TOP));
-        builder.addSeparator(caps.getString("sign"), cc.xyw(2, 3, 2));
+        builder.addSeparator(Messages.getText("sign"), cc.xyw(2, 3, 2));
 
         builder.add(keys, cc.xyw(1, 5, 3));
-        final JLabel pslabel = builder.addLabel(caps.getString("passphrase"), cc.xy(1, 7));
+        final JLabel pslabel = builder.addLabel(Messages.getText("passphrase"), cc.xy(1, 7));
         pslabel.setLabelFor(passphrase);
         pslabel.setIcon(IconTools.getPassword());
 
@@ -314,9 +315,9 @@ public class KeyStoreDialog {
                 message.clear();
             sign.setEnabled(validate());
             if (login)
-                sign.setText(caps.getString("login"));
+                sign.setText(Messages.getText("login"));
             else
-                sign.setText(caps.getString("sign"));
+                sign.setText(Messages.getText("sign"));
 
             frame.pack();
             UIUtilities.centerOnScreen(frame);
@@ -376,6 +377,6 @@ public class KeyStoreDialog {
 
     private static final String DEFAULT_ALIAS = "DEFAULT_ALIAS";
     private static final String REMEMBER_PASSPHRASE = "REMEMBER_PASSPHRASE";
-    private ResourceBundle caps;
+
 
 }

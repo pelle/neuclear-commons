@@ -12,11 +12,13 @@ import org.neuclear.commons.swing.Messages;
 
 import javax.swing.*;
 import java.awt.event.*;
-import java.util.ResourceBundle;
 
 /*
-$Id: NewAliasDialog.java,v 1.15 2004/06/03 23:13:17 pelle Exp $
+$Id: NewAliasDialog.java,v 1.16 2004/06/04 19:09:56 pelle Exp $
 $Log: NewAliasDialog.java,v $
+Revision 1.16  2004/06/04 19:09:56  pelle
+Updated the code now to use the new Messages class for localization support.
+
 Revision 1.15  2004/06/03 23:13:17  pelle
 Changes to Messages. Does not compile.
 
@@ -100,14 +102,13 @@ public class NewAliasDialog implements Runnable {
             // Likely PlasticXP is not in the class path; ignore.
         }
         this.ksPanel = agent;
-        caps = Messages.getMessages();
 
-        ok = new JButton(caps.getString("create"));
+        ok = new JButton(Messages.getText("create"));
         ok.setIcon(IconTools.getOK());
         ok.setEnabled(false);
-        cancel = new JButton(caps.getString("cancel"));
+        cancel = new JButton(Messages.getText("cancel"));
         cancel.setIcon(IconTools.getCancel());
-        cancel2 = new JButton(caps.getString("cancel"));
+        cancel2 = new JButton(Messages.getText("cancel"));
         cancel2.setIcon(IconTools.getCancel());
         alias = new JTextField();
 
@@ -126,7 +127,7 @@ public class NewAliasDialog implements Runnable {
         progress.setVisible(true);
 
         dialog = new JDialog();
-        dialog.setTitle(caps.getString("signingagent"));
+        dialog.setTitle(Messages.getText("signingagent"));
         dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         dialog.hide();
         regular = buildPanel();
@@ -245,16 +246,16 @@ public class NewAliasDialog implements Runnable {
         builder.setDefaultDialogBorder();
 
         builder.add(banner, cc.xyw(1, 1, 3));
-        final JLabel aliaslabel = builder.addLabel(caps.getString("name"), cc.xy(1, 3));
+        final JLabel aliaslabel = builder.addLabel(Messages.getText("name"), cc.xy(1, 3));
         aliaslabel.setIcon(IconTools.getPersonality());
         aliaslabel.setLabelFor(alias);
         builder.add(alias, cc.xy(3, 3));
-        final JLabel ppl1 = builder.addLabel(caps.getString("passphrase"), cc.xy(1, 5));
+        final JLabel ppl1 = builder.addLabel(Messages.getText("passphrase"), cc.xy(1, 5));
         ppl1.setLabelFor(passphrase1);
         ppl1.setIcon(IconTools.getPassword());
         builder.add(passphrase1, cc.xy(3, 5));
 
-        final JLabel ppl2 = builder.addLabel(caps.getString("repeatpassphrase"), cc.xy(1, 7));
+        final JLabel ppl2 = builder.addLabel(Messages.getText("repeatpassphrase"), cc.xy(1, 7));
         ppl2.setLabelFor(passphrase2);
         ppl2.setIcon(IconTools.getPassword());
         builder.add(passphrase2, cc.xy(3, 7));
@@ -362,7 +363,6 @@ public class NewAliasDialog implements Runnable {
     private JPanel regular;
     private JPanel process;
     private MessageLabel message;
-    private ResourceBundle caps;
     private BannerPanel banner;
 
 }

@@ -3,7 +3,6 @@ package org.neuclear.commons.crypto.passphraseagents.swing.actions;
 import org.neuclear.commons.swing.Messages;
 
 import javax.swing.*;
-import java.util.ResourceBundle;
 
 /*
 NeuClear Distributed Transaction Clearing Platform
@@ -23,8 +22,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: NeuClearAction.java,v 1.3 2004/06/03 23:13:16 pelle Exp $
+$Id: NeuClearAction.java,v 1.4 2004/06/04 19:09:56 pelle Exp $
 $Log: NeuClearAction.java,v $
+Revision 1.4  2004/06/04 19:09:56  pelle
+Updated the code now to use the new Messages class for localization support.
+
 Revision 1.3  2004/06/03 23:13:16  pelle
 Changes to Messages. Does not compile.
 
@@ -44,10 +46,9 @@ I am creating actions, panels and dialogs.
  */
 public abstract class NeuClearAction extends AbstractAction {
     public NeuClearAction(String name, Icon icon) {
-        super(caps.getString(name), icon);
+        super(Messages.getText(name), icon);
         this.name = name;
     }
 
     protected final String name;
-    protected final static ResourceBundle caps = Messages.getMessages();
 }

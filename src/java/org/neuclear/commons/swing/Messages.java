@@ -1,10 +1,5 @@
 package org.neuclear.commons.swing;
 
-import java.util.Locale;
-import java.util.ResourceBundle;
-import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
-
 /*
  *  The NeuClear Project and it's libraries are
  *  (c) 2002-2004 Antilles Software Ventures SA
@@ -25,6 +20,11 @@ import java.util.prefs.Preferences;
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.util.Locale;
+import java.util.ResourceBundle;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
+
 /**
  * User: pelleb
  * Date: Apr 16, 2004
@@ -34,13 +34,13 @@ public class Messages {
     /**
      */
     private Messages() {
-        this(null, "cryptodialogs");
+        this(Messages.class, null, "cryptodialogs");
     }
 
-    protected Messages(Messages parent, String name) {
+    private Messages(Class ref, Messages parent, String name) {
         this.name = name;
         this.parent = parent;
-        this.bundle = ResourceBundle.getBundle(name);
+        this.bundle = ResourceBundle.getBundle(name, getLocale(), ref.getClassLoader());
     }
 
     public final String getString(String key) {
@@ -53,6 +53,24 @@ public class Messages {
     private final String name;
     private final Messages parent;
     private final ResourceBundle bundle;
+
+    private static Messages messages;
+    private static Object lock = new Object();
+
+    public static Messages getMessages() {
+        synchronized (lock) {
+            if (messages == null)
+                messages = new Messages();
+        }
+        return messages;
+    }
+
+    public static void updateMessageRoot(Class ref, String name) {
+        synchronized (lock) {
+            messages = new Messages(ref, messages, name);
+        }
+
+    }
 
     public static String getTitle(String id) {
         return getComponentText(id, "title");
@@ -102,18 +120,6 @@ public class Messages {
         return getText(object.getClass(), id);
     }
 
-    public static synchronized void updateBundle() {
-        bundle = createBundle();
-    }
-
-
-    private static ResourceBundle createBundle(Class ref) {
-//        try {
-//            return ResourceBundle.getBundle("cryptodialogs", getLocale(), AgentMessages.class.getClassLoader());
-//        } catch (Exception e) {
-        return ResourceBundle.getBundle("cryptodialogs");
-//        }
-    }
 
     private static Preferences getPrefs() {
         return Preferences.userNodeForPackage(Messages.class);
@@ -138,7 +144,16 @@ public class Messages {
         } catch (BackingStoreException e) {
             System.err.println(e.getLocalizedMessage());
         }
-        updateBundle();
+    }
+
+    public static void updateLocale(String language) {
+        Preferences prefs = getPrefs();
+        prefs.put(LANG, language);
+        try {
+            prefs.flush();
+        } catch (BackingStoreException e) {
+            System.err.println(e.getLocalizedMessage());
+        }
     }
 
     private static final String CC = "CC";

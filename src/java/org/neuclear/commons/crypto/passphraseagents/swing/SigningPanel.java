@@ -20,13 +20,15 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /*
-$Id: SigningPanel.java,v 1.3 2004/06/03 23:13:17 pelle Exp $
+$Id: SigningPanel.java,v 1.4 2004/06/04 19:09:56 pelle Exp $
 $Log: SigningPanel.java,v $
+Revision 1.4  2004/06/04 19:09:56  pelle
+Updated the code now to use the new Messages class for localization support.
+
 Revision 1.3  2004/06/03 23:13:17  pelle
 Changes to Messages. Does not compile.
 
@@ -107,17 +109,16 @@ public class SigningPanel extends JPanel {
         this.signer = signer;
         prefs = Preferences.userNodeForPackage(DefaultSigner.class);
 //        AgentMessages.updateLocale("es", "ES");
-        caps = Messages.getMessages();
         setLayout(new BorderLayout());
         keys = new KeyStorePanel(signer);
         cache = new HashMap();
-        sign = new JButton(caps.getString("sign"));
+        sign = new JButton(Messages.getText("sign"));
         sign.setIcon(IconTools.getSign());
         sign.setEnabled(false);
-        cancel = new JButton(caps.getString("cancel"));
+        cancel = new JButton(Messages.getText("cancel"));
         cancel.setIcon(IconTools.getCancel());
         message = new MessageLabel();
-        remember = new JCheckBox(caps.getString("remember"), prefs.getBoolean(REMEMBER_PASSPHRASE, false));
+        remember = new JCheckBox(Messages.getText("remember"), prefs.getBoolean(REMEMBER_PASSPHRASE, false));
         passphrase = new JPasswordField();
         buildPanel();
 
@@ -186,7 +187,7 @@ public class SigningPanel extends JPanel {
         builder.setDefaultDialogBorder();
 
         builder.add(keys, cc.xyw(1, 1, 3));
-        final JLabel pslabel = builder.addLabel(caps.getString("passphrase"), cc.xy(1, 3));
+        final JLabel pslabel = builder.addLabel(Messages.getText("passphrase"), cc.xy(1, 3));
         pslabel.setLabelFor(passphrase);
         pslabel.setIcon(IconTools.getPassword());
 
@@ -310,6 +311,4 @@ public class SigningPanel extends JPanel {
 
     private static final String DEFAULT_ALIAS = "DEFAULT_ALIAS";
     private static final String REMEMBER_PASSPHRASE = "REMEMBER_PASSPHRASE";
-    private ResourceBundle caps;
-
 }

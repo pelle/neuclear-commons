@@ -35,7 +35,6 @@ import java.awt.*;
 import java.security.KeyStoreException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.ResourceBundle;
 import java.util.Vector;
 import java.util.prefs.Preferences;
 
@@ -50,8 +49,6 @@ public class KeyStorePanel extends JPanel {
         this.signer = signer;
         prefs = Preferences.userNodeForPackage(DefaultSigner.class);
 
-//        AgentMessages.updateLocale("es", "ES");
-        caps = Messages.getMessages();
 
         setLayout(new BorderLayout());
         toolbar = new JToolBar();
@@ -112,7 +109,7 @@ public class KeyStorePanel extends JPanel {
     }
 
     public JLabel getLabel() {
-        JLabel idlabel = new JLabel(caps.getString("identities"));
+        JLabel idlabel = new JLabel(Messages.getText("identities"));
         idlabel.setIcon(IconTools.getPersonalities());
         idlabel.setLabelFor(list);
         return idlabel;
@@ -160,7 +157,7 @@ public class KeyStorePanel extends JPanel {
 
 
     private static final String DEFAULT_ALIAS = "DEFAULT_ALIAS";
-    private ResourceBundle caps;
+
 
     public static void main(String args[]) {
         JFrame frame = new JFrame();

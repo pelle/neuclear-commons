@@ -3,6 +3,7 @@ package org.neuclear.commons.crypto.passphraseagents.swing.actions;
 import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
 import org.neuclear.commons.crypto.passphraseagents.swing.KeyStorePanel;
 import org.neuclear.commons.crypto.passphraseagents.swing.NewAliasDialog;
+import org.neuclear.commons.swing.Messages;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -26,8 +27,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: NewPersonalityAction.java,v 1.4 2004/05/14 23:47:01 pelle Exp $
+$Id: NewPersonalityAction.java,v 1.5 2004/06/04 19:09:56 pelle Exp $
 $Log: NewPersonalityAction.java,v $
+Revision 1.5  2004/06/04 19:09:56  pelle
+Updated the code now to use the new Messages class for localization support.
+
 Revision 1.4  2004/05/14 23:47:01  pelle
 Moved PersonalSigner and OpenSignerDialog to neuclear-commons where they belong.
 The whole mechanism of opening keystores is pretty smooth right now.
@@ -54,7 +58,7 @@ I am creating actions, panels and dialogs.
 public class NewPersonalityAction extends SignerAction {
     public NewPersonalityAction(KeyStorePanel panel) {
         super("newid", IconTools.getAddPersonality(), panel.getSigner());
-        putValue(SHORT_DESCRIPTION, caps.getString("newid"));
+        putValue(SHORT_DESCRIPTION, Messages.getText("newid"));
         putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_N));
         nad = new NewAliasDialog(panel);
     }

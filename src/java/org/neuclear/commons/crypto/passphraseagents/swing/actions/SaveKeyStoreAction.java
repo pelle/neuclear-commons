@@ -3,6 +3,7 @@ package org.neuclear.commons.crypto.passphraseagents.swing.actions;
 import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
 import org.neuclear.commons.crypto.signers.BrowsableSigner;
 import org.neuclear.commons.crypto.signers.PersonalSigner;
+import org.neuclear.commons.swing.Messages;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -25,8 +26,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: SaveKeyStoreAction.java,v 1.4 2004/05/16 00:03:59 pelle Exp $
+$Id: SaveKeyStoreAction.java,v 1.5 2004/06/04 19:09:56 pelle Exp $
 $Log: SaveKeyStoreAction.java,v $
+Revision 1.5  2004/06/04 19:09:56  pelle
+Updated the code now to use the new Messages class for localization support.
+
 Revision 1.4  2004/05/16 00:03:59  pelle
 Added SigningServer which encapsulates all the web serving functionality.
 Added IdentityPanel which contains an IdentityTree of Identities.
@@ -53,7 +57,7 @@ I am creating actions, panels and dialogs.
 public class SaveKeyStoreAction extends SignerAction implements Runnable {
     public SaveKeyStoreAction(BrowsableSigner signer) {
         super("savekeys", IconTools.getSaveAs(), signer);
-        putValue(SHORT_DESCRIPTION, caps.getString("savekeys"));
+        putValue(SHORT_DESCRIPTION, Messages.getText("savekeys"));
         putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_S));
 
     }
