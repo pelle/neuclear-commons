@@ -1,0 +1,4 @@
+<components>
+    <component type="org.neuclear.commons.sql.ConnectionSource" class="org.neuclear.commons.sql.DefaultConnectionSource"/>
+
+</components>
