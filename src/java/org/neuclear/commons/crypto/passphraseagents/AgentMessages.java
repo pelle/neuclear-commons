@@ -52,7 +52,11 @@ public class AgentMessages {
     }
 
     private static ResourceBundle createBundle() {
-        return ResourceBundle.getBundle("cryptodialogs", getLocale(), AgentMessages.class.getClassLoader());
+//        try {
+//            return ResourceBundle.getBundle("cryptodialogs", getLocale(), AgentMessages.class.getClassLoader());
+//        } catch (Exception e) {
+        return ResourceBundle.getBundle("cryptodialogs", new Locale("en", "US"), AgentMessages.class.getClassLoader());
+//        }
     }
 
     private static Preferences getPrefs() {
@@ -62,11 +66,11 @@ public class AgentMessages {
     private static Locale getLocale() {
         Locale deflocale = Locale.getDefault();
         Preferences prefs = getPrefs();
-        String cc = prefs.get(CC, deflocale.getCountry());
+//        String cc = prefs.get(CC, deflocale.getCountry());
         String lang = prefs.get(LANG, deflocale.getLanguage());
 //        String variant=prefs.get("LANGUAGE",deflocale.getVariant());
 
-        return new Locale(lang, cc);
+        return new Locale(lang);
     }
 
     public static void updateLocale(String language, String country) {
