@@ -25,8 +25,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: RawCertificate.java,v 1.1 2003/12/18 17:40:07 pelle Exp $
+$Id: RawCertificate.java,v 1.2 2004/01/09 16:34:32 pelle Exp $
 $Log: RawCertificate.java,v $
+Revision 1.2  2004/01/09 16:34:32  pelle
+changed use of base36 encoding to base32 to ensure compatibility with other schemes.
+
 Revision 1.1  2003/12/18 17:40:07  pelle
 You can now create keys that get stored with a X509 certificate in the keystore. These can be saved as well.
 IdentityCreator has been modified to allow creation of keys.
@@ -109,7 +112,7 @@ public final class RawCertificate extends Certificate {
 
     public final String toString() {
         try {
-            return CryptoTools.formatAsBase36(CryptoTools.digest(getEncoded()));
+            return CryptoTools.encodeBase32(CryptoTools.digest(getEncoded()));
         } catch (Exception e) {
             return "error";
         }

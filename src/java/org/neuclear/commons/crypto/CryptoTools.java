@@ -1,6 +1,9 @@
 /*
- * $Id: CryptoTools.java,v 1.9 2003/12/19 00:31:16 pelle Exp $
+ * $Id: CryptoTools.java,v 1.10 2004/01/09 16:34:32 pelle Exp $
  * $Log: CryptoTools.java,v $
+ * Revision 1.10  2004/01/09 16:34:32  pelle
+ * changed use of base36 encoding to base32 to ensure compatibility with other schemes.
+ *
  * Revision 1.9  2003/12/19 00:31:16  pelle
  * Lots of usability changes through out all the passphrase agents and end user tools.
  *
@@ -527,10 +530,15 @@ public final class CryptoTools {
         }
         return true;
     }
-
-    public static String formatAsBase36(final byte[] val) {
+    /**
+     * Unpadded Base32 Encoding as defined in:
+     * <a href="http://www.waterken.com/dev/Enc/base32/">http://www.waterken.com/dev/Enc/base32/</a>
+     * @param val
+     * @return
+     */
+    public static String encodeBase32(final byte[] val) {
         final BigInteger big = new BigInteger(val);
-        return big.toString(36);
+        return big.toString(32);
     }
 
     public static String createRandomID() {
@@ -540,7 +548,7 @@ public final class CryptoTools {
 
     public static String createRandomID(int length) {
         final BigInteger big = new BigInteger(length, getRandomInstance());
-        return big.toString(36);
+        return big.toString(32);
     }
 
     private static synchronized Random getRandomInstance() {
