@@ -1,5 +1,8 @@
-/* $Id: ServletTools.java,v 1.12 2004/06/19 20:44:31 pelle Exp $
+/* $Id: ServletTools.java,v 1.13 2004/09/06 22:22:28 pelle Exp $
  * $Log: ServletTools.java,v $
+ * Revision 1.13  2004/09/06 22:22:28  pelle
+ * Added outputCombo to ServletTools for formatting html comboboxes
+ *
  * Revision 1.12  2004/06/19 20:44:31  pelle
  * Added support for more resource bundles in ServletMessages
  * Cleaned up a few things in ServletTools.
@@ -82,11 +85,15 @@ import org.neuclear.commons.Utility;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * @author pelleb
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public final class ServletTools {
     private ServletTools() {
@@ -131,5 +138,51 @@ public final class ServletTools {
 
     public static String getInitParam(String name, ServletConfig config) {
         return Utility.denullString(config.getInitParameter(name), config.getServletContext().getInitParameter(name));
+    }
+
+    public static void outputCombo(final PrintWriter out, final HttpServletRequest request, final String name, final Map map) {
+        outputCombo(out, name, request.getParameter(name), map);
+    }
+
+    public static void outputCombo(final PrintWriter out, final String name, final String selected, final Map map) {
+        out.print("<select name=\"");
+        out.print(name);
+        out.println("\">");
+        Iterator iter = map.keySet().iterator();
+        while (iter.hasNext()) {
+            String id = (String) iter.next();
+            out.print("<option value=\"");
+            out.print(id);
+            if (selected != null && id.equals(selected))
+                out.print("\" selected=\"true\">");
+            else
+                out.print("\">");
+            out.print(map.get(id));
+            out.println("</option>");
+        }
+        out.println("</select>");
+    }
+
+    public static void outputCombo(final JspWriter out, final HttpServletRequest request, final String name, final Map map) throws IOException {
+        outputCombo(out, name, request.getParameter(name), map);
+    }
+
+    public static void outputCombo(final JspWriter out, final String name, final String selected, final Map map) throws IOException {
+        out.print("<select name=\"");
+        out.print(name);
+        out.println("\">");
+        Iterator iter = map.keySet().iterator();
+        while (iter.hasNext()) {
+            String id = (String) iter.next();
+            out.print("<option value=\"");
+            out.print(id);
+            if (selected != null && id.equals(selected))
+                out.print("\" selected=\"true\">");
+            else
+                out.print("\">");
+            out.print(map.get(id));
+            out.println("</option>");
+        }
+        out.println("</select>");
     }
 }
