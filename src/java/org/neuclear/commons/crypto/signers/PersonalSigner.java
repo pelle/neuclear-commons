@@ -42,7 +42,7 @@ import java.util.prefs.Preferences;
  * Date: May 13, 2004
  * Time: 9:12:42 AM
  */
-public class PersonalSigner implements BrowsableSigner, ListModel {
+public class PersonalSigner implements BrowsableSigner, ComboBoxModel {
     public PersonalSigner(JFrame frame) {
 //        signer=null;
         this.frame = frame;
@@ -215,6 +215,16 @@ public class PersonalSigner implements BrowsableSigner, ListModel {
             }
         }
     }
+
+    public Object getSelectedItem() {
+        return selected;
+    }
+
+    public void setSelectedItem(Object anItem) {
+        selected = anItem;
+    }
+
+    private Object selected;
 
     private OpenSignerDialog dia;
     private BrowsableSigner signer;

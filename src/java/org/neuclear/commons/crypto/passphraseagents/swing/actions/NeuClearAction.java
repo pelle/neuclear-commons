@@ -23,8 +23,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: NeuClearAction.java,v 1.1 2004/05/05 23:39:45 pelle Exp $
+$Id: NeuClearAction.java,v 1.2 2004/05/27 19:51:26 pelle Exp $
 $Log: NeuClearAction.java,v $
+Revision 1.2  2004/05/27 19:51:26  pelle
+The beginnings of the Create Account Page
+
 Revision 1.1  2004/05/05 23:39:45  pelle
 Starting to organize the swing parts of the passphrase agent a bit better.
 I am creating actions, panels and dialogs.
@@ -39,7 +42,9 @@ I am creating actions, panels and dialogs.
 public abstract class NeuClearAction extends AbstractAction {
     public NeuClearAction(String name, Icon icon) {
         super(caps.getString(name), icon);
+        this.name = name;
     }
 
+    protected final String name;
     protected final static ResourceBundle caps = AgentMessages.getMessages();
 }
