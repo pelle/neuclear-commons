@@ -1,6 +1,7 @@
 package org.neuclear.commons.crypto.passphraseagents.swing;
 
 import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
+import org.neuclear.commons.swing.Messages;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,8 +24,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: MessageLabel.java,v 1.2 2004/04/22 12:35:29 pelle Exp $
+$Id: MessageLabel.java,v 1.3 2004/06/04 23:27:19 pelle Exp $
 $Log: MessageLabel.java,v $
+Revision 1.3  2004/06/04 23:27:19  pelle
+Externalized loads of strings.
+More localization to Spanish
+
 Revision 1.2  2004/04/22 12:35:29  pelle
 Added Icons and improved localisation
 
@@ -63,7 +68,7 @@ public class MessageLabel extends JLabel {
     }
 
     public void invalidPassphrase() {
-        invalid("Incorrect Passphrase. Please try again...");
+        invalid(Messages.getText("invalidpassphrase"));
     }
 
     public void error(String message) {

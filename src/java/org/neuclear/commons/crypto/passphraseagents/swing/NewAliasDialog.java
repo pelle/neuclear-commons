@@ -14,8 +14,12 @@ import javax.swing.*;
 import java.awt.event.*;
 
 /*
-$Id: NewAliasDialog.java,v 1.16 2004/06/04 19:09:56 pelle Exp $
+$Id: NewAliasDialog.java,v 1.17 2004/06/04 23:27:19 pelle Exp $
 $Log: NewAliasDialog.java,v $
+Revision 1.17  2004/06/04 23:27:19  pelle
+Externalized loads of strings.
+More localization to Spanish
+
 Revision 1.16  2004/06/04 19:09:56  pelle
 Updated the code now to use the new Messages class for localization support.
 
@@ -103,7 +107,7 @@ public class NewAliasDialog implements Runnable {
         }
         this.ksPanel = agent;
 
-        ok = new JButton(Messages.getText("create"));
+        ok = new JButton(Messages.getOK("createaccount"));
         ok.setIcon(IconTools.getOK());
         ok.setEnabled(false);
         cancel = new JButton(Messages.getText("cancel"));
@@ -117,8 +121,8 @@ public class NewAliasDialog implements Runnable {
 
         banner = new com.l2fprod.common.swing.BannerPanel();
         banner.setIcon(IconTools.getLogo());
-        banner.setTitle("Create Account");
-        banner.setSubtitle("Choose a <b>name</b> and enter your <b>password</b> twice. The name will only be known to you.");
+        banner.setTitle(Messages.getTitle("createaccount"));
+        banner.setSubtitle(Messages.getDescription("createaccount"));
 
         message = new MessageLabel();
 
@@ -216,21 +220,21 @@ public class NewAliasDialog implements Runnable {
 
     private boolean validate() {
         if (alias.getText().length() == 0) {
-            message.invalid("Please enter your new Identity Name");
+            message.invalid(Messages.getText("enternewaccountname"));
             return false;
         }
         if (ksPanel.getSigner().canSignFor(alias.getText())) {
-            message.invalid(alias.getText() + " already exists");
+            message.invalid(alias.getText() + Messages.getText("alreadyexists"));
             return false;
         }
         char[] p1 = passphrase1.getPassword();
         char[] p2 = passphrase2.getPassword();
         if (p1 == null || p2 == null || p1.length == 0 || p2.length == 0) {
-            message.invalid("Please enter your new matching passphrases");
+            message.invalid(Messages.getText("entermatchingpassphrase"));
             return false;
         }
         if (p1.length != p2.length) {
-            message.invalid("Both passphrases must be the same");
+            message.invalid(Messages.getText("passphrasenotsame"));
             return false;
         }
         message.clear();
@@ -280,7 +284,7 @@ public class NewAliasDialog implements Runnable {
 
         builder.setDefaultDialogBorder();
 
-        builder.addSeparator("Creating Account Keys", cc.xyw(1, 1, 3));
+        builder.addSeparator(Messages.getProcessTitle("createaccount"), cc.xyw(1, 1, 3));
         builder.add(progress, cc.xyw(1, 3, 3));
         ButtonBarBuilder bb = new ButtonBarBuilder();
         bb.addGlue();

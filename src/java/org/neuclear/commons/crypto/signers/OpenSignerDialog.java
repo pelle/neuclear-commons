@@ -33,6 +33,7 @@ import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
 import org.neuclear.commons.crypto.passphraseagents.swing.JKSFilter;
 import org.neuclear.commons.crypto.passphraseagents.swing.MessageLabel;
 import org.neuclear.commons.crypto.passphraseagents.swing.NewPassphraseDialog;
+import org.neuclear.commons.swing.Messages;
 import org.neuclear.commons.swing.WaitForInput;
 
 import javax.swing.*;
@@ -67,10 +68,10 @@ public class OpenSignerDialog extends JDialog {
 
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         find = new JButton(IconTools.getOpen());
-        ok = new JButton("Open");
+        ok = new JButton(Messages.getOK("openaccounts"));
         ok.setIcon(IconTools.getOK());
         ok.setEnabled(false);
-        cancel = new JButton("Cancel");
+        cancel = new JButton(Messages.getText("cancel"));
         cancel.setIcon(IconTools.getCancel());
         filefield = new JTextField(filename);
         passphrase = new JPasswordField();
@@ -78,8 +79,8 @@ public class OpenSignerDialog extends JDialog {
         message = new MessageLabel();
         banner = new com.l2fprod.common.swing.BannerPanel();
         banner.setIcon(IconTools.getLogo());
-        banner.setTitle(TITLE);
-        banner.setSubtitle("Select an <b>Accounts</b> file or leave as is. Enter your <b>password</b> and you are in.");
+        banner.setTitle(Messages.getTitle("openaccounts"));
+        banner.setSubtitle(Messages.getDescription("openaccounts"));
         Container contents = getContentPane();
 //        contents.setLayout(new BorderLayout());
 //        contents.add(banner,BorderLayout.NORTH);
@@ -155,9 +156,9 @@ public class OpenSignerDialog extends JDialog {
     private void updateOKText() {
         File file = new File(filefield.getText());
         if (file.exists())
-            ok.setText("Open");
+            ok.setText(Messages.getOK("openaccounts"));
         else
-            ok.setText("Create");
+            ok.setText(Messages.getComponentText("openaccounts", "create.title"));
     }
 
     private boolean validateForm() {
@@ -185,11 +186,11 @@ public class OpenSignerDialog extends JDialog {
         builder.setDefaultDialogBorder();
 
         builder.add(banner, cc.xyw(1, 1, 5));
-        builder.addLabel("Accounts File:", cc.xy(1, 3)).setLabelFor(filefield);
+        builder.addLabel(Messages.getText("accountsfile"), cc.xy(1, 3)).setLabelFor(filefield);
         builder.add(filefield, cc.xy(3, 3));
         builder.add(find, cc.xy(5, 3));
 
-        final JLabel label = builder.addLabel("Passphrase:", cc.xy(1, 5));
+        final JLabel label = builder.addLabel(Messages.getText("passphrase"), cc.xy(1, 5));
         label.setLabelFor(passphrase);
         label.setIcon(IconTools.getPassword());
         builder.add(passphrase, cc.xyw(3, 5, 3));
@@ -226,7 +227,7 @@ public class OpenSignerDialog extends JDialog {
 
     public void save(JCESigner signer, boolean force) throws UserCancellationException {
         if (!force) {
-            prepFileChooser(filename, "Select Accounts File");
+            prepFileChooser(filename, Messages.getText("selectaccountsfile"));
             int result = fc.showSaveDialog(dia);
             if (result == JFileChooser.APPROVE_OPTION)
                 filename = fc.getSelectedFile().getAbsolutePath();
@@ -288,7 +289,7 @@ public class OpenSignerDialog extends JDialog {
                 passphrase.setText("");
                 setResult(signer);
             } catch (InvalidPassphraseException e) {
-                message.invalid("You entered an invalid passphrase. Try again...");
+                message.invalidPassphrase();
                 return;
             }
         }
