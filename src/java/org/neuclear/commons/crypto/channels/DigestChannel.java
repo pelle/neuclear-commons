@@ -24,8 +24,14 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: DigestChannel.java,v 1.1 2004/03/05 23:43:06 pelle Exp $
+$Id: DigestChannel.java,v 1.2 2004/03/06 20:50:28 pelle Exp $
 $Log: DigestChannel.java,v $
+Revision 1.2  2004/03/06 20:50:28  pelle
+Added Unit tests for DigestChannel and SigningChannel.
+The SigningChannel passes for Signing on straight signing of byte arrays as well as from Files
+Currently the Verifying channel fails, need to investigate.
+The DigestChannel passes for all types.
+
 Revision 1.1  2004/03/05 23:43:06  pelle
 New Channels package with nio based channels for various crypto related tasks such as digests, signing, verifying and encoding.
 DigestsChannel, SigningChannel and VerifyingChannel are complete, but not tested.
@@ -39,6 +45,7 @@ AbstractEncodingChannel will be used for a Base64/Base32 Channel as well as poss
 public class DigestChannel extends AbstractCryptoChannel {
     public DigestChannel() throws NoSuchAlgorithmException {
         this("SHA1");
+
     }
 
     public DigestChannel(MessageDigest digest) throws NoSuchAlgorithmException {
@@ -52,9 +59,13 @@ public class DigestChannel extends AbstractCryptoChannel {
     public int write(ByteBuffer buffer) throws IOException {
         if (closed)
             throw new ClosedChannelException();
-        final byte[] bytes = buffer.array();
-        digest.update(bytes);
-        return bytes.length;
+        final int size = buffer.limit()-buffer.position();
+        if (bytes ==null)
+            bytes=new byte[size];
+        final int count=Math.min(size,bytes.length);
+        buffer.get(bytes,0,count);
+        digest.update(bytes,0,count);
+        return count;
     }
 
     /**
@@ -67,4 +78,5 @@ public class DigestChannel extends AbstractCryptoChannel {
     }
 
     private final MessageDigest digest;
+    private byte[] bytes;
 }
