@@ -30,8 +30,12 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /*
-$Id: KeyStoreDialog.java,v 1.6 2004/04/15 15:34:41 pelle Exp $
+$Id: KeyStoreDialog.java,v 1.7 2004/04/15 20:03:51 pelle Exp $
 $Log: KeyStoreDialog.java,v $
+Revision 1.7  2004/04/15 20:03:51  pelle
+Added license screen to Personal Signer.
+Added Sign document menu to  Personal Signer.
+
 Revision 1.6  2004/04/15 15:34:41  pelle
 Got rid of the looping InvalidPassphraseException in DefaultSigner.
 Added initial focus for all dialogs.
@@ -86,7 +90,7 @@ public class KeyStoreDialog {
         cancel = new JButton("Cancel");
         newId = new JButton("New ID ...");
         message = new MessageLabel();
-        save = new JButton("Save ...");
+        save = new JButton("Save keys ...");
         remember = new JCheckBox("remember passphrase in current session", prefs.getBoolean(REMEMBER_PASSPHRASE, false));
         list = new JList();
         list.setBorder(BorderFactory.createLoweredBevelBorder());

@@ -14,8 +14,12 @@ import java.io.File;
 import java.security.PublicKey;
 
 /*
-$Id: SwingAgent.java,v 1.8 2004/04/15 15:34:41 pelle Exp $
+$Id: SwingAgent.java,v 1.9 2004/04/15 20:03:52 pelle Exp $
 $Log: SwingAgent.java,v $
+Revision 1.9  2004/04/15 20:03:52  pelle
+Added license screen to Personal Signer.
+Added Sign document menu to  Personal Signer.
+
 Revision 1.8  2004/04/15 15:34:41  pelle
 Got rid of the looping InvalidPassphraseException in DefaultSigner.
 Added initial focus for all dialogs.
@@ -164,7 +168,7 @@ public class SwingAgent implements InteractiveAgent {
     class JKSFilter extends javax.swing.filechooser.FileFilter {
         public boolean accept(File file) {
             String filename = file.getName();
-            return filename.endsWith(".jks");
+            return file.isDirectory() || filename.endsWith(".jks");
         }
 
         public String getDescription() {

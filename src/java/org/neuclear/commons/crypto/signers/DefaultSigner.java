@@ -31,8 +31,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: DefaultSigner.java,v 1.10 2004/04/15 15:34:41 pelle Exp $
+$Id: DefaultSigner.java,v 1.11 2004/04/15 20:03:52 pelle Exp $
 $Log: DefaultSigner.java,v $
+Revision 1.11  2004/04/15 20:03:52  pelle
+Added license screen to Personal Signer.
+Added Sign document menu to  Personal Signer.
+
 Revision 1.10  2004/04/15 15:34:41  pelle
 Got rid of the looping InvalidPassphraseException in DefaultSigner.
 Added initial focus for all dialogs.
@@ -163,6 +167,10 @@ public final class DefaultSigner implements BrowsableSigner {
 
     public void createKeyPair(String alias, char passphrase[]) throws CryptoException {
         signer.createKeyPair(alias, passphrase);
+    }
+
+    public InteractiveAgent getAgent() {
+        return agent;
     }
 
     public void save() {

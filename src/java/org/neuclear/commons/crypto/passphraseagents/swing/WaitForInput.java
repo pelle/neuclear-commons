@@ -3,8 +3,12 @@ package org.neuclear.commons.crypto.passphraseagents.swing;
 import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
 
 /*
-$Id: WaitForInput.java,v 1.3 2004/04/14 00:10:52 pelle Exp $
+$Id: WaitForInput.java,v 1.4 2004/04/15 20:03:52 pelle Exp $
 $Log: WaitForInput.java,v $
+Revision 1.4  2004/04/15 20:03:52  pelle
+Added license screen to Personal Signer.
+Added Sign document menu to  Personal Signer.
+
 Revision 1.3  2004/04/14 00:10:52  pelle
 Added a MessageLabel for handling errors, validation and info
 Save works well now.
@@ -56,7 +60,7 @@ public abstract class WaitForInput implements Runnable {
         }
     }
 
-    abstract void execute();
+    public abstract void execute();
 
     private Object result;
     private boolean cancelled = false;
