@@ -1,6 +1,13 @@
 /*
- * $Id: CryptoTools.java,v 1.5 2003/11/21 04:43:41 pelle Exp $
+ * $Id: CryptoTools.java,v 1.6 2003/12/06 00:16:35 pelle Exp $
  * $Log: CryptoTools.java,v $
+ * Revision 1.6  2003/12/06 00:16:35  pelle
+ * Updated various areas in NSTools.
+ * Updated URI Validation in particular to support new expanded format
+ * Updated createUniqueID and friends to be a lot more unique and more efficient.
+ * In CryptoTools updated getRandom() to finally use a SecureRandom.
+ * Changed CryptoTools.getFormatURLSafe to getBase36 because that is what it really is.
+ *
  * Revision 1.5  2003/11/21 04:43:41  pelle
  * EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
  * Otherwise You will Finaliate.
@@ -483,19 +490,28 @@ public final class CryptoTools {
         return true;
     }
 
-    public static String formatAsURLSafe(final byte[] val) {
+    public static String formatAsBase36(final byte[] val) {
         final BigInteger big = new BigInteger(val);
         return big.toString(36);
     }
 
     public static String createRandomID() {
-        final BigInteger big = new BigInteger(4096, getRandomInstance());
+        return createRandomID(RAND_BIT_LENGTH);
+
+    }
+
+    public static String createRandomID(int length) {
+        final BigInteger big = new BigInteger(length, getRandomInstance());
         return big.toString(36);
     }
 
     private static synchronized Random getRandomInstance() {
         if (randSource == null)
-            randSource = new Random();
+            try {
+                randSource = SecureRandom.getInstance("SHA1PRNG");
+            } catch (NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
+            }
         return randSource;
     }
 
@@ -736,8 +752,9 @@ public final class CryptoTools {
     private static final int DEFAULT_ITERATION_COUNT = 2048;
     public static final byte[] hexTable = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
-    private static Random randSource;
+    private static SecureRandom randSource;
 
     public final static String DEFAULT_KEYSTORE = System.getProperty("user.home") + "/.keystore";
+    public static final int RAND_BIT_LENGTH = 128;
 
 }

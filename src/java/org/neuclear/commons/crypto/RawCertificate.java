@@ -23,8 +23,15 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: RawCertificate.java,v 1.2 2003/11/21 04:43:41 pelle Exp $
+$Id: RawCertificate.java,v 1.3 2003/12/06 00:16:35 pelle Exp $
 $Log: RawCertificate.java,v $
+Revision 1.3  2003/12/06 00:16:35  pelle
+Updated various areas in NSTools.
+Updated URI Validation in particular to support new expanded format
+Updated createUniqueID and friends to be a lot more unique and more efficient.
+In CryptoTools updated getRandom() to finally use a SecureRandom.
+Changed CryptoTools.getFormatURLSafe to getBase36 because that is what it really is.
+
 Revision 1.2  2003/11/21 04:43:41  pelle
 EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
 Otherwise You will Finaliate.
@@ -88,7 +95,7 @@ public final class RawCertificate extends Certificate {
 
     public final String toString() {
         try {
-            return CryptoTools.formatAsURLSafe(CryptoTools.digest(getEncoded()));
+            return CryptoTools.formatAsBase36(CryptoTools.digest(getEncoded()));
         } catch (Exception e) {
             return "error";
         }
