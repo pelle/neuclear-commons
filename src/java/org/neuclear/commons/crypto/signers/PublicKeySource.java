@@ -1,7 +1,5 @@
 package org.neuclear.commons.crypto.signers;
 
-import org.neuclear.commons.crypto.CryptoException;
-
 import java.security.PublicKey;
 
 /*
@@ -22,8 +20,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: PublicKeySource.java,v 1.2 2003/12/19 18:02:53 pelle Exp $
+$Id: PublicKeySource.java,v 1.3 2004/01/19 17:53:14 pelle Exp $
 $Log: PublicKeySource.java,v $
+Revision 1.3  2004/01/19 17:53:14  pelle
+Various clean ups
+
 Revision 1.2  2003/12/19 18:02:53  pelle
 Revamped a lot of exception handling throughout the framework, it has been simplified in most places:
 - For most cases the main exception to worry about now is InvalidNamedObjectException.

@@ -1,15 +1,18 @@
 package org.neuclear.commons.crypto.applets;
 
-import java.security.KeyPairGenerator;
 import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 
 /**
  * (C) 2003 Antilles Software Ventures SA
  * User: pelleb
  * Date: Nov 19, 2003
  * Time: 9:18:12 AM
- * $Id: KeyGenerationTask.java,v 1.3 2003/12/19 00:31:15 pelle Exp $
+ * $Id: KeyGenerationTask.java,v 1.4 2004/01/19 17:53:14 pelle Exp $
  * $Log: KeyGenerationTask.java,v $
+ * Revision 1.4  2004/01/19 17:53:14  pelle
+ * Various clean ups
+ *
  * Revision 1.3  2003/12/19 00:31:15  pelle
  * Lots of usability changes through out all the passphrase agents and end user tools.
  *

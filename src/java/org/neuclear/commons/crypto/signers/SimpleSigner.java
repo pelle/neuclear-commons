@@ -1,6 +1,9 @@
 /*
- * $Id: SimpleSigner.java,v 1.9 2003/12/19 18:02:53 pelle Exp $
+ * $Id: SimpleSigner.java,v 1.10 2004/01/19 17:53:14 pelle Exp $
  * $Log: SimpleSigner.java,v $
+ * Revision 1.10  2004/01/19 17:53:14  pelle
+ * Various clean ups
+ *
  * Revision 1.9  2003/12/19 18:02:53  pelle
  * Revamped a lot of exception handling throughout the framework, it has been simplified in most places:
  * - For most cases the main exception to worry about now is InvalidNamedObjectException.
@@ -126,21 +129,17 @@
  */
 package org.neuclear.commons.crypto.signers;
 
-import org.neuclear.commons.NeuClearException;
 import org.neuclear.commons.LowLevelException;
 import org.neuclear.commons.crypto.CryptoException;
 import org.neuclear.commons.crypto.CryptoTools;
 import org.neuclear.commons.crypto.passphraseagents.PassPhraseAgent;
 import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
-import org.neuclear.commons.crypto.passphraseagents.InteractiveAgent;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import java.io.*;
 import java.security.*;
-import java.security.cert.*;
-import java.security.cert.Certificate;
 import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.HashMap;

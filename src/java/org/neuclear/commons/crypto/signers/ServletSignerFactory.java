@@ -1,18 +1,17 @@
 package org.neuclear.commons.crypto.signers;
 
-import org.neuclear.commons.Utility;
 import org.neuclear.commons.NeuClearException;
-import org.neuclear.commons.servlets.ServletTools;
+import org.neuclear.commons.Utility;
 import org.neuclear.commons.crypto.CryptoTools;
 import org.neuclear.commons.crypto.passphraseagents.*;
+import org.neuclear.commons.servlets.ServletTools;
 
 import javax.servlet.ServletConfig;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Collection;
-import java.util.Collections;
 import java.io.FileNotFoundException;
 import java.security.GeneralSecurityException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Used to create Signers from servlet configuration parameters. It keeps a cache of Signers with similar parameters. Thus

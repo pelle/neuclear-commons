@@ -19,8 +19,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: Base32.java,v 1.2 2004/01/18 21:20:20 pelle Exp $
+$Id: Base32.java,v 1.3 2004/01/19 17:53:13 pelle Exp $
 $Log: Base32.java,v $
+Revision 1.3  2004/01/19 17:53:13  pelle
+Various clean ups
+
 Revision 1.2  2004/01/18 21:20:20  pelle
 Created Base32 encoder that now fully complies with Tyler's spec.
 
@@ -45,7 +48,7 @@ public final class Base32 {
       * @param big
       * @return String with Base32 encoding
       */
-     public static String encode(final BigInteger big) throws CryptoException {
+     public static String encode(final BigInteger big) {
 //        System.out.println("JDK toByteArray(): "+encode(big.toByteArray()));
 //        System.out.println("getBytes(): "+encode(getBytes(big)));
          return encode(big.toByteArray());

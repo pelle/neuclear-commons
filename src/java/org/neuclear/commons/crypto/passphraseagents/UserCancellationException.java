@@ -1,6 +1,5 @@
 package org.neuclear.commons.crypto.passphraseagents;
 
-import org.neuclear.commons.crypto.CryptoException;
 import org.neuclear.commons.NeuClearException;
 
 /*
@@ -21,8 +20,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: UserCancellationException.java,v 1.1 2003/12/19 19:56:00 pelle Exp $
+$Id: UserCancellationException.java,v 1.2 2004/01/19 17:53:14 pelle Exp $
 $Log: UserCancellationException.java,v $
+Revision 1.2  2004/01/19 17:53:14  pelle
+Various clean ups
+
 Revision 1.1  2003/12/19 19:56:00  pelle
 IDEA missed it yet again
 

@@ -1,9 +1,7 @@
 package org.neuclear.commons.crypto.passphraseagents;
 
-import org.neuclear.commons.LowLevelException;
-
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /*
 NeuClear Distributed Transaction Clearing Platform
@@ -23,8 +21,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: AskAtStartupAgent.java,v 1.6 2003/12/22 13:45:25 pelle Exp $
+$Id: AskAtStartupAgent.java,v 1.7 2004/01/19 17:53:14 pelle Exp $
 $Log: AskAtStartupAgent.java,v $
+Revision 1.7  2004/01/19 17:53:14  pelle
+Various clean ups
+
 Revision 1.6  2003/12/22 13:45:25  pelle
 Added a naive benchmarking tool.
 Fixed a bug in AskAtStartupAgent

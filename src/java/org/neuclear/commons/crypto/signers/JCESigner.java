@@ -1,6 +1,9 @@
 /*
- * $Id: JCESigner.java,v 1.15 2003/12/22 22:14:37 pelle Exp $
+ * $Id: JCESigner.java,v 1.16 2004/01/19 17:53:14 pelle Exp $
  * $Log: JCESigner.java,v $
+ * Revision 1.16  2004/01/19 17:53:14  pelle
+ * Various clean ups
+ *
  * Revision 1.15  2003/12/22 22:14:37  pelle
  * Last minute cleanups and documentation prior to release 0.8.1
  *
@@ -147,15 +150,13 @@
  */
 package org.neuclear.commons.crypto.signers;
 
-import org.neuclear.commons.NeuClearException;
-import org.neuclear.commons.Utility;
 import org.neuclear.commons.LowLevelException;
+import org.neuclear.commons.Utility;
 import org.neuclear.commons.crypto.CryptoException;
 import org.neuclear.commons.crypto.CryptoTools;
-import org.neuclear.commons.crypto.jce.RawCertificate;
+import org.neuclear.commons.crypto.passphraseagents.InteractiveAgent;
 import org.neuclear.commons.crypto.passphraseagents.PassPhraseAgent;
 import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
-import org.neuclear.commons.crypto.passphraseagents.InteractiveAgent;
 
 import java.io.*;
 import java.security.*;

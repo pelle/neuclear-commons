@@ -5,8 +5,8 @@ import org.neuclear.commons.Utility;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /*
 NeuClear Distributed Transaction Clearing Platform
@@ -26,8 +26,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: ConsoleAgent.java,v 1.1 2003/12/19 00:31:15 pelle Exp $
+$Id: ConsoleAgent.java,v 1.2 2004/01/19 17:53:14 pelle Exp $
 $Log: ConsoleAgent.java,v $
+Revision 1.2  2004/01/19 17:53:14  pelle
+Various clean ups
+
 Revision 1.1  2003/12/19 00:31:15  pelle
 Lots of usability changes through out all the passphrase agents and end user tools.
 

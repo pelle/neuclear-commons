@@ -1,13 +1,10 @@
 package org.neuclear.commons.crypto.signers;
 
-import org.neuclear.commons.NeuClearException;
-import org.neuclear.commons.LowLevelException;
 import org.neuclear.commons.crypto.passphraseagents.AlwaysTheSamePassphraseAgent;
 import org.neuclear.commons.crypto.passphraseagents.PassPhraseAgent;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.security.GeneralSecurityException;
 
 /*
 NeuClear Distributed Transaction Clearing Platform
@@ -27,8 +24,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: TestCaseSigner.java,v 1.9 2003/12/19 00:31:16 pelle Exp $
+$Id: TestCaseSigner.java,v 1.10 2004/01/19 17:53:14 pelle Exp $
 $Log: TestCaseSigner.java,v $
+Revision 1.10  2004/01/19 17:53:14  pelle
+Various clean ups
+
 Revision 1.9  2003/12/19 00:31:16  pelle
 Lots of usability changes through out all the passphrase agents and end user tools.
 

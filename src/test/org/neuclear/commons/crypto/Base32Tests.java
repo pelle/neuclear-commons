@@ -20,8 +20,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: Base32Tests.java,v 1.2 2004/01/18 21:20:20 pelle Exp $
+$Id: Base32Tests.java,v 1.3 2004/01/19 17:53:14 pelle Exp $
 $Log: Base32Tests.java,v $
+Revision 1.3  2004/01/19 17:53:14  pelle
+Various clean ups
+
 Revision 1.2  2004/01/18 21:20:20  pelle
 Created Base32 encoder that now fully complies with Tyler's spec.
 
@@ -52,9 +55,9 @@ public class Base32Tests extends TestCase{
         assertEquals(18,Base32.encode("hello123456").length());
 
         for (int i=0;i<TESTSTRINGS.length;i++){
-            System.out.print("Encoding: "+TESTSTRINGS[i]+" ...");
+//            System.out.print("Encoding: "+TESTSTRINGS[i]+" ...");
             final String encoded = Base32.encode(TESTSTRINGS[i]);
-            System.out.println(" ->"+encoded);
+//            System.out.println(" ->"+encoded);
             assertEquals(TESTSTRINGS[i],new String(Base32.decode(encoded)));
         }
     }

@@ -3,10 +3,10 @@ package org.neuclear.commons.crypto.passphraseagents;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
-import java.util.Map;
+import java.awt.event.ItemListener;
 import java.util.HashMap;
+import java.util.Map;
 
 /*
 NeuClear Distributed Transaction Clearing Platform
@@ -26,8 +26,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: GuiDialogAgent.java,v 1.6 2003/12/22 22:14:36 pelle Exp $
+$Id: GuiDialogAgent.java,v 1.7 2004/01/19 17:53:14 pelle Exp $
 $Log: GuiDialogAgent.java,v $
+Revision 1.7  2004/01/19 17:53:14  pelle
+Various clean ups
+
 Revision 1.6  2003/12/22 22:14:36  pelle
 Last minute cleanups and documentation prior to release 0.8.1
 
