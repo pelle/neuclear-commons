@@ -1,6 +1,9 @@
 /*
- * $Id: CryptoTools.java,v 1.16 2004/03/08 23:50:34 pelle Exp $
+ * $Id: CryptoTools.java,v 1.17 2004/03/18 21:31:26 pelle Exp $
  * $Log: CryptoTools.java,v $
+ * Revision 1.17  2004/03/18 21:31:26  pelle
+ * Some fixups in SignedInfo
+ *
  * Revision 1.16  2004/03/08 23:50:34  pelle
  * More improvements on the XMLSignature. Now uses the Transforms properly, References properly.
  * All the major elements have been refactored to be cleaner and more correct.
@@ -474,7 +477,7 @@ public final class CryptoTools {
         return new byte[0];
     }
 
-    public static Signature getSignatureCipher(final PrivateKey key) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException {
+    public static Signature getSignatureCipher(final PrivateKey key) throws NoSuchAlgorithmException, InvalidKeyException {
         Signature sig = null;
         if (key instanceof RSAPrivateKey)
             sig = Signature.getInstance("SHA1withRSA"); // Set up signature object.
