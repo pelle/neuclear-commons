@@ -146,6 +146,10 @@ public class KeyStorePanel extends JPanel {
         return (String) list.getSelectedValue();
     }
 
+    public JList getList() {
+        return list;
+    }
+
     final private BrowsableSigner signer;
     private String lastSelected;
     private final JList list;
