@@ -55,42 +55,6 @@
             </p>
 
         </section>
-        <section name="[12 December, 2003] New release 0.5">
-            <p>
-                Panama City, 12th of December, 2004. We are happy to announce
-                the 0.5 release of NeuClear Commons. Major new features are:
-            </p>
-            <ul>
-                <li>Support for JNDI datasources</li>
-                <li>Transaction support via
-                    <a href="http://jotm.objectweb.org">JOTM</a>
-                </li>
-            </ul>
-            <p>
-                Main goal of this release is to support the latest
-                <a href="http://old.neuclear.org/id/">0.8 release
-                of NeuClear ID</a>.
-                <a href="http://sourceforge.net/project/showfiles.php?group_id=90470">Download it today and join in the NeuClear revolution</a>.
-            </p>
-
-        </section>
-        <section name="[11 November, 2003] Released 0.4">
-            <p>
-                This release is very quick after 0.3, but we deemed it necessary
-                to move a bunch of crypto code from
-                <a href="http://old.neuclear.org/id/">NeuClear ID</a>
-                and
-                <a href="http://old.neuclear.org/xmlsig/">NeuClear XMLSig</a> to here.
-                If you are using any of the CVS modules as well as the latest release 0.10 of
-                XMLSig please update to this release.
-            </p>
-        </section>
-        <section name="[10 November, 2003] Released 0.3">
-            <p>
-                The first file release of NeuClear Commons has been released. Click the download link to
-                download.
-            </p>
-        </section>
     </body>
 
 </document>
