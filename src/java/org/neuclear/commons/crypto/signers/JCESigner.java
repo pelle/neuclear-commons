@@ -1,6 +1,9 @@
 /*
- * $Id: JCESigner.java,v 1.10 2003/12/14 20:52:54 pelle Exp $
+ * $Id: JCESigner.java,v 1.11 2003/12/16 21:09:22 pelle Exp $
  * $Log: JCESigner.java,v $
+ * Revision 1.11  2003/12/16 21:09:22  pelle
+ * The Sample Web App is semi stable for now.
+ *
  * Revision 1.10  2003/12/14 20:52:54  pelle
  * Added ServletPassPhraseAgent which uses ThreadLocal to transfer the passphrase to the signer.
  * Added ServletSignerFactory, which builds Signers for use within servlets based on parameters in the Servlets
@@ -198,9 +201,11 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
     }
 
     private static KeyStore loadKeyStore(final String provider, final String type, final InputStream in, final PassPhraseAgent agent, final String name) throws NeuClearException {
+//        System.out.println("Loading JCESigner: "+name);
         return loadKeyStore(provider,type,in,agent.getPassPhrase("Keystore password for: "+name));
     }
     private static KeyStore loadKeyStore(final String provider, final String type, final InputStream in, final char[] passphrase) throws NeuClearException {
+//        System.out.println("Loading JCESigner using passphrase: "+new String(passphrase));
         try {
             KeyStore ki = null;
             if (provider == null)
@@ -208,7 +213,6 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
             else
                 ki = KeyStore.getInstance(type, provider);
             ki.load(in, passphrase);
-//            System.out.println("Successfully loaded JCESigner: " + name + " type: " + ki.getType() + " size: " + ki.size());
             return ki;
         } catch (KeyStoreException e) {
             throw new NeuClearException(e);
