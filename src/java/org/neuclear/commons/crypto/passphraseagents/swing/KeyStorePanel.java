@@ -32,9 +32,8 @@ import org.neuclear.commons.crypto.signers.*;
 import javax.swing.*;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.security.KeyStoreException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.Vector;
@@ -59,23 +58,11 @@ public class KeyStorePanel extends JPanel {
         toolbar.putClientProperty(Options.HEADER_STYLE_KEY, HeaderStyle.SINGLE);
         toolbar.setFloatable(true);
         toolbar.setRollover(true);
-
-        openAction = new OpenKeyStoreAction(signer);
-        open = new JButton(openAction);
-        open.setText(null);
-        open.putClientProperty(Options.IS_NARROW_KEY, Boolean.TRUE);
-        toolbar.add(open);
-        saveAction = new SaveKeyStoreAction(signer);
-        save = new JButton(saveAction);
-        save.setText(null);
-        save.putClientProperty(Options.IS_NARROW_KEY, Boolean.TRUE);
-        toolbar.add(save);
+        actions = new ArrayList(3);
+        addAction(new OpenKeyStoreAction(signer), true);
+        addAction(new SaveKeyStoreAction(signer), true);
         toolbar.addSeparator();
-
-        newPersonality = new NewPersonalityAction(this);
-        newId = new JButton(newPersonality);
-//        newId.setText(null);
-        toolbar.add(newId);
+        addAction(new NewPersonalityAction(this), false);
         add(toolbar, BorderLayout.NORTH);
 
         list = new JList();
@@ -83,29 +70,23 @@ public class KeyStorePanel extends JPanel {
             list.setModel((ListModel) signer);
 //        list.setBorder(BorderFactory.createLoweredBevelBorder());
         list.setCellRenderer(new KeyStoreListCellRenderer());
-        add(list, BorderLayout.CENTER);
+        add(new JScrollPane(list), BorderLayout.CENTER);
 //        nad = new NewAliasDialog(this);
         fillAliasList();
 
-        newId.addActionListener(new ActionListener() {
-            public void actionPerformed(final ActionEvent actionEvent) {
-
-//                SwingUtilities.invokeLater(nad);
-            }
-        });
-
-        save.addActionListener(new ActionListener() {
-            /**
-             * Invoked when an action occurs.
-             */
-            public void actionPerformed(ActionEvent e) {
-//                SaveKeyStore.saveAs(signer, message);
-            }
-
-        });
-
-
     }
+
+    public JButton addAction(Action action, boolean tiny) {
+        JButton button = new JButton(action);
+        if (tiny) {
+            button.setText(null);
+            button.putClientProperty(Options.IS_NARROW_KEY, Boolean.TRUE);
+        }
+        toolbar.add(button);
+        actions.add(action);
+        return button;
+    }
+
 
     void updateList(String alias) {
         if (alias != null) {
@@ -118,11 +99,16 @@ public class KeyStorePanel extends JPanel {
     }
 
     public Action[] getFileActions() {
-        return new Action[]{newPersonality, openAction, saveAction};
+        return getActions();
     }
 
     public Action[] getActions() {
-        return new Action[]{newPersonality, openAction, saveAction};
+        Action array[] = new Action[actions.size()];
+        for (int i = 0; i < actions.size(); i++) {
+            array[i] = (Action) actions.get(i);
+
+        }
+        return array;
     }
 
     public JLabel getLabel() {
@@ -162,11 +148,9 @@ public class KeyStorePanel extends JPanel {
 
     final private BrowsableSigner signer;
     private String lastSelected;
-    private final JButton newId;
-    private final JButton save;
-    private final JButton open;
     private final JList list;
     private final JToolBar toolbar;
+    private final ArrayList actions;
 //    private final NewAliasDialog nad;
     private final Preferences prefs;
 
@@ -205,10 +189,5 @@ public class KeyStorePanel extends JPanel {
     public ListModel getModel() {
         return list.getModel();
     }
-
-    private NewPersonalityAction newPersonality;
-    private OpenKeyStoreAction openAction;
-    private SaveKeyStoreAction saveAction;
-
 
 }
