@@ -27,8 +27,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: ConsoleAgent.java,v 1.3 2004/03/31 18:48:23 pelle Exp $
+$Id: ConsoleAgent.java,v 1.4 2004/03/31 23:14:03 pelle Exp $
 $Log: ConsoleAgent.java,v $
+Revision 1.4  2004/03/31 23:14:03  pelle
+misc changes
+
 Revision 1.3  2004/03/31 18:48:23  pelle
 Added various Streams for simplified crypto operations.
 
