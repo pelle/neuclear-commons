@@ -5,6 +5,7 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.plaf.Options;
+import com.l2fprod.common.util.OS;
 import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
 
 import javax.swing.*;
@@ -16,8 +17,13 @@ import java.awt.event.KeyListener;
 import java.net.URL;
 
 /*
-$Id: NewPassphraseDialog.java,v 1.5 2004/04/22 23:59:51 pelle Exp $
+$Id: NewPassphraseDialog.java,v 1.6 2004/05/17 23:56:37 pelle Exp $
 $Log: NewPassphraseDialog.java,v $
+Revision 1.6  2004/05/17 23:56:37  pelle
+GUI defaults to XP on Windows XP
+KeyStoreDialog checks if it receives an AuthenticationRequest and changes "Sign" button to "Login"
+IdentityPanel has a new HTML preview.
+
 Revision 1.5  2004/04/22 23:59:51  pelle
 Added various statistics to Ledger as well as AssetController
 Improved look and feel in the web app.
@@ -63,7 +69,7 @@ The XMLSig classes have also been updated to support this.
 public class NewPassphraseDialog {
     public NewPassphraseDialog() {
         try {
-            if (UIManager.getSystemLookAndFeelClassName().equals("apple.laf.AquaLookAndFeel"))
+            if (OS.isMacOSX())
                 System.setProperty("com.apple.laf.useScreenMenuBar", "true");
             else {
                 UIManager.setLookAndFeel("com.jgoodies.plaf.plastic.PlasticXPLookAndFeel");

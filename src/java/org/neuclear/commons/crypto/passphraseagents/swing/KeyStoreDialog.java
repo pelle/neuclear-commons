@@ -4,6 +4,7 @@ import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import com.l2fprod.common.swing.UIUtilities;
 import org.neuclear.commons.crypto.passphraseagents.AgentMessages;
 import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
 import org.neuclear.commons.crypto.signers.*;
@@ -21,8 +22,13 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /*
-$Id: KeyStoreDialog.java,v 1.14 2004/05/16 00:04:00 pelle Exp $
+$Id: KeyStoreDialog.java,v 1.15 2004/05/17 23:56:37 pelle Exp $
 $Log: KeyStoreDialog.java,v $
+Revision 1.15  2004/05/17 23:56:37  pelle
+GUI defaults to XP on Windows XP
+KeyStoreDialog checks if it receives an AuthenticationRequest and changes "Sign" button to "Login"
+IdentityPanel has a new HTML preview.
+
 Revision 1.14  2004/05/16 00:04:00  pelle
 Added SigningServer which encapsulates all the web serving functionality.
 Added IdentityPanel which contains an IdentityTree of Identities.
@@ -263,6 +269,15 @@ public class KeyStoreDialog {
             this.data = data;
             this.cb = cb;
             this.invalid = false;
+            this.login = (new String(data).indexOf("xmlns:auth") != -1);
+//            if (login)
+//                System.out.println("Is Login");
+//            try {
+//                System.out.write(data);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+
         }
 
         public void run() {
@@ -283,9 +298,14 @@ public class KeyStoreDialog {
             else
                 message.clear();
             sign.setEnabled(validate());
-
+            if (login)
+                sign.setText(caps.getString("login"));
+            else
+                sign.setText(caps.getString("sign"));
 
             frame.pack();
+            UIUtilities.centerOnScreen(frame);
+
             frame.show();
             frame.toFront();
             passphrase.requestFocus();
@@ -321,6 +341,7 @@ public class KeyStoreDialog {
 
 
         private final byte data[];
+        private final boolean login;
         private final SetPublicKeyCallBack cb;
         private boolean invalid = false;
 

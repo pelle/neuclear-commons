@@ -1,6 +1,7 @@
 package org.neuclear.commons.crypto.passphraseagents.swing;
 
 import com.jgoodies.plaf.Options;
+import com.l2fprod.common.util.OS;
 
 import javax.swing.*;
 
@@ -33,11 +34,14 @@ public class SwingTools {
 
     public static void setLAF() {
         try {
-            if (!ismac) {
+            if (OS.isMacOSX()) {
+                System.setProperty("com.apple.macos.useScreenMenuBar", "true");
+            } else if (OS.isWindows2003() || OS.isWindowsXP()) {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } else {
                 UIManager.setLookAndFeel("com.jgoodies.plaf.plastic.PlasticXPLookAndFeel");
                 UIManager.put(Options.USE_SYSTEM_FONTS_APP_KEY, Boolean.TRUE);
             }
-            System.setProperty("com.apple.macos.useScreenMenuBar", "true");
 
         } catch (Exception e) {
             // Likely PlasticXP is not in the class path; ignore.

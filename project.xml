@@ -195,6 +195,14 @@
             <id>commons-logging</id>
             <version>1.0.3</version>
         </dependency>
+        <dependency>
+            <groupId>l2fprod</groupId>
+            <artifactId>l2fprod-common</artifactId>
+            <version>0.1-dev-20040423</version>
+            <properties>
+                <jnlp.jar>true</jnlp.jar>
+            </properties>
+        </dependency>
 
     </dependencies>
     <build>
