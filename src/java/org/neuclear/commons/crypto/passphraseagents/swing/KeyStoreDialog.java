@@ -28,8 +28,12 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /*
-$Id: KeyStoreDialog.java,v 1.10 2004/04/22 12:35:29 pelle Exp $
+$Id: KeyStoreDialog.java,v 1.11 2004/05/05 23:39:45 pelle Exp $
 $Log: KeyStoreDialog.java,v $
+Revision 1.11  2004/05/05 23:39:45  pelle
+Starting to organize the swing parts of the passphrase agent a bit better.
+I am creating actions, panels and dialogs.
+
 Revision 1.10  2004/04/22 12:35:29  pelle
 Added Icons and improved localisation
 
@@ -85,9 +89,6 @@ The XMLSig classes have also been updated to support this.
  * Time: 9:55:37 AM
  */
 public class KeyStoreDialog {
-    /**
-     * @jira NEU-30 Allow Identity Objects to be described in XHTML
-     */
     public KeyStoreDialog() {
         SwingTools.setLAF();
         prefs = Preferences.userNodeForPackage(DefaultSigner.class);

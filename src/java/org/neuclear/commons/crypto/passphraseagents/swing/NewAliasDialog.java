@@ -17,8 +17,12 @@ import java.awt.event.KeyListener;
 import java.util.ResourceBundle;
 
 /*
-$Id: NewAliasDialog.java,v 1.8 2004/04/22 12:35:29 pelle Exp $
+$Id: NewAliasDialog.java,v 1.9 2004/05/05 23:39:45 pelle Exp $
 $Log: NewAliasDialog.java,v $
+Revision 1.9  2004/05/05 23:39:45  pelle
+Starting to organize the swing parts of the passphrase agent a bit better.
+I am creating actions, panels and dialogs.
+
 Revision 1.8  2004/04/22 12:35:29  pelle
 Added Icons and improved localisation
 
@@ -58,6 +62,10 @@ Added NewAliasDialog, which isnt yet complete.
  * Time: 5:58:38 PM
  */
 public class NewAliasDialog implements Runnable {
+    public NewAliasDialog() {
+        this(null);
+    }
+
     public NewAliasDialog(KeyStoreDialog agent) {
         try {
             if (UIManager.getSystemLookAndFeelClassName().equals("apple.laf.AquaLookAndFeel"))
