@@ -22,8 +22,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: CommandLineAgent.java,v 1.1 2003/11/11 21:17:46 pelle Exp $
+$Id: CommandLineAgent.java,v 1.2 2003/11/19 14:37:37 pelle Exp $
 $Log: CommandLineAgent.java,v $
+Revision 1.2  2003/11/19 14:37:37  pelle
+CommandLineAgent now masks the passphrase input using the JLine library which is now a dependency.
+And the beginnings of a KeyGeneratorApplet
+
 Revision 1.1  2003/11/11 21:17:46  pelle
 Further vital reshuffling.
 org.neudist.crypto.* and org.neudist.utils.* have been moved to respective areas under org.neuclear.commons
@@ -54,7 +58,7 @@ public class CommandLineAgent implements InteractiveAgent {
         System.out.print(": ");
         try {
             //TODO Figure out how to mask input
-            return reader.readLine().toCharArray();
+            return new jline.ConsoleReader().readLine(new Character((char)0)).toCharArray();
         } catch (IOException e) {
             System.err.println("Couldnt read line. Returning empty passphrase");
             return "".toCharArray();
@@ -63,8 +67,8 @@ public class CommandLineAgent implements InteractiveAgent {
 
     public static void main(String args[]) {
         PassPhraseAgent dia = new CommandLineAgent();
-        System.out.println("Getting passphrase... " + dia.getPassPhrase("neu://pelle@test"));
-        System.out.println("Getting passphrase... " + dia.getPassPhrase("neu://pelle@test"));
+        System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("neu://pelle@test")));
+        System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("neu://pelle@test")));
 
         System.exit(0);
     }
