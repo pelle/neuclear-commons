@@ -34,6 +34,7 @@ public abstract class AbstractDialogRunner extends WaitForInput {
 
     public void run() {
         dia.open();
+        dia.toFront();
     }
 
     public void error(String error) {
