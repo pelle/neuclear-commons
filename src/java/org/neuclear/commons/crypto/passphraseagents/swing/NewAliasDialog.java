@@ -15,8 +15,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 /*
-$Id: NewAliasDialog.java,v 1.2 2004/04/09 22:56:44 pelle Exp $
+$Id: NewAliasDialog.java,v 1.3 2004/04/12 15:00:29 pelle Exp $
 $Log: NewAliasDialog.java,v $
+Revision 1.3  2004/04/12 15:00:29  pelle
+Now have a slightly better way of handling the waiting for input using the WaitForInput class.
+This will later be put into a command queue for execution.
+
 Revision 1.2  2004/04/09 22:56:44  pelle
 SwingAgent now manages key creation as well through the NewAliasDialog.
 Many small uservalidation features have also been added.
@@ -33,7 +37,7 @@ Added NewAliasDialog, which isnt yet complete.
  * Time: 5:58:38 PM
  */
 public class NewAliasDialog implements Runnable {
-    public NewAliasDialog(SwingAgent agent) {
+    public NewAliasDialog(KeyStoreDialog agent) {
         try {
             UIManager.setLookAndFeel("com.jgoodies.plaf.plastic.PlasticXPLookAndFeel");
             UIManager.put(Options.USE_SYSTEM_FONTS_APP_KEY, Boolean.TRUE);
@@ -172,18 +176,34 @@ public class NewAliasDialog implements Runnable {
         passphrase2.setEnabled(false);
         ok.setEnabled(false);
         cancel.setEnabled(true);
-        try {
-            System.out.println("Generating Key");
-            agent.getSigner().createKeyPair(alias.getText(), passphrase1.getPassword());
-            agent.updateList(alias.getText());
-        } catch (CryptoException e) {
-            e.printStackTrace();
-        }
+        new Thread(new Runnable() {
 
-        dialog.hide();
+            /**
+             * When an object implementing interface <code>Runnable</code> is used
+             * to create a thread, starting the thread causes the object's
+             * <code>run</code> method to be called in that separately executing
+             * thread.
+             * <p/>
+             * The general contract of the method <code>run</code> is that it may
+             * take any action whatsoever.
+             *
+             * @see Thread#run()
+             */
+            public void run() {
+                try {
+                    System.out.println("Generating Key");
+                    agent.getSigner().createKeyPair(alias.getText(), passphrase1.getPassword());
+                    agent.updateList(alias.getText());
+                    dialog.hide();
+                } catch (CryptoException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }).start();
     }
 
-    private SwingAgent agent;
+    private KeyStoreDialog agent;
     private JDialog dialog;
     private JButton ok;
     private JButton cancel;
