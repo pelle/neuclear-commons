@@ -22,12 +22,13 @@
 
     <repository>
         <connection>
-         scm:cvs:pserver:anonymous@cvs.neuclear.sourceforge.net:/cvsroot/neuclear:neuclear-commons
+         scm:cvs:pserver:anonymous@cvs.sourceforge.net:/cvsroot/neuclear:neuclear-commons
         </connection>
         <url>
-      http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/neuclear/neuclear-commons/
+      http://cvs.sourceforge.net/viewcvs.py/neuclear/neuclear-commons/
         </url>
     </repository>
+
 
     <siteAddress>dev.neuclear.org</siteAddress>
     <siteDirectory>/home/sites/neuclear.org/public_html/commons/</siteDirectory>
