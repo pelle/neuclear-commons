@@ -40,6 +40,8 @@ public class Messages {
     private Messages(Class ref, Messages parent, String name) {
         this.name = name;
         this.parent = parent;
+        System.setProperty("file.encoding","UTF-8");
+        System.out.println("encoding: "+System.getProperty("file.encoding"));
         this.bundle = ResourceBundle.getBundle(name, getLocale(), ref.getClassLoader());
     }
 
@@ -137,6 +139,7 @@ public class Messages {
 
     public static void updateLocale(String language, String country) {
         Preferences prefs = getPrefs();
+        Locale.setDefault(new Locale(language,country));
         prefs.put(LANG, language);
         prefs.put(CC, country);
         try {
@@ -148,6 +151,7 @@ public class Messages {
 
     public static void updateLocale(String language) {
         Preferences prefs = getPrefs();
+        Locale.setDefault(new Locale(language));
         prefs.put(LANG, language);
         try {
             prefs.flush();
