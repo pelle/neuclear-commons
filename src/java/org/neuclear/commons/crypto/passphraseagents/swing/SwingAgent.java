@@ -14,8 +14,11 @@ import java.io.File;
 import java.security.PublicKey;
 
 /*
-$Id: SwingAgent.java,v 1.5 2004/04/13 17:32:05 pelle Exp $
+$Id: SwingAgent.java,v 1.6 2004/04/13 18:14:02 pelle Exp $
 $Log: SwingAgent.java,v $
+Revision 1.6  2004/04/13 18:14:02  pelle
+added open dialog to swing agent and interactive agent
+
 Revision 1.5  2004/04/13 17:32:05  pelle
 Now has save dialog
 Remembers passphrases
@@ -53,11 +56,15 @@ public class SwingAgent implements InteractiveAgent {
         ksd = new KeyStoreDialog();
         simple = new SimpleDialog();
         queue = new RunnableQueue();
+        fc = new JFileChooser();
+        fc.setFileFilter(new JKSFilter());
+
     }
 
     private final SimpleDialog simple;
     private final KeyStoreDialog ksd;
     private final RunnableQueue queue;
+    private final JFileChooser fc;
 
     public static void main(final String[] args) {
         final InteractiveAgent dia = new SwingAgent();
@@ -118,14 +125,22 @@ public class SwingAgent implements InteractiveAgent {
     }
 
     public File getSaveToFileName(String title, String def) throws UserCancellationException {
-        File file = new File(def);
-        JFileChooser fc = new JFileChooser(file.getParentFile());
-        fc.setFileFilter(new JKSFilter());
-        fc.setSelectedFile(file);
-        fc.setDialogTitle(title);
-        // Show open dialog; this method does not return until the dialog is closed
+        prepFileChooser(def, title);
         fc.showSaveDialog(ksd.getDialog());
         return fc.getSelectedFile();
+    }
+
+    public File getOpenFileName(String title, String def) throws UserCancellationException {
+        prepFileChooser(def, title);
+        fc.showOpenDialog(ksd.getDialog());
+        return fc.getSelectedFile();
+    }
+
+    private void prepFileChooser(String def, String title) {
+        File file = new File(def);
+        fc.setCurrentDirectory(file.getParentFile());
+        fc.setSelectedFile(file);
+        fc.setDialogTitle(title);
     }
 
     class JKSFilter extends javax.swing.filechooser.FileFilter {

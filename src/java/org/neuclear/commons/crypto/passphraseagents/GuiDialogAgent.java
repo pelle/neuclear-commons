@@ -30,8 +30,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: GuiDialogAgent.java,v 1.10 2004/04/13 17:32:06 pelle Exp $
+$Id: GuiDialogAgent.java,v 1.11 2004/04/13 18:14:02 pelle Exp $
 $Log: GuiDialogAgent.java,v $
+Revision 1.11  2004/04/13 18:14:02  pelle
+added open dialog to swing agent and interactive agent
+
 Revision 1.10  2004/04/13 17:32:06  pelle
 Now has save dialog
 Remembers passphrases
@@ -287,6 +290,10 @@ public final class GuiDialogAgent implements InteractiveAgent {
     }
 
     public File getSaveToFileName(String title, String def) throws UserCancellationException {
+        return null;
+    }
+
+    public File getOpenFileName(String title, String def) throws UserCancellationException {
         return null;
     }
 

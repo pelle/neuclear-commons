@@ -79,4 +79,8 @@ public class ServletPassPhraseAgent extends ThreadLocal implements InteractiveAg
     public File getSaveToFileName(String title, String def) throws UserCancellationException {
         return null;
     }
+
+    public File getOpenFileName(String title, String def) throws UserCancellationException {
+        return null;
+    }
 }
