@@ -20,8 +20,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: KeyResolverFactory.java,v 1.3 2004/02/19 15:29:09 pelle Exp $
+$Id: KeyResolverFactory.java,v 1.4 2004/04/02 23:04:44 pelle Exp $
 $Log: KeyResolverFactory.java,v $
+Revision 1.4  2004/04/02 23:04:44  pelle
+Got TransferOrder and Builder working with their test cases.
+Working on TransferReceipt which is the first embedded receipt. This is causing some problems at the moment.
+
 Revision 1.3  2004/02/19 15:29:09  pelle
 Various cleanups and corrections
 
@@ -66,6 +70,6 @@ public class KeyResolverFactory {
         return instance;
     }
 
-    public final static String DEFAULT = "org.neuclear.commons.crypto.keyresolvers.NullResolver";
+    public final static String DEFAULT = "org.neuclear.commons.crypto.keyresolvers.PublicKeyCache";
     private static KeyResolver instance;
 }
