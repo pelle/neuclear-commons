@@ -1,5 +1,10 @@
-/* $Id: ServletTools.java,v 1.3 2003/12/12 19:27:38 pelle Exp $
+/* $Id: ServletTools.java,v 1.4 2003/12/15 23:32:40 pelle Exp $
  * $Log: ServletTools.java,v $
+ * Revision 1.4  2003/12/15 23:32:40  pelle
+ * added ServletTools.getInitParam() which first tries the ServletConfig, then the context config.
+ * All the web.xml's have been updated to support this. Also various further generalizations have been done throughout
+ * for getServiceid(), getTitle(), getSigner()
+ *
  * Revision 1.3  2003/12/12 19:27:38  pelle
  * All the Cactus tests now for signing servlet.
  * Added working AuthenticationFilterTest
@@ -42,12 +47,15 @@
  */
 package org.neuclear.commons.servlets;
 
+import org.neuclear.commons.Utility;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.ServletConfig;
 import java.io.PrintWriter;
 
 /**
  * @author pelleb
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public final class ServletTools {
 
@@ -66,8 +74,12 @@ public final class ServletTools {
         out.println("body, th, td, input, select, textarea, h2 small {\n font-family: Verdana, Helvetica, Arial, sans-serif;\n }\n code, pre {\n font-family: 'Andale Mono', Courier, monospace;\n font-size: small;\n background-color: lightgrey;\n}");
         out.println("</style></head><body bgcolor=\"#FFFFFF\"><div id=\"banner\"><table bgcolor=\"#0000ff\" width=\"100%\"><tr><td><h3 style=\"color: white\">");
         out.println(title);
-        out.println("</h3></td><td align=\"right\"><img src=\"images/logo.gif\"></td></tr></table></div>");
+        out.println("</h3></td><td align=\"right\"></td></tr></table></div>");
 
 
+    }
+
+    public static String getInitParam(String name, ServletConfig config){
+        return Utility.denullString(config.getInitParameter(name),config.getServletContext().getInitParameter(name));
     }
 }

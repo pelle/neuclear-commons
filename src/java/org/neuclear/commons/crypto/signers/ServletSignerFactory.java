@@ -2,6 +2,7 @@ package org.neuclear.commons.crypto.signers;
 
 import org.neuclear.commons.Utility;
 import org.neuclear.commons.NeuClearException;
+import org.neuclear.commons.servlets.ServletTools;
 import org.neuclear.commons.crypto.CryptoTools;
 import org.neuclear.commons.crypto.passphraseagents.*;
 
@@ -38,40 +39,48 @@ public final class ServletSignerFactory {
     private ServletSignerFactory() {
         map=Collections.synchronizedMap(new HashMap());
     }
-
     public synchronized Signer createSigner(ServletConfig config) throws FileNotFoundException, GeneralSecurityException, NeuClearException {
-        final String keystore=config.getInitParameter("keystore");
-        final String keeppassphrase=config.getInitParameter("keeppassphrase");
-        final String agenttype=config.getInitParameter("passphraseagent");
-        final String serviceid = config.getInitParameter("serviceid");
+        final String keystore=ServletTools.getInitParam("keystore",config);
+        final String keeppassphrase=ServletTools.getInitParam("keeppassphrase",config);
+        final String agenttype=ServletTools.getInitParam("passphraseagent",config);
+        final String serviceid = ServletTools.getInitParam("serviceid",config);
         final String hash = getConfigHash(keystore, keeppassphrase, agenttype,serviceid);
         if (map.containsKey(hash))
             return (Signer)map.get(hash);
 
-        final InteractiveAgent coreagent=getAgent(agenttype);
-        final PassPhraseAgent agent=(!Utility.isEmpty(keeppassphrase)&&keeppassphrase.equals("1"))?(PassPhraseAgent)new AskAtStartupAgent(coreagent,serviceid):coreagent;
+        final PassPhraseAgent coreagent=getAgent(agenttype);
+        final PassPhraseAgent agent=createWrapperAgent(keeppassphrase, coreagent, serviceid);
         // If keystore is "test" setup the TestCaseSigner otherwise use the JCESigner
         final Signer signer=createSigner(keystore, agent);
         map.put(hash,signer);
         return signer;
     }
 
-    private JCESigner createSigner(final String keystore, final PassPhraseAgent agent) throws GeneralSecurityException, NeuClearException, FileNotFoundException {
+    private static final PassPhraseAgent createWrapperAgent(final String keeppassphrase, final PassPhraseAgent coreagent, final String serviceid) {
+        if (!Utility.isEmpty(keeppassphrase)&&keeppassphrase.equals("1")&&coreagent instanceof InteractiveAgent)
+            return new AskAtStartupAgent((InteractiveAgent)coreagent,serviceid);
+        return coreagent;
+    }
+
+    private static final JCESigner createSigner(final String keystore, final PassPhraseAgent agent) throws GeneralSecurityException, NeuClearException, FileNotFoundException {
         if (!Utility.isEmpty(keystore)){
             if (keystore.toLowerCase().equals("test"))
                 return new TestCaseSigner(agent);
+
             if (!keystore.toLowerCase().equals("default"))
                 return new JCESigner(keystore,"jks", "SUN",agent);
         }
         return new DefaultSigner(agent);
     }
 
-    private InteractiveAgent getAgent(final String agenttype) {
+    private static final PassPhraseAgent getAgent(final String agenttype) {
         if (!Utility.isEmpty(agenttype)){
             if (agenttype.toLowerCase().equals("console"))
                 return new CommandLineAgent();
             if (agenttype.toLowerCase().equals("servlet"))
                 return new ServletPassPhraseAgent();
+            if (agenttype.toLowerCase().equals("test"))
+                return new AlwaysTheSamePassphraseAgent("neuclear");
         }
         return new GuiDialogAgent();  //The default DialogAgent
     }
