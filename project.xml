@@ -175,6 +175,7 @@
                 <includes>*.jks</includes>
                 <includes>*.xml</includes>
                 <includes>*.properties</includes>
+		<excludes>*.java</excludes>
             </resource>
         </resources>
     </build>

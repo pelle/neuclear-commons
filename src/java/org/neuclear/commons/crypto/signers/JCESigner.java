@@ -1,6 +1,9 @@
 /*
- * $Id: JCESigner.java,v 1.16 2004/01/19 17:53:14 pelle Exp $
+ * $Id: JCESigner.java,v 1.17 2004/01/20 17:38:58 pelle Exp $
  * $Log: JCESigner.java,v $
+ * Revision 1.17  2004/01/20 17:38:58  pelle
+ * Further updates to unit tests
+ *
  * Revision 1.16  2004/01/19 17:53:14  pelle
  * Various clean ups
  *
@@ -368,6 +371,8 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
             }
         } catch (KeyStoreException e) {
             throw new LowLevelException(e);
+        } catch (NonExistingSignerException e) {
+            return KEY_NONE;
         }
         return KEY_NONE;  //To change body of implemented methods use Options | File Templates.
     }
@@ -387,9 +392,17 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
         }
     }
 
-    public final PublicKey getPublicKey(final String name)  {
+    public final PublicKey getPublicKey(final String name) throws NonExistingSignerException {
         try {
-            return ks.getCertificate(name).getPublicKey();
+            final Certificate certificate = ks.getCertificate(name);
+            if (certificate==null)
+                throw new NonExistingSignerException(name);
+
+            PublicKey pub= certificate.getPublicKey();
+            if (pub==null)
+                throw new NonExistingSignerException(name);
+            return pub;
+
         } catch (KeyStoreException e) {
             throw new LowLevelException(e);
         }

@@ -20,8 +20,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: PublicKeySource.java,v 1.3 2004/01/19 17:53:14 pelle Exp $
+$Id: PublicKeySource.java,v 1.4 2004/01/20 17:38:58 pelle Exp $
 $Log: PublicKeySource.java,v $
+Revision 1.4  2004/01/20 17:38:58  pelle
+Further updates to unit tests
+
 Revision 1.3  2004/01/19 17:53:14  pelle
 Various clean ups
 
@@ -54,5 +57,5 @@ as SmartCards for end user applications.
  * Time: 2:15:58 PM
  */
 public interface PublicKeySource {
-    PublicKey getPublicKey(String name) ;
+    PublicKey getPublicKey(String name) throws NonExistingSignerException;
 }
