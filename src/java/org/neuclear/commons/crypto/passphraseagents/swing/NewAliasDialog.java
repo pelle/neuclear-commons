@@ -6,16 +6,22 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.plaf.Options;
 import org.neuclear.commons.crypto.CryptoException;
+import org.neuclear.commons.crypto.passphraseagents.AgentMessages;
+import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ResourceBundle;
 
 /*
-$Id: NewAliasDialog.java,v 1.7 2004/04/21 23:10:13 pelle Exp $
+$Id: NewAliasDialog.java,v 1.8 2004/04/22 12:35:29 pelle Exp $
 $Log: NewAliasDialog.java,v $
+Revision 1.8  2004/04/22 12:35:29  pelle
+Added Icons and improved localisation
+
 Revision 1.7  2004/04/21 23:10:13  pelle
 Fixed mac look and feel
 
@@ -64,10 +70,15 @@ public class NewAliasDialog implements Runnable {
             // Likely PlasticXP is not in the class path; ignore.
         }
         this.agent = agent;
-        ok = new JButton("Create");
+        caps = AgentMessages.getMessages();
+
+        ok = new JButton(caps.getString("create"));
+        ok.setIcon(IconTools.getOK());
         ok.setEnabled(false);
-        cancel = new JButton("Cancel");
-        cancel2 = new JButton("Cancel");
+        cancel = new JButton(caps.getString("cancel"));
+        cancel.setIcon(IconTools.getCancel());
+        cancel2 = new JButton(caps.getString("cancel"));
+        cancel2.setIcon(IconTools.getCancel());
         alias = new JTextField();
 
         passphrase1 = new JPasswordField();
@@ -78,7 +89,7 @@ public class NewAliasDialog implements Runnable {
         progress.setIndeterminate(true);
         progress.setVisible(true);
         dialog = new JDialog(agent.getFrame(), true);
-        dialog.setTitle("NeuClear Signing Agent");
+        dialog.setTitle(caps.getString("signingagent"));
         dialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         dialog.hide();
         regular = buildPanel();
@@ -174,12 +185,19 @@ public class NewAliasDialog implements Runnable {
 
         builder.setDefaultDialogBorder();
 
-        builder.addSeparator("Create alias", cc.xyw(1, 1, 3));
-        builder.addLabel("Alias:", cc.xy(1, 3)).setLabelFor(alias);
+        builder.addSeparator(caps.getString("newid"), cc.xyw(1, 1, 3));
+        final JLabel aliaslabel = builder.addLabel(caps.getString("name"), cc.xy(1, 3));
+        aliaslabel.setIcon(IconTools.getPersonality());
+        aliaslabel.setLabelFor(alias);
         builder.add(alias, cc.xy(3, 3));
-        builder.addLabel("Passphrase:", cc.xy(1, 5)).setLabelFor(passphrase1);
+        final JLabel ppl1 = builder.addLabel(caps.getString("passphrase"), cc.xy(1, 5));
+        ppl1.setLabelFor(passphrase1);
+        ppl1.setIcon(IconTools.getPassword());
         builder.add(passphrase1, cc.xy(3, 5));
-        builder.addLabel("(Repeat) Passphrase:", cc.xy(1, 7)).setLabelFor(passphrase2);
+
+        final JLabel ppl2 = builder.addLabel(caps.getString("repeatpassphrase"), cc.xy(1, 7));
+        ppl2.setLabelFor(passphrase2);
+        ppl2.setIcon(IconTools.getPassword());
         builder.add(passphrase2, cc.xy(3, 7));
         builder.add(message, cc.xyw(1, 9, 3));
 
@@ -285,5 +303,6 @@ public class NewAliasDialog implements Runnable {
     private JPanel regular;
     private JPanel process;
     private MessageLabel message;
+    private ResourceBundle caps;
 
 }

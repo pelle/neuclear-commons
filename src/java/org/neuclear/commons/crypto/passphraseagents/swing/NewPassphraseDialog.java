@@ -5,6 +5,7 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.plaf.Options;
+import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,8 +16,11 @@ import java.awt.event.KeyListener;
 import java.net.URL;
 
 /*
-$Id: NewPassphraseDialog.java,v 1.3 2004/04/21 23:10:13 pelle Exp $
+$Id: NewPassphraseDialog.java,v 1.4 2004/04/22 12:35:29 pelle Exp $
 $Log: NewPassphraseDialog.java,v $
+Revision 1.4  2004/04/22 12:35:29  pelle
+Added Icons and improved localisation
+
 Revision 1.3  2004/04/21 23:10:13  pelle
 Fixed mac look and feel
 
@@ -136,9 +140,13 @@ public class NewPassphraseDialog {
         builder.addSeparator("Enter new passphrase", cc.xyw(1, 3, 3));
         builder.addLabel("name:", cc.xy(1, 5)).setLabelFor(alias);
         builder.add(alias, cc.xy(3, 5));
-        builder.addLabel("Passphrase:", cc.xy(1, 7)).setLabelFor(passphrase);
+        final JLabel pslabel1 = builder.addLabel("Passphrase:", cc.xy(1, 7));
+        pslabel1.setIcon(IconTools.getPassword());
+        pslabel1.setLabelFor(passphrase);
         builder.add(passphrase, cc.xy(3, 7));
-        builder.addLabel("Repeat Passphrase:", cc.xy(1, 9)).setLabelFor(passphrase2);
+        final JLabel pslabel2 = builder.addLabel("Repeat Passphrase:", cc.xy(1, 9));
+        pslabel1.setIcon(IconTools.getPassword());
+        pslabel2.setLabelFor(passphrase2);
         builder.add(passphrase2, cc.xy(3, 9));
         builder.add(message, cc.xyw(1, 11, 3));
 

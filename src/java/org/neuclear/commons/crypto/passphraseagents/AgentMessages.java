@@ -62,8 +62,8 @@ public class AgentMessages {
     private static Locale getLocale() {
         Locale deflocale = Locale.getDefault();
         Preferences prefs = getPrefs();
-        String cc = prefs.get("COUNTRY", deflocale.getCountry());
-        String lang = prefs.get("LANGUAGE", deflocale.getLanguage());
+        String cc = prefs.get(CC, deflocale.getCountry());
+        String lang = prefs.get(LANG, deflocale.getLanguage());
 //        String variant=prefs.get("LANGUAGE",deflocale.getVariant());
 
         return new Locale(lang, cc);
@@ -71,8 +71,8 @@ public class AgentMessages {
 
     public static void updateLocale(String language, String country) {
         Preferences prefs = getPrefs();
-        prefs.put("LANGUAGE", language);
-        prefs.put("COUNTRY", country);
+        prefs.put(LANG, language);
+        prefs.put(CC, country);
         try {
             prefs.flush();
         } catch (BackingStoreException e) {
@@ -80,6 +80,9 @@ public class AgentMessages {
         }
         updateBundle();
     }
+
+    private static final String CC = "CC";
+    private static final String LANG = "LANG";
 
 
 }

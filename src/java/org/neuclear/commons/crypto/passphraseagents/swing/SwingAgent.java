@@ -1,6 +1,5 @@
 package org.neuclear.commons.crypto.passphraseagents.swing;
 
-import com.jgoodies.plaf.Options;
 import org.neuclear.commons.crypto.Base64;
 import org.neuclear.commons.crypto.CryptoTools;
 import org.neuclear.commons.crypto.passphraseagents.InteractiveAgent;
@@ -14,8 +13,11 @@ import java.io.File;
 import java.security.PublicKey;
 
 /*
-$Id: SwingAgent.java,v 1.10 2004/04/21 23:10:13 pelle Exp $
+$Id: SwingAgent.java,v 1.11 2004/04/22 12:35:29 pelle Exp $
 $Log: SwingAgent.java,v $
+Revision 1.11  2004/04/22 12:35:29  pelle
+Added Icons and improved localisation
+
 Revision 1.10  2004/04/21 23:10:13  pelle
 Fixed mac look and feel
 
@@ -63,16 +65,7 @@ The XMLSig classes have also been updated to support this.
  */
 public class SwingAgent implements InteractiveAgent {
     public SwingAgent() {
-        try {
-            if (UIManager.getSystemLookAndFeelClassName().equals("apple.laf.AquaLookAndFeel"))
-                System.setProperty("com.apple.laf.useScreenMenuBar", "true");
-            else {
-                UIManager.setLookAndFeel("com.jgoodies.plaf.plastic.PlasticXPLookAndFeel");
-                UIManager.put(Options.USE_SYSTEM_FONTS_APP_KEY, Boolean.TRUE);
-            }
-        } catch (Exception e) {
-            // Likely PlasticXP is not in the class path; ignore.
-        }
+        SwingTools.setLAF();
         ksd = new KeyStoreDialog();
         simple = new SimpleDialog();
         np = new NewPassphraseDialog();

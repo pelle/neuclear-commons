@@ -1,5 +1,7 @@
 package org.neuclear.commons.crypto.passphraseagents.swing;
 
+import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -21,8 +23,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: MessageLabel.java,v 1.1 2004/04/14 00:10:51 pelle Exp $
+$Id: MessageLabel.java,v 1.2 2004/04/22 12:35:29 pelle Exp $
 $Log: MessageLabel.java,v $
+Revision 1.2  2004/04/22 12:35:29  pelle
+Added Icons and improved localisation
+
 Revision 1.1  2004/04/14 00:10:51  pelle
 Added a MessageLabel for handling errors, validation and info
 Save works well now.
@@ -37,22 +42,24 @@ It's pretty much there I think.
  */
 public class MessageLabel extends JLabel {
     public MessageLabel() {
-        orig = getBackground();
+//        orig = getBackground();
         setText(" ");
 
-        setOpaque(false);
+//        setOpaque(false);
     }
 
     public void info(String message) {
-        setOpaque(true);
-        setBackground(INFO);
+//        setOpaque(true);
+//        setBackground(INFO);
         setText(message);
+        setIcon(IconTools.getInfo());
     }
 
     public void invalid(String message) {
-        setOpaque(true);
-        setBackground(INVALID);
+//        setOpaque(true);
+//        setBackground(INVALID);
         setText(message);
+        setIcon(IconTools.getInvalid());
     }
 
     public void invalidPassphrase() {
@@ -60,9 +67,10 @@ public class MessageLabel extends JLabel {
     }
 
     public void error(String message) {
-        setOpaque(true);
-        setBackground(ERROR);
+//        setOpaque(true);
+//        setBackground(ERROR);
         setText(message);
+        setIcon(IconTools.getError());
     }
 
     public void error(Exception e) {
@@ -73,12 +81,14 @@ public class MessageLabel extends JLabel {
     }
 
     public void clear() {
-        setBackground(orig);
+//        setBackground(orig);
         setText(" ");
-        setOpaque(false);
+//        setOpaque(false);
+        setIcon(null);
     }
 
-    private final Color orig;
+//    private final Color orig;
+
 
     public static final Color INFO = new Color(200, 200, 200);
     public static final Color ERROR = Color.RED;

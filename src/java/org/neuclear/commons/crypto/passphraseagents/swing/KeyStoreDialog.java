@@ -4,8 +4,8 @@ import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.plaf.Options;
 import org.neuclear.commons.crypto.passphraseagents.AgentMessages;
+import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
 import org.neuclear.commons.crypto.signers.BrowsableSigner;
 import org.neuclear.commons.crypto.signers.DefaultSigner;
 import org.neuclear.commons.crypto.signers.InvalidPassphraseException;
@@ -28,8 +28,11 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /*
-$Id: KeyStoreDialog.java,v 1.9 2004/04/21 23:10:13 pelle Exp $
+$Id: KeyStoreDialog.java,v 1.10 2004/04/22 12:35:29 pelle Exp $
 $Log: KeyStoreDialog.java,v $
+Revision 1.10  2004/04/22 12:35:29  pelle
+Added Icons and improved localisation
+
 Revision 1.9  2004/04/21 23:10:13  pelle
 Fixed mac look and feel
 
@@ -86,26 +89,21 @@ public class KeyStoreDialog {
      * @jira NEU-30 Allow Identity Objects to be described in XHTML
      */
     public KeyStoreDialog() {
-        try {
-            if (UIManager.getSystemLookAndFeelClassName().equals("apple.laf.AquaLookAndFeel"))
-                System.setProperty("com.apple.laf.useScreenMenuBar", "true");
-            else {
-                UIManager.setLookAndFeel("com.jgoodies.plaf.plastic.PlasticXPLookAndFeel");
-                UIManager.put(Options.USE_SYSTEM_FONTS_APP_KEY, Boolean.TRUE);
-            }
-        } catch (Exception e) {
-            // Likely PlasticXP is not in the class path; ignore.
-        }
+        SwingTools.setLAF();
         prefs = Preferences.userNodeForPackage(DefaultSigner.class);
-        AgentMessages.updateLocale("es", "ES");
+//        AgentMessages.updateLocale("es", "ES");
         caps = AgentMessages.getMessages();
         cache = new HashMap();
         sign = new JButton(caps.getString("sign"));
+        sign.setIcon(IconTools.getSign());
         sign.setEnabled(false);
         cancel = new JButton(caps.getString("cancel"));
+        cancel.setIcon(IconTools.getCancel());
         newId = new JButton(caps.getString("newid"));
+        newId.setIcon(IconTools.getAddPersonality());
         message = new MessageLabel();
         save = new JButton(caps.getString("savekeys"));
+        save.setIcon(IconTools.getSaveAs());
         remember = new JCheckBox(caps.getString("remember"), prefs.getBoolean(REMEMBER_PASSPHRASE, false));
         list = new JList();
         list.setBorder(BorderFactory.createLoweredBevelBorder());
@@ -236,11 +234,18 @@ public class KeyStoreDialog {
 
         builder.setDefaultDialogBorder();
 
-        builder.add(icon, cc.xyw(1, 5, 1, CellConstraints.LEFT, CellConstraints.TOP));
-        icon.setLabelFor(list);
-        builder.addSeparator(caps.getString("identities"), cc.xyw(1, 3, 3));
+        builder.add(icon, cc.xyw(1, 3, 1, CellConstraints.LEFT, CellConstraints.TOP));
+        builder.addSeparator(caps.getString("sign"), cc.xyw(2, 3, 2));
+
+        JLabel idlabel = builder.addLabel(caps.getString("identities"), cc.xyw(1, 5, 1, CellConstraints.LEFT, CellConstraints.TOP));
+        idlabel.setIcon(IconTools.getPersonalities());
+        idlabel.setLabelFor(list);
+
         builder.add(list, cc.xyw(3, 5, 1));
-        builder.addLabel(caps.getString("passphrase"), cc.xy(1, 7)).setLabelFor(passphrase);
+        final JLabel pslabel = builder.addLabel(caps.getString("passphrase"), cc.xy(1, 7));
+        pslabel.setLabelFor(passphrase);
+        pslabel.setIcon(IconTools.getPassword());
+
         builder.add(passphrase, cc.xy(3, 7));
         builder.add(remember, cc.xy(3, 9));
         builder.add(message, cc.xyw(1, 11, 3));
@@ -333,11 +338,13 @@ public class KeyStoreDialog {
                 message.invalidPassphrase();
             else
                 message.clear();
+            sign.setEnabled(validate());
+
+
             frame.pack();
             frame.show();
             frame.toFront();
             passphrase.requestFocus();
-            sign.setEnabled(false);
         }
 
         public void execute() {
