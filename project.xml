@@ -198,15 +198,10 @@
 
     </dependencies>
     <build>
-
         <sourceDirectory>src/java</sourceDirectory>
 
         <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
-        <integrationUnitTestSourceDirectory/>
 
-        <aspectSourceDirectory/>
-
-        <!-- Unit test cases -->
         <unitTest>
             <includes>
                 <include>**/*Test.java</include>
@@ -215,20 +210,27 @@
                 <exclude>**/Abstract*Test.java</exclude>
             </excludes>
         </unitTest>
+
         <resources>
             <resource>
                 <directory>
-                src/java
+                      src/java
                 </directory>
-                <includes>*.png</includes>
-                <includes>*.gif</includes>
-                <includes>*.jpg</includes>
-                <includes>*.jks</includes>
-                <includes>*.xml</includes>
-                <includes>*.properties</includes>
-                <excludes>*.java</excludes>
+                <includes>
+                    <include>*.png</include>
+                    <include>*.gif</include>
+                    <include>*.jpg</include>
+                    <include>*.jks</include>
+                    <include>*.xml</include>
+                    <include>*.properties</include>
+                    <include>LICENSE.txt</include>
+                </includes>
+                <excludes>
+                    <exclude>*.java</exclude>
+                </excludes>
             </resource>
         </resources>
+
     </build>
 </project>
 
