@@ -2,6 +2,7 @@ package org.neuclear.commons.crypto.passphraseagents.swing.actions;
 
 import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
 import org.neuclear.commons.crypto.passphraseagents.swing.NewAliasDialog;
+import org.neuclear.commons.crypto.signers.BrowsableSigner;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -24,8 +25,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: NewPersonalityAction.java,v 1.1 2004/05/05 23:39:45 pelle Exp $
+$Id: NewPersonalityAction.java,v 1.2 2004/05/06 17:36:28 pelle Exp $
 $Log: NewPersonalityAction.java,v $
+Revision 1.2  2004/05/06 17:36:28  pelle
+Further slight mods in the gui
+
 Revision 1.1  2004/05/05 23:39:45  pelle
 Starting to organize the swing parts of the passphrase agent a bit better.
 I am creating actions, panels and dialogs.
@@ -37,9 +41,9 @@ I am creating actions, panels and dialogs.
  * Date: May 5, 2004
  * Time: 11:16:19 PM
  */
-public class NewPersonalityAction extends NeuClearAction {
-    public NewPersonalityAction() {
-        super("newid", IconTools.getAddPersonality());
+public class NewPersonalityAction extends SignerAction {
+    public NewPersonalityAction(BrowsableSigner signer) {
+        super("newid", IconTools.getAddPersonality(), signer);
 
         nad = null;
     }
@@ -50,6 +54,7 @@ public class NewPersonalityAction extends NeuClearAction {
     public void actionPerformed(ActionEvent e) {
         if (nad == null)
             nad = new NewAliasDialog();
+
         SwingUtilities.invokeLater(nad);
     }
 

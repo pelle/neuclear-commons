@@ -17,8 +17,11 @@ import java.awt.event.KeyListener;
 import java.util.ResourceBundle;
 
 /*
-$Id: NewAliasDialog.java,v 1.9 2004/05/05 23:39:45 pelle Exp $
+$Id: NewAliasDialog.java,v 1.10 2004/05/06 17:36:29 pelle Exp $
 $Log: NewAliasDialog.java,v $
+Revision 1.10  2004/05/06 17:36:29  pelle
+Further slight mods in the gui
+
 Revision 1.9  2004/05/05 23:39:45  pelle
 Starting to organize the swing parts of the passphrase agent a bit better.
 I am creating actions, panels and dialogs.
@@ -66,7 +69,7 @@ public class NewAliasDialog implements Runnable {
         this(null);
     }
 
-    public NewAliasDialog(KeyStoreDialog agent) {
+    public NewAliasDialog(KeyStorePanel agent) {
         try {
             if (UIManager.getSystemLookAndFeelClassName().equals("apple.laf.AquaLookAndFeel"))
                 System.setProperty("com.apple.laf.useScreenMenuBar", "true");
@@ -96,7 +99,8 @@ public class NewAliasDialog implements Runnable {
         progress = new JProgressBar(0, 100);
         progress.setIndeterminate(true);
         progress.setVisible(true);
-        dialog = new JDialog(agent.getFrame(), true);
+
+        dialog = new JDialog();
         dialog.setTitle(caps.getString("signingagent"));
         dialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         dialog.hide();
@@ -299,7 +303,7 @@ public class NewAliasDialog implements Runnable {
 
     }
 
-    private KeyStoreDialog agent;
+    private KeyStorePanel agent;
     private JDialog dialog;
     private JButton ok;
     private JButton cancel;
