@@ -1,6 +1,13 @@
 /*
-  $Id: CryptoToolsTest.java,v 1.2 2003/11/21 04:43:42 pelle Exp $
+  $Id: CryptoToolsTest.java,v 1.3 2004/04/09 20:02:55 pelle Exp $
   $Log: CryptoToolsTest.java,v $
+  Revision 1.3  2004/04/09 20:02:55  pelle
+  Added PrivateKey wrapping and unwrapping to CryptoTools with the methods:
+  byte [] wrapKey(char passphrase[], PrivateKey key)
+  and
+  PrivateKey unWrapKey(char passphrase[],byte wrapped[],String algorithm)
+  PrivateKey unWrapRSAKey(char passphrase[],byte wrapped[])
+
   Revision 1.2  2003/11/21 04:43:42  pelle
   EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
   Otherwise You will Finaliate.
@@ -91,7 +98,10 @@ package org.neuclear.commons.crypto;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.neuclear.commons.NeuClearException;
+
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 
 
 /**
@@ -131,7 +141,7 @@ public final class CryptoToolsTest extends TestCase {
         assertEquals(padded.length % 14, 0);
     }
 
-    public final void testSymmetricKeyEncryption() throws  CryptoException {
+    public final void testSymmetricKeyEncryption() throws CryptoException {
         final String contentString = "<xml>Hello</xml>";
         final byte[] password = "Three Brown Geese sledded down the hill".getBytes();
         final byte[] contents = contentString.getBytes();
@@ -148,5 +158,19 @@ public final class CryptoToolsTest extends TestCase {
         assertEquals("Test Encryption/Decryption works", contentString, decryptString);
     }
 
+    public final void testKeyWrapping() throws NoSuchAlgorithmException, CryptoException {
+        KeyPair kp = CryptoTools.createTinyRSAKeyPair();
+        assertNotNull(kp);
+        assertNotNull(kp.getPrivate());
+        char password[] = "the secrets of the world are mine".toCharArray();
+        byte wrapped[] = CryptoTools.wrapKey(password, kp.getPrivate());
+        assertNotNull(wrapped);
+        PrivateKey priv = CryptoTools.unWrapRSAKey(password, wrapped);
+
+        byte[] data = "the quick brown fox jumped over the lazy dog".getBytes();
+        byte[] sig = CryptoTools.sign(priv, data);
+        assertNotNull(sig);
+        assertTrue(CryptoTools.verify(kp.getPublic(), data, sig));
+    }
 
 }

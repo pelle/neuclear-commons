@@ -1,6 +1,13 @@
 /*
- * $Id: CryptoTools.java,v 1.19 2004/03/31 18:48:25 pelle Exp $
+ * $Id: CryptoTools.java,v 1.20 2004/04/09 20:02:54 pelle Exp $
  * $Log: CryptoTools.java,v $
+ * Revision 1.20  2004/04/09 20:02:54  pelle
+ * Added PrivateKey wrapping and unwrapping to CryptoTools with the methods:
+ * byte [] wrapKey(char passphrase[], PrivateKey key)
+ * and
+ * PrivateKey unWrapKey(char passphrase[],byte wrapped[],String algorithm)
+ * PrivateKey unWrapRSAKey(char passphrase[],byte wrapped[])
+ *
  * Revision 1.19  2004/03/31 18:48:25  pelle
  * Added various Streams for simplified crypto operations.
  *
@@ -266,6 +273,7 @@ import org.bouncycastle.jce.interfaces.ECPublicKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.neuclear.commons.time.TimeTools;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKeyFactory;
@@ -688,6 +696,7 @@ public final class CryptoTools {
         return makePBECipher(DEFAULT_PBE_ALGORITHM, mode, password, salt, iterationCount, DEFAULT_JCE_PROVIDER);
     }
 
+
     /**
      * Adapted from BouncyCastle's JDKKeyStore class.<p>
      * This one is setup with some meaningful JCE and Algorithm Defaults as well as general simple defaults
@@ -703,6 +712,31 @@ public final class CryptoTools {
         return makePBECipher(DEFAULT_PBE_ALGORITHM, mode, password, DEFAULT_SALT, DEFAULT_ITERATION_COUNT, DEFAULT_JCE_PROVIDER);
     }
 
+    public static byte[] wrapKey(final char password[], final PrivateKey key) throws CryptoException {
+        try {
+            Cipher cipher = makePBECipher(Cipher.WRAP_MODE, password);
+            return cipher.wrap(key);
+        } catch (BadPaddingException e) {
+            throw new CryptoException(e);
+        } catch (GeneralSecurityException e) {
+            throw new CryptoException(e);
+        }
+    }
+
+    public static PrivateKey unWrapKey(final char password[], final byte data[], final String algorithm) throws CryptoException {
+        try {
+            Cipher cipher = makePBECipher(Cipher.UNWRAP_MODE, password);
+            return (PrivateKey) cipher.unwrap(data, algorithm, Cipher.PRIVATE_KEY);
+        } catch (BadPaddingException e) {
+            throw new CryptoException(e);
+        } catch (GeneralSecurityException e) {
+            throw new CryptoException(e);
+        }
+    }
+
+    public static PrivateKey unWrapRSAKey(final char password[], final byte data[]) throws CryptoException {
+        return unWrapKey(password, data, "RSA");
+    }
 
     public static PublicKey createPK(final String mod, final String exp) throws CryptoException {
         try {

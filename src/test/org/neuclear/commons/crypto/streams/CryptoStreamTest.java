@@ -12,8 +12,15 @@ import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 
 /*
-$Id: CryptoStreamTest.java,v 1.1 2004/03/31 18:48:27 pelle Exp $
+$Id: CryptoStreamTest.java,v 1.2 2004/04/09 20:02:55 pelle Exp $
 $Log: CryptoStreamTest.java,v $
+Revision 1.2  2004/04/09 20:02:55  pelle
+Added PrivateKey wrapping and unwrapping to CryptoTools with the methods:
+byte [] wrapKey(char passphrase[], PrivateKey key)
+and
+PrivateKey unWrapKey(char passphrase[],byte wrapped[],String algorithm)
+PrivateKey unWrapRSAKey(char passphrase[],byte wrapped[])
+
 Revision 1.1  2004/03/31 18:48:27  pelle
 Added various Streams for simplified crypto operations.
 
@@ -28,8 +35,9 @@ public class CryptoStreamTest extends TestCase {
 
     public CryptoStreamTest(String name) throws NoSuchAlgorithmException {
         super(name);
-        rsa = CryptoTools.createTinyRSAKeyPair();
-        dsa = CryptoTools.createTinyDSAKeyPair();
+//        rsa = CryptoTools.createTinyRSAKeyPair();
+//        dsa = CryptoTools.createTinyDSAKeyPair();
+        CryptoTools.ensureProvider();
     }
 
 
