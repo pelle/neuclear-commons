@@ -1,5 +1,14 @@
-/* $Id: SimpleSignerStoreTest.java,v 1.2 2003/11/12 23:47:50 pelle Exp $
+/* $Id: SimpleSignerStoreTest.java,v 1.3 2003/11/19 23:32:51 pelle Exp $
  * $Log: SimpleSignerStoreTest.java,v $
+ * Revision 1.3  2003/11/19 23:32:51  pelle
+ * Signers now can generatekeys via the generateKey() method.
+ * Refactored the relationship between SignedNamedObject and NamedObjectBuilder a bit.
+ * SignedNamedObject now contains the full xml which is returned with getEncoded()
+ * This means that it is now possible to further send on or process a SignedNamedObject, leaving
+ * NamedObjectBuilder for its original purposes of purely generating new Contracts.
+ * NamedObjectBuilder.sign() now returns a SignedNamedObject which is the prefered way of processing it.
+ * Updated all major interfaces that used the old model to use the new model.
+ *
  * Revision 1.2  2003/11/12 23:47:50  pelle
  * Much work done in creating good test environment.
  * PaymentReceiverTest works, but needs a abit more work in its environment to succeed testing.
@@ -89,20 +98,17 @@ import org.neuclear.commons.crypto.CryptoTools;
 import org.neuclear.commons.crypto.passphraseagents.AlwaysTheSamePassphraseAgent;
 
 import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.SecureRandom;
+import java.security.*;
 
 
 /**
  * @author pelleb
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class SimpleSignerStoreTest extends TestCase {
     public SimpleSignerStoreTest(String name) throws GeneralSecurityException, NeuClearException, ConfigurationException {
         super(name);
-        store = getSignerStoreInstance();
+        signer = getSignerStoreInstance();
         generateKeys();
     }
 
@@ -132,7 +138,7 @@ public class SimpleSignerStoreTest extends TestCase {
     public void testAddKey() throws NeuClearException, GeneralSecurityException, IOException {
         boolean success = false;
         try {
-            store.addKey("root", root.getPrivate());
+            signer.addKey("root", root.getPrivate());
             success = true;
         } catch (GeneralSecurityException e) {
             e.printStackTrace();
@@ -146,8 +152,8 @@ public class SimpleSignerStoreTest extends TestCase {
         boolean success = false;
         byte data[] = null;
         try {
-            store.addKey("bob", bob.getPrivate());
-            data = store.sign("bob", "test".getBytes());
+            signer.addKey("bob", bob.getPrivate());
+            data = signer.sign("bob", "test".getBytes());
             assertTrue(CryptoTools.verify(bob.getPublic(), "test".getBytes(), data));
             success = true;
         } catch (GeneralSecurityException e) {
@@ -160,8 +166,18 @@ public class SimpleSignerStoreTest extends TestCase {
         //assertEquals("Gotten Key was the same as Stored Key", bob.getPrivate(), key);
     }
 
+    public void testGenerateKey() throws CryptoException {
+        PublicKey pub = signer.generateKey("tupac");
+        byte data[] = "this is a test".getBytes();
+        byte sig[] = signer.sign("tupac", data);
+        assertNotNull(sig);
+        assertTrue(CryptoTools.verify(pub, data, sig));
+        assertTrue(signer.canSignFor("tupac"));
 
-    private SimpleSigner store;
+
+    }
+
+    private SimpleSigner signer;
     private static KeyPairGenerator kg;
     protected static KeyPair root;
     protected static KeyPair bob;

@@ -1,6 +1,15 @@
 /*
- * $Id: Signer.java,v 1.1 2003/11/11 21:17:47 pelle Exp $
+ * $Id: Signer.java,v 1.2 2003/11/19 23:32:50 pelle Exp $
  * $Log: Signer.java,v $
+ * Revision 1.2  2003/11/19 23:32:50  pelle
+ * Signers now can generatekeys via the generateKey() method.
+ * Refactored the relationship between SignedNamedObject and NamedObjectBuilder a bit.
+ * SignedNamedObject now contains the full xml which is returned with getEncoded()
+ * This means that it is now possible to further send on or process a SignedNamedObject, leaving
+ * NamedObjectBuilder for its original purposes of purely generating new Contracts.
+ * NamedObjectBuilder.sign() now returns a SignedNamedObject which is the prefered way of processing it.
+ * Updated all major interfaces that used the old model to use the new model.
+ *
  * Revision 1.1  2003/11/11 21:17:47  pelle
  * Further vital reshuffling.
  * org.neudist.crypto.* and org.neudist.utils.* have been moved to respective areas under org.neuclear.commons
@@ -69,6 +78,8 @@ package org.neuclear.commons.crypto.signers;
 
 import org.neuclear.commons.crypto.CryptoException;
 
+import java.security.PublicKey;
+
 
 /**
  * The Signer follows the following model:
@@ -90,6 +101,7 @@ public interface Signer {
      * @param data Data to be signed
      * @return The signature
      * @throws org.neuclear.commons.crypto.CryptoException
+     *          
      */
 
     public byte[] sign(String name, byte data[]) throws CryptoException;
@@ -108,15 +120,26 @@ public interface Signer {
 
     /**
      * Checks the key type of the given alias
-     * @param name
+     * 
+     * @param name 
      * @return KEY_NONE,KEY_RSA,KEY_DSA
-     * @throws CryptoException
+     * @throws CryptoException 
      */
     public int getKeyType(String name) throws CryptoException;
 
-    final public static int KEY_NONE=0;
-    final public static int KEY_RSA=1;
-    final public static int KEY_DSA=2;
-    final public static int KEY_OTHER=-1;
+    /**
+     * Creates a new KeyPair, stores the PrivateKey using the given alias
+     * and returns the PublicKey.
+     * 
+     * @param alias 
+     * @return Generated PublicKey
+     * @throws CryptoException 
+     */
+    public PublicKey generateKey(String alias) throws CryptoException;
+
+    final public static int KEY_NONE = 0;
+    final public static int KEY_RSA = 1;
+    final public static int KEY_DSA = 2;
+    final public static int KEY_OTHER = -1;
 
 }

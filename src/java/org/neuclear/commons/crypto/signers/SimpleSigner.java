@@ -1,6 +1,15 @@
 /*
- * $Id: SimpleSigner.java,v 1.2 2003/11/12 18:54:42 pelle Exp $
+ * $Id: SimpleSigner.java,v 1.3 2003/11/19 23:32:50 pelle Exp $
  * $Log: SimpleSigner.java,v $
+ * Revision 1.3  2003/11/19 23:32:50  pelle
+ * Signers now can generatekeys via the generateKey() method.
+ * Refactored the relationship between SignedNamedObject and NamedObjectBuilder a bit.
+ * SignedNamedObject now contains the full xml which is returned with getEncoded()
+ * This means that it is now possible to further send on or process a SignedNamedObject, leaving
+ * NamedObjectBuilder for its original purposes of purely generating new Contracts.
+ * NamedObjectBuilder.sign() now returns a SignedNamedObject which is the prefered way of processing it.
+ * Updated all major interfaces that used the old model to use the new model.
+ *
  * Revision 1.2  2003/11/12 18:54:42  pelle
  * Updated SimpleSignerStoreTest to use a StoredPassPhraseAgent eliminating the popup during testing.
  * Created SigningBenchmark for running comparative performance benchmarks on various key algorithms.
@@ -89,9 +98,7 @@ import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import java.io.*;
-import java.security.GeneralSecurityException;
-import java.security.KeyFactory;
-import java.security.PrivateKey;
+import java.security.*;
 import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.HashMap;
@@ -116,6 +123,13 @@ public class SimpleSigner implements Signer {
                 ks = new HashMap();
 
             kf = KeyFactory.getInstance("RSA", "BC");
+            try {
+                kpg = KeyPairGenerator.getInstance("RSA");
+                kpg.initialize(1024, SecureRandom.getInstance("SHA1PRNG"));
+            } catch (NoSuchAlgorithmException e) {
+                throw new CryptoException(e);
+            }
+
         } catch (IOException e) {
             throw new NeuClearException(e);
         } catch (ClassNotFoundException e) {
@@ -234,9 +248,32 @@ public class SimpleSigner implements Signer {
         return CryptoTools.sign(getKey(name, agent.getPassPhrase(name)), data);
     }
 
+    /**
+     * Creates a new KeyPair, stores the PrivateKey using the given alias
+     * and returns the PublicKey.
+     * 
+     * @param alias 
+     * @return Generated PublicKey
+     * @throws org.neuclear.commons.crypto.CryptoException
+     *          
+     */
+    public PublicKey generateKey(String alias) throws CryptoException {
+        try {
+            KeyPair kp = kpg.generateKeyPair();
+            addKey(alias, agent.getPassPhrase(alias), kp.getPrivate());
+            return kp.getPublic();
+        } catch (GeneralSecurityException e) {
+            throw new CryptoException(e);
+        } catch (IOException e) {
+            throw new CryptoException(e);
+        }
+
+    }
+
     private KeyFactory kf;
     private Map ks;
 
     private final File signerFile;
     private final PassPhraseAgent agent;
+    private final KeyPairGenerator kpg;
 }

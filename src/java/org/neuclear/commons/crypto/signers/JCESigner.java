@@ -1,6 +1,15 @@
 /*
- * $Id: JCESigner.java,v 1.5 2003/11/18 15:07:18 pelle Exp $
+ * $Id: JCESigner.java,v 1.6 2003/11/19 23:32:50 pelle Exp $
  * $Log: JCESigner.java,v $
+ * Revision 1.6  2003/11/19 23:32:50  pelle
+ * Signers now can generatekeys via the generateKey() method.
+ * Refactored the relationship between SignedNamedObject and NamedObjectBuilder a bit.
+ * SignedNamedObject now contains the full xml which is returned with getEncoded()
+ * This means that it is now possible to further send on or process a SignedNamedObject, leaving
+ * NamedObjectBuilder for its original purposes of purely generating new Contracts.
+ * NamedObjectBuilder.sign() now returns a SignedNamedObject which is the prefered way of processing it.
+ * Updated all major interfaces that used the old model to use the new model.
+ *
  * Revision 1.5  2003/11/18 15:07:18  pelle
  * Changes to JCE Implementation
  * Working on getting all tests working including store tests
@@ -91,10 +100,12 @@ package org.neuclear.commons.crypto.signers;
 import org.neuclear.commons.NeuClearException;
 import org.neuclear.commons.crypto.CryptoException;
 import org.neuclear.commons.crypto.CryptoTools;
+import org.neuclear.commons.crypto.RawCertificate;
 import org.neuclear.commons.crypto.passphraseagents.PassPhraseAgent;
 
 import java.io.*;
 import java.security.*;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.interfaces.DSAPublicKey;
 import java.security.interfaces.RSAPublicKey;
@@ -109,12 +120,12 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
     }
 
     protected JCESigner(String name, InputStream in, String type, String provider, PassPhraseAgent agent) throws NeuClearException {
-           this(loadKeyStore(provider, type, in, agent, name),agent);
+        this(loadKeyStore(provider, type, in, agent, name), agent);
     }
 
     private static KeyStore loadKeyStore(String provider, String type, InputStream in, PassPhraseAgent agent, String name) throws NeuClearException {
         try {
-            KeyStore ki=null;
+            KeyStore ki = null;
             if (provider == null)
                 ki = KeyStore.getInstance(type);
             else
@@ -135,11 +146,19 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
         }
     }
 
-    public JCESigner(KeyStore ks,PassPhraseAgent agent) {
+    public JCESigner(KeyStore ks, PassPhraseAgent agent) throws CryptoException {
         this.agent = agent;
         this.ks = ks;
         cache = new KeyCache(ks);
+        try {
+            kpg = KeyPairGenerator.getInstance("RSA");
+            kpg.initialize(1024, SecureRandom.getInstance("SHA1PRNG"));
+        } catch (NoSuchAlgorithmException e) {
+            throw new CryptoException(e);
+        }
+
     }
+
     private PrivateKey getKey(String name, char passphrase[]) throws InvalidPassphraseException, NonExistingSignerException, IOException {
         try {
             PrivateKey key = (PrivateKey) cache.getKey(name, passphrase);
@@ -203,6 +222,25 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
         return KEY_NONE;  //To change body of implemented methods use Options | File Templates.
     }
 
+    /**
+     * Creates a new KeyPair, stores the PrivateKey using the given alias
+     * and returns the PublicKey.
+     * 
+     * @param alias 
+     * @return Generated PublicKey
+     * @throws org.neuclear.commons.crypto.CryptoException
+     *          
+     */
+    public PublicKey generateKey(String alias) throws CryptoException {
+        try {
+            KeyPair kp = kpg.generateKeyPair();
+            ks.setKeyEntry(alias, kp.getPrivate(), agent.getPassPhrase(alias), new Certificate[]{new RawCertificate(kp.getPublic())});
+            return kp.getPublic();
+        } catch (KeyStoreException e) {
+            throw new CryptoException(e);
+        }
+    }
+
     public PublicKey getPublicKey(String name) throws CryptoException {
         try {
             return ks.getCertificate(name).getPublicKey();
@@ -215,4 +253,5 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
     private final KeyCache cache;
     private final PassPhraseAgent agent;
 
+    private final KeyPairGenerator kpg;
 }

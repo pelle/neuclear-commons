@@ -1,6 +1,15 @@
 /*
- * $Id: CryptoTools.java,v 1.2 2003/11/18 23:34:55 pelle Exp $
+ * $Id: CryptoTools.java,v 1.3 2003/11/19 23:32:50 pelle Exp $
  * $Log: CryptoTools.java,v $
+ * Revision 1.3  2003/11/19 23:32:50  pelle
+ * Signers now can generatekeys via the generateKey() method.
+ * Refactored the relationship between SignedNamedObject and NamedObjectBuilder a bit.
+ * SignedNamedObject now contains the full xml which is returned with getEncoded()
+ * This means that it is now possible to further send on or process a SignedNamedObject, leaving
+ * NamedObjectBuilder for its original purposes of purely generating new Contracts.
+ * NamedObjectBuilder.sign() now returns a SignedNamedObject which is the prefered way of processing it.
+ * Updated all major interfaces that used the old model to use the new model.
+ *
  * Revision 1.2  2003/11/18 23:34:55  pelle
  * Payment Web Application is getting there.
  *
@@ -178,6 +187,7 @@ import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.modes.CBCBlockCipher;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
 import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.jce.interfaces.ECPrivateKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.crypto.Cipher;
@@ -395,9 +405,11 @@ public class CryptoTools {
     public static Signature getSignatureCipher(PrivateKey key) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException {
         Signature sig = null;
         if (key instanceof RSAPrivateKey)
-            sig = Signature.getInstance("SHA1withRSA"); // Set up signature object.
+            sig = Signature.getInstance("SHA1withRSA", "BC"); // Set up signature object.
         else if (key instanceof DSAPrivateKey)
-            sig = Signature.getInstance("SHA1withDSA");
+            sig = Signature.getInstance("SHA1withDSA", "BC");
+        else if (key instanceof ECPrivateKey)
+            sig = Signature.getInstance("SHA1withECDSA", "BC");
 
         sig.initSign(key); // Initialize with my private signing key.
         return sig;
@@ -407,10 +419,10 @@ public class CryptoTools {
         try {
             Signature sig = null;
             if (pk instanceof DSAPublicKey) {
-                sig = Signature.getInstance("SHA1withDSA"); // Set up signature object.
+                sig = Signature.getInstance("SHA1withDSA", "BC"); // Set up signature object.
                 sigvalue = convertXMLDSIGtoASN1(sigvalue);
             } else if (pk instanceof RSAPublicKey) {
-                sig = Signature.getInstance("SHA1withRSA");
+                sig = Signature.getInstance("SHA1withRSA", "BC");
             }
             sig.initVerify(pk); // Initialize with my private signing key.
             sig.update(value);
