@@ -25,8 +25,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: JNDIConnectionSource.java,v 1.3 2003/11/28 00:12:13 pelle Exp $
+$Id: JNDIConnectionSource.java,v 1.4 2003/12/01 15:44:53 pelle Exp $
 $Log: JNDIConnectionSource.java,v $
+Revision 1.4  2003/12/01 15:44:53  pelle
+Added XAConnectionSources and Transaction capability through jotm.
+
 Revision 1.3  2003/11/28 00:12:13  pelle
 Getting the NeuClear web transactions working.
 
@@ -42,9 +45,9 @@ Payment Web Application is getting there.
 */
 
 /**
- * User: pelleb
- * Date: Nov 18, 2003
- * Time: 6:09:37 PM
+ * The JNDIConnectionSource takes as a constructer the name of a JNDI connection source.
+ * While not required, for most applications this should implement XA and there should also be
+ * a JTA UserTransaction available via JNDI
  */
 public final class JNDIConnectionSource implements ConnectionSource {
     public JNDIConnectionSource(final String name) throws NamingException {

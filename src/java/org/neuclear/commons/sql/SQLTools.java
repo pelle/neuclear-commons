@@ -1,5 +1,16 @@
 package org.neuclear.commons.sql;
 
+import org.neuclear.commons.NeuClearException;
+import org.objectweb.jotm.Jotm;
+import org.objectweb.carol.util.configuration.CarolConfiguration;
+import org.objectweb.carol.util.configuration.RMIConfigurationException;
+
+import javax.transaction.UserTransaction;
+import javax.transaction.TransactionManager;
+import javax.transaction.SystemException;
+import javax.naming.InitialContext;
+import javax.naming.Context;
+import javax.naming.NamingException;
 import java.sql.SQLException;
 import java.sql.DriverManager;
 import java.sql.Timestamp;
@@ -41,7 +52,7 @@ public final class SQLTools {
     }
 
 
-    private static Properties loadProperties() throws IOException {
+    static Properties loadProperties() throws IOException {
         final Properties props=new Properties();
         final File propsFile= new File(
                 System.getProperty("user.home")+
@@ -62,4 +73,49 @@ public final class SQLTools {
             return null;
         return new Timestamp(date.getTime());
     }
+    public final static UserTransaction getUserTransaction() throws NamingException,SystemException {
+            Context ctx = new InitialContext();
+        UserTransaction ut = null;
+        try {
+            ut = (UserTransaction)ctx.lookup(USERXACT);
+        } catch (NamingException e) {
+            getTransactionManager().getTransaction();
+            return jotm.getUserTransaction();
+
+        }
+        return ut;
+
+    }
+
+    public final static synchronized TransactionManager getTransactionManager() throws NamingException {
+        if (jotm==null){
+            Context ctx = new InitialContext();
+            jotm=new Jotm(true,false);
+            ctx.rebind(USERXACT,jotm.getUserTransaction());
+        }
+        return jotm.getTransactionManager();
+
+    }
+    final static void loadDefaultContext(){
+        try{
+            System.setProperty("java.naming.factory.initial","org.objectweb.carol.jndi.spi.MultiOrbInitialContextFactory");
+            Context ctx=new InitialContext();
+        } catch (Exception ex){
+
+            try {
+                CarolConfiguration.init();
+                getTransactionManager();
+            } catch (RMIConfigurationException e) {
+                throw new RuntimeException(e);
+            } catch (NamingException e) {
+                throw new RuntimeException(e) ;
+
+            }
+        }
+    }
+
+
+    private static Jotm jotm;
+    public static final String USERXACT = "java:comp/UserTransaction";
+
 }
