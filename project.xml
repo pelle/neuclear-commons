@@ -198,6 +198,9 @@
                 <directory>
                 src/java
                 </directory>
+                <includes>*.png</includes>
+                <includes>*.gif</includes>
+                <includes>*.jpg</includes>
                 <includes>*.jks</includes>
                 <includes>*.xml</includes>
                 <includes>*.properties</includes>
