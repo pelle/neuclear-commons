@@ -1,5 +1,7 @@
 package org.neuclear.commons.crypto.passphraseagents;
 
+import org.neuclear.commons.crypto.signers.Signer;
+
 /*
 NeuClear Distributed Transaction Clearing Platform
 (C) 2003 Pelle Braendgaard
@@ -18,8 +20,14 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: InteractiveAgent.java,v 1.3 2003/12/19 18:02:53 pelle Exp $
+$Id: InteractiveAgent.java,v 1.4 2004/03/29 23:48:32 pelle Exp $
 $Log: InteractiveAgent.java,v $
+Revision 1.4  2004/03/29 23:48:32  pelle
+InteractiveAgent now has a new method which allows signers to ask for a passphrase without specifying alias.
+The agents are passed a reference to the Signer, which they can use to browse aliases as well as create new key pairs.
+
+The intention is to encapsulate most of the key management functionality within the InteractiveAgent.
+
 Revision 1.3  2003/12/19 18:02:53  pelle
 Revamped a lot of exception handling throughout the framework, it has been simplified in most places:
 - For most cases the main exception to worry about now is InvalidNamedObjectException.
@@ -49,5 +57,14 @@ The IdentityCreator now fully works with the new Signer architecture.
  * Time: 5:13:49 PM
  */
 public interface InteractiveAgent extends PassPhraseAgent {
+    /**
+     * The User is asked to pick a name by the PassPhraseAgent. The PassPhraseAgent can query the given signer for
+     * a list of included aliases or even create a new keypair.
+     *
+     * @return
+     * @throws UserCancellationException
+     */
+    char[] getPassPhrase(final Signer signer) throws UserCancellationException;
+
 
 }
