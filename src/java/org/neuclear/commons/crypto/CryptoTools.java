@@ -1,6 +1,10 @@
 /*
- * $Id: CryptoTools.java,v 1.12 2004/01/18 21:20:20 pelle Exp $
+ * $Id: CryptoTools.java,v 1.13 2004/02/18 00:13:41 pelle Exp $
  * $Log: CryptoTools.java,v $
+ * Revision 1.13  2004/02/18 00:13:41  pelle
+ * Many, many clean ups. I've readded Targets in a new method.
+ * Gotten rid of NamedObjectBuilder and revamped Identity and Resolvers
+ *
  * Revision 1.12  2004/01/18 21:20:20  pelle
  * Created Base32 encoder that now fully complies with Tyler's spec.
  *
@@ -746,6 +750,7 @@ public final class CryptoTools {
         if ((asn1Bytes[0] != 48) || (asn1Bytes[1] != asn1Bytes.length - 2)
                 || (asn1Bytes[2] != 2) || (i > 20) || (asn1Bytes[4 + rLength] != 2)
                 || (j > 20)) {
+            
             throw new IOException("Invalid ASN.1 format of DSA signature");
         } else {
             final byte[] xmldsigBytes = new byte[40];

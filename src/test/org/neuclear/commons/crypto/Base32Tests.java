@@ -20,8 +20,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: Base32Tests.java,v 1.4 2004/01/19 23:49:29 pelle Exp $
+$Id: Base32Tests.java,v 1.5 2004/02/18 00:13:42 pelle Exp $
 $Log: Base32Tests.java,v $
+Revision 1.5  2004/02/18 00:13:42  pelle
+Many, many clean ups. I've readded Targets in a new method.
+Gotten rid of NamedObjectBuilder and revamped Identity and Resolvers
+
 Revision 1.4  2004/01/19 23:49:29  pelle
 Unit testing uncovered further issues with Base32
 NSTools is now uptodate as are many other classes. All transactional builders habe been updated.
@@ -65,7 +69,7 @@ public class Base32Tests extends TestCase{
         for (int i=0;i<TESTSTRINGS.length;i++){
 //            System.out.print("Encoding: "+TESTSTRINGS[i]+" ...");
             final String encoded = Base32.encode(TESTSTRINGS[i]);
-//            System.out.println(" ->"+encoded);
+           System.out.println(" ->"+encoded);
             assertEquals("TESTSTRINGS["+i+"]",TESTSTRINGS[i].getBytes(),Base32.decode(encoded));
         }
     }
@@ -75,7 +79,7 @@ public class Base32Tests extends TestCase{
 //            System.out.print("Encoding: "+TESTSTRINGS[i]+" ...");
             final String hash = com.waterken.url.Base32.encode(CryptoTools.digest(TESTSTRINGS[i]));
             assertEquals(32, hash.length());
-//            System.out.println(" ->"+hash);
+            System.out.println(" ->"+hash);
             assertTrue("TESTSTRINGS["+i+"]",CryptoTools.equalByteArrays(CryptoTools.digest(TESTSTRINGS[i]),Base32.decode(hash)));
         }
     }
