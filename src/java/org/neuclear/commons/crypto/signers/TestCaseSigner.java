@@ -4,6 +4,7 @@ import org.neuclear.commons.NeuClearException;
 import org.neuclear.commons.crypto.passphraseagents.AlwaysTheSamePassphraseAgent;
 
 import java.io.InputStream;
+import java.net.URL;
 import java.security.GeneralSecurityException;
 
 /*
@@ -24,8 +25,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: TestCaseSigner.java,v 1.1 2003/11/12 23:47:50 pelle Exp $
+$Id: TestCaseSigner.java,v 1.2 2003/11/13 23:26:17 pelle Exp $
 $Log: TestCaseSigner.java,v $
+Revision 1.2  2003/11/13 23:26:17  pelle
+The signing service and web authentication application is now almost working.
+
 Revision 1.1  2003/11/12 23:47:50  pelle
 Much work done in creating good test environment.
 PaymentReceiverTest works, but needs a abit more work in its environment to succeed testing.
@@ -50,7 +54,7 @@ public class TestCaseSigner extends JCESigner {
      * @throws GeneralSecurityException 
      */
     public TestCaseSigner() throws NeuClearException, GeneralSecurityException {
-        this(KEYSTORE, TestCaseSigner.class.getClassLoader().getResourceAsStream(KEYSTORE), "neuclear");
+        this(KEYSTORE, getKeyStore(), "neuclear");
     }
 
     /**
@@ -67,8 +71,17 @@ public class TestCaseSigner extends JCESigner {
         super(name,
                 in,
                 "jks", "SUN",
+                //new GuiDialogAgent()
                 new AlwaysTheSamePassphraseAgent(passphrase)
         );
+    }
+
+    private static InputStream getKeyStore() {
+        URL url = TestCaseSigner.class.getClassLoader().getResource(KEYSTORE);
+        System.out.println("loading keystore from: " + url.toString());
+        return TestCaseSigner.class.getResourceAsStream(KEYSTORE);
+
+
     }
 
     private static final String KEYSTORE = "org/neuclear/commons/crypto/signers/testkeys.jks";

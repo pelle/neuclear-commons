@@ -1,6 +1,9 @@
 /*
- * $Id: JCESigner.java,v 1.2 2003/11/12 23:47:50 pelle Exp $
+ * $Id: JCESigner.java,v 1.3 2003/11/13 23:26:17 pelle Exp $
  * $Log: JCESigner.java,v $
+ * Revision 1.3  2003/11/13 23:26:17  pelle
+ * The signing service and web authentication application is now almost working.
+ *
  * Revision 1.2  2003/11/12 23:47:50  pelle
  * Much work done in creating good test environment.
  * PaymentReceiverTest works, but needs a abit more work in its environment to succeed testing.
@@ -105,11 +108,11 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
             else
                 ks = KeyStore.getInstance(type, provider);
             ks.load(in, agent.getPassPhrase("KeyStore Passphrase for" + name));
-
+            System.out.println("Successfully loaded JCESigner: " + name + " type: " + ks.getType() + " size: " + ks.size());
         } catch (IOException e) {
             throw new NeuClearException(e);
         }
-        System.out.println("Successfully loaded JCESigner: " + name);
+
     }
 
     private PrivateKey getKey(String name, char passphrase[]) throws InvalidPassphraseException, NonExistingSignerException, IOException {
