@@ -22,30 +22,36 @@
 
     <repository>
      <connection>
-         scm:cvs:pserver:anonymous@cvs.neudist.sourceforge.net:/cvsroot/neudist:neuclear-commons
+         scm:cvs:pserver:anonymous@cvs.neudist.sourceforge.net:/cvsroot/neuclear:neuclear-commons
      </connection>
      <url>
-      http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/neudist/neuclear-commons/
+      http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/neuclear/neuclear-commons/
     </url>
   </repository>
 
   <siteAddress>neuclear.org</siteAddress>
   <siteDirectory>/home/sites/neuclear.org/public_html/commons/</siteDirectory>
-  <issueTrackingUrl>http://devone.veraxpay.com:9090</issueTrackingUrl>
-  <mailingLists>
-    <mailingList>
-      <name>NeuDist Announce</name>
-      <subscribe>http://lists.sourceforge.net/lists/listinfo/neudist-announce</subscribe>
-      <unsubscribe>http://lists.sourceforge.net/lists/listinfo/neudist-announce</unsubscribe>
-      <archive>http://www.geocrawler.com/redir-sf.php3?list=neudist-announce</archive>
-    </mailingList>
-    <mailingList>
-      <name>NeuDist Discuss</name>
-      <subscribe>http://lists.sourceforge.net/lists/listinfo/neudist-discuss</subscribe>
-      <unsubscribe>http://lists.sourceforge.net/lists/listinfo/neudist-discuss</unsubscribe>
-      <archive>http://www.geocrawler.com/redir-sf.php3?list=neudist-discuss</archive>
-    </mailingList>
-  </mailingLists>
+    <mailingLists>
+      <mailingList>
+        <name>NeuClear Announce</name>
+        <subscribe>http://lists.sourceforge.net/lists/listinfo/neuclear-announce</subscribe>
+        <unsubscribe>http://lists.sourceforge.net/lists/listinfo/neuclear-announce</unsubscribe>
+        <archive>http://sourceforge.net/mailarchive/forum.php?forum=neuclear-announce</archive>
+      </mailingList>
+      <mailingList>
+        <name>NeuClear General</name>
+        <subscribe>http://lists.sourceforge.net/lists/listinfo/neuclear-general</subscribe>
+        <unsubscribe>http://lists.sourceforge.net/lists/listinfo/neuclear-general</unsubscribe>
+        <archive>http://sourceforge.net/mailarchive/forum.php?forum=neuclear-general</archive>
+      </mailingList>
+        <mailingList>
+          <name>NeuClear Develop</name>
+          <subscribe>http://lists.sourceforge.net/lists/listinfo/neuclear-develop</subscribe>
+          <unsubscribe>http://lists.sourceforge.net/lists/listinfo/neuclear-develop</unsubscribe>
+          <archive>http://sourceforge.net/mailarchive/forum.php?forum=neuclear-develop</archive>
+        </mailingList>
+    </mailingLists>
+
 
   <developers>
 
