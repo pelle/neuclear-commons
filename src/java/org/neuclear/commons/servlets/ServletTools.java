@@ -1,5 +1,8 @@
-/* $Id: ServletTools.java,v 1.5 2003/12/16 15:04:43 pelle Exp $
+/* $Id: ServletTools.java,v 1.6 2003/12/22 22:14:37 pelle Exp $
  * $Log: ServletTools.java,v $
+ * Revision 1.6  2003/12/22 22:14:37  pelle
+ * Last minute cleanups and documentation prior to release 0.8.1
+ *
  * Revision 1.5  2003/12/16 15:04:43  pelle
  * Added SignedMessage contract for signing simple textual contracts.
  * Added NeuSender, updated SmtpSender and Sender to take plain email addresses (without the mailto:)
@@ -64,7 +67,7 @@ import java.io.PrintWriter;
 
 /**
  * @author pelleb
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public final class ServletTools {
 
@@ -83,7 +86,7 @@ public final class ServletTools {
         out.println("body, th, td, input, select, textarea, h2 small {\n font-family: Verdana, Helvetica, Arial, sans-serif;\n }\n code, pre {\n font-family: 'Andale Mono', Courier, monospace;\n font-size: small;\n background-color: lightgrey;\n}");
         out.println("</style></head><body bgcolor=\"#FFFFFF\"><div id=\"banner\"><table bgcolor=\"#0000ff\" width=\"100%\"><tr><td><h3 style=\"color: white\">");
         out.println(title);
-        out.println("</h3></td><td align=\"right\"></td></tr></table></div>");
+        out.println("</h3></td></tr></table></div>");
 
 
     }

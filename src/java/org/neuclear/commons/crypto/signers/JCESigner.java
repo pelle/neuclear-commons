@@ -1,6 +1,9 @@
 /*
- * $Id: JCESigner.java,v 1.14 2003/12/19 18:02:53 pelle Exp $
+ * $Id: JCESigner.java,v 1.15 2003/12/22 22:14:37 pelle Exp $
  * $Log: JCESigner.java,v $
+ * Revision 1.15  2003/12/22 22:14:37  pelle
+ * Last minute cleanups and documentation prior to release 0.8.1
+ *
  * Revision 1.14  2003/12/19 18:02:53  pelle
  * Revamped a lot of exception handling throughout the framework, it has been simplified in most places:
  * - For most cases the main exception to worry about now is InvalidNamedObjectException.
@@ -265,7 +268,7 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
      * @throws InvalidPassphraseException
      */
     private static KeyStore loadKeyStore(final String provider, final String type, final InputStream in, final char[] passphrase) throws InvalidPassphraseException {
-//        System.out.println("Loading JCESigner using passphrase: "+new String(passphrase));
+//       System.out.println("Loading JCESigner using passphrase: "+new String(passphrase));
         try {
             KeyStore ki = null;
             if (provider == null)

@@ -26,8 +26,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: GuiDialogAgent.java,v 1.5 2003/12/19 00:31:15 pelle Exp $
+$Id: GuiDialogAgent.java,v 1.6 2003/12/22 22:14:36 pelle Exp $
 $Log: GuiDialogAgent.java,v $
+Revision 1.6  2003/12/22 22:14:36  pelle
+Last minute cleanups and documentation prior to release 0.8.1
+
 Revision 1.5  2003/12/19 00:31:15  pelle
 Lots of usability changes through out all the passphrase agents and end user tools.
 
@@ -91,7 +94,7 @@ public final class GuiDialogAgent implements InteractiveAgent {
         frame = new Frame("Please Enter Passphrase...");
 
         frame.setVisible(false);
-        frame.setSize(200, 100);
+        frame.setSize(300, 100);
         final Panel panel = new Panel();
         panel.setLayout(new BorderLayout());
         frame.add(panel);
@@ -121,6 +124,7 @@ public final class GuiDialogAgent implements InteractiveAgent {
         nameLabel.setForeground(Color.blue);
         text.add(nameLabel);
         incorrectLabel = new Label();
+        incorrectLabel.setText("Incorrect Passphrase");
         incorrectLabel.setForeground(Color.red);
         incorrectLabel.setVisible(false);
         text.add(incorrectLabel);
@@ -185,7 +189,9 @@ public final class GuiDialogAgent implements InteractiveAgent {
             else
                 passphrase.setText("");
             isCancel=true;
-            incorrectLabel.setVisible(true);
+            if (incorrect)
+                System.err.println("Incorrect passphrase");
+            incorrectLabel.setVisible(incorrect);
 
             nameLabel.setText(name);
             frame.pack();
