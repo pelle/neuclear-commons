@@ -23,7 +23,7 @@ import java.security.GeneralSecurityException;
  * <tr><td>serviceid</td><td>The main service ID of the service. Ie. neu://superbux.com/ecurrency. This is only required (and used)
  * if you set <tt>keeppassphrase</tt> (see below)</td></tr>
  * <tr><td>passphraseagent</td><td>The type of passphraseagent to use. Valid options are <tt>servlet</tt>,
- * <tt>gui</tt> and <tt>console</tt>(default)</td></tr>
+ * <tt>gui</tt>(default) and <tt>console</tt></td></tr>
  * <tr><td>keeppassphrase</td><td>This asks for the service passphrase once at startup and remembers it through the lifetime of the servlet</td></tr>
  * </table>
  * <p>
@@ -68,12 +68,12 @@ public final class ServletSignerFactory {
 
     private InteractiveAgent getAgent(final String agenttype) {
         if (!Utility.isEmpty(agenttype)){
-            if (agenttype.toLowerCase().equals("gui"))
-                return new GuiDialogAgent();
+            if (agenttype.toLowerCase().equals("console"))
+                return new CommandLineAgent();
             if (agenttype.toLowerCase().equals("servlet"))
                 return new ServletPassPhraseAgent();
         }
-        return new CommandLineAgent(); //The default DialogAgent
+        return new GuiDialogAgent();  //The default DialogAgent
     }
 
     private static final String getConfigHash(final String keystore, final String keeppassphrase, final String agenttype,final String serviceid) {
