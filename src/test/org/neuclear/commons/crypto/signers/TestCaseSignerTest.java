@@ -27,8 +27,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: TestCaseSignerTest.java,v 1.6 2003/12/19 18:02:53 pelle Exp $
+$Id: TestCaseSignerTest.java,v 1.7 2004/02/19 15:29:12 pelle Exp $
 $Log: TestCaseSignerTest.java,v $
+Revision 1.7  2004/02/19 15:29:12  pelle
+Various cleanups and corrections
+
 Revision 1.6  2003/12/19 18:02:53  pelle
 Revamped a lot of exception handling throughout the framework, it has been simplified in most places:
 - For most cases the main exception to worry about now is InvalidNamedObjectException.
@@ -103,6 +106,7 @@ public final class TestCaseSignerTest extends TestCase {
         assertTrue(CryptoTools.verify(pub, data, sig));
         assertTrue(signer.canSignFor(ALIASEVE));
     }
+
     private void testKey(final String name) throws CryptoException, UserCancellationException {
         final byte[] sig = signer.sign(name, TESTDATA.getBytes());
         assertNotNull(sig);
@@ -111,7 +115,7 @@ public final class TestCaseSignerTest extends TestCase {
 
 
     private final TestCaseSigner signer;
-    private final String TESTDATA = "Here we go again";
+    private static final String TESTDATA = "Here we go again";
     private static final String ALIASEVE = "neu://eve@test";
 
 }

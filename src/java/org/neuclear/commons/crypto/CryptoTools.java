@@ -1,6 +1,9 @@
 /*
- * $Id: CryptoTools.java,v 1.13 2004/02/18 00:13:41 pelle Exp $
+ * $Id: CryptoTools.java,v 1.14 2004/02/19 15:29:10 pelle Exp $
  * $Log: CryptoTools.java,v $
+ * Revision 1.14  2004/02/19 15:29:10  pelle
+ * Various cleanups and corrections
+ *
  * Revision 1.13  2004/02/18 00:13:41  pelle
  * Many, many clean ups. I've readded Targets in a new method.
  * Gotten rid of NamedObjectBuilder and revamped Identity and Resolvers
@@ -265,6 +268,8 @@ import java.util.Random;
 // TODO Implement some code to automatically BC Provider if not installed
 
 public final class CryptoTools {
+    private CryptoTools() {
+    }
 
 
     /**
@@ -315,6 +320,7 @@ public final class CryptoTools {
 
         return null;
     }
+
     public static PublicKey getPublicKeyFromBase64(final String b64) throws CryptoException {
         try {
             final byte[] barray = Base64.decode(b64);
@@ -336,8 +342,8 @@ public final class CryptoTools {
         for (int i = 0; i < barray.length; i++) {
             h = 2 * i;
             final byte src = barray[i];
-            hexarray[h] = hexTable[(src & 0xF0) >> 4];
-            hexarray[h + 1] = hexTable[src & 0x0F];
+            hexarray[h] = HEX_TABLE[(src & 0xF0) >> 4];
+            hexarray[h + 1] = HEX_TABLE[src & 0x0F];
 
         }
         return new String(hexarray);
@@ -359,16 +365,6 @@ public final class CryptoTools {
         return bytearray;
     }
 
-    public static byte[] getHash(final String value) throws CryptoException {
-        try {
-            final MessageDigest dig = MessageDigest.getInstance("SHA1");
-            dig.digest(value.getBytes());
-            return dig.digest();
-        } catch (NoSuchAlgorithmException e) {
-            rethrowException(e);
-            return null;
-        }
-    }
 
     //Quick Hack. Not very efficient I know.
     public static byte[] pad(final byte[] value, final Cipher c) {
@@ -424,7 +420,7 @@ public final class CryptoTools {
         } catch (InvalidCipherTextException e) {
             rethrowException(e);
         }
-        return null;
+        return new byte[0];
     }
 
     public static Cipher getCipher(final byte[] key, final boolean doencrypt) throws CryptoException {
@@ -465,7 +461,7 @@ public final class CryptoTools {
         } catch (IOException e) {
             rethrowException(e);
         }
-        return null;
+        return new byte[0];
     }
 
     public static Signature getSignatureCipher(final PrivateKey key) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException {
@@ -507,6 +503,7 @@ public final class CryptoTools {
         final Digest dig = new org.bouncycastle.crypto.digests.SHA1Digest();
         return digest(dig, value);
     }
+
     public static byte[] digest(final String value) {
         return digest(value.getBytes());
     }
@@ -541,9 +538,11 @@ public final class CryptoTools {
         }
         return true;
     }
+
     /**
      * Unpadded Base32 Encoding as defined in:
      * <a href="http://www.waterken.com/dev/Enc/base32/">http://www.waterken.com/dev/Enc/base32/</a>
+     *
      * @param val
      * @return
      */
@@ -606,14 +605,12 @@ public final class CryptoTools {
      * @throws java.security.GeneralSecurityException
      *          
      */
-    public static Cipher makePBECipher(
-            final String algorithm,
-            final int mode,
-            final char[] password,
-            final byte[] salt,
-            final int iterationCount,
-            final String provider
-            ) throws GeneralSecurityException {
+    public static Cipher makePBECipher(final String algorithm,
+                                       final int mode,
+                                       final char[] password,
+                                       final byte[] salt,
+                                       final int iterationCount,
+                                       final String provider) throws GeneralSecurityException {
         final PBEKeySpec pbeSpec = new PBEKeySpec(password);
         final SecretKeyFactory keyFact = SecretKeyFactory.getInstance(algorithm, provider);
         final PBEParameterSpec defParams = new PBEParameterSpec(salt, iterationCount);
@@ -637,12 +634,10 @@ public final class CryptoTools {
      * @throws java.security.GeneralSecurityException
      *          
      */
-    public static Cipher makePBECipher(
-            final int mode,
-            final char[] password,
-            final byte[] salt,
-            final int iterationCount
-            ) throws GeneralSecurityException {
+    public static Cipher makePBECipher(final int mode,
+                                       final char[] password,
+                                       final byte[] salt,
+                                       final int iterationCount) throws GeneralSecurityException {
         return makePBECipher(DEFAULT_PBE_ALGORITHM, mode, password, salt, iterationCount, DEFAULT_JCE_PROVIDER);
     }
 
@@ -656,10 +651,8 @@ public final class CryptoTools {
      * @throws java.security.GeneralSecurityException
      *          
      */
-    public static Cipher makePBECipher(
-            final int mode,
-            final char[] password
-            ) throws GeneralSecurityException {
+    public static Cipher makePBECipher(final int mode,
+                                       final char[] password) throws GeneralSecurityException {
         return makePBECipher(DEFAULT_PBE_ALGORITHM, mode, password, DEFAULT_SALT, DEFAULT_ITERATION_COUNT, DEFAULT_JCE_PROVIDER);
     }
 
@@ -700,6 +693,7 @@ public final class CryptoTools {
         return kg;
 
     }
+
     public static KeyPairGenerator getTinyKeyPairGenerator() throws NoSuchAlgorithmException {
         if (kg == null) {
             kg = KeyPairGenerator.getInstance("RSA");
@@ -750,7 +744,7 @@ public final class CryptoTools {
         if ((asn1Bytes[0] != 48) || (asn1Bytes[1] != asn1Bytes.length - 2)
                 || (asn1Bytes[2] != 2) || (i > 20) || (asn1Bytes[4 + rLength] != 2)
                 || (j > 20)) {
-            
+
             throw new IOException("Invalid ASN.1 format of DSA signature");
         } else {
             final byte[] xmldsigBytes = new byte[40];
@@ -809,24 +803,25 @@ public final class CryptoTools {
         return asn1Bytes;
     }
 
-    public final static Certificate createCertificate(String name,KeyPair kp) throws SignatureException, InvalidKeyException {
-        X509V3CertificateGenerator gen=new X509V3CertificateGenerator();
+    public final static Certificate createCertificate(String name, KeyPair kp) throws SignatureException, InvalidKeyException {
+        X509V3CertificateGenerator gen = new X509V3CertificateGenerator();
 //        Vector code=new Vector(1);
 //        code.add(0,"CN");
 //        Vector names=new Vector(1);
 //        names.add(0,name);
 //        final X509Name x509Name = new X509Name(code,names);
 //        gen.setIssuerDN(x509Name);
-        final X509Principal x509 = new X509Principal("CN="+name+", OU=NEU, O=NEU, L=NEU, ST=NEU, C=PA");
+        final X509Principal x509 = new X509Principal("CN=" + name + ", OU=NEU, O=NEU, L=NEU, ST=NEU, C=PA");
         gen.setSubjectDN(x509);
         gen.setIssuerDN(x509);
         gen.setPublicKey(kp.getPublic());
         gen.setNotBefore(new Date());
         gen.setNotAfter(TimeTools.get2020());
         gen.setSignatureAlgorithm("SHA1withRSA");
-        gen.setSerialNumber(new BigInteger( digest(kp.getPublic().getEncoded())));
+        gen.setSerialNumber(new BigInteger(digest(kp.getPublic().getEncoded())));
         return gen.generateX509Certificate(kp.getPrivate());
     }
+
     {
         ensureProvider();
     }
@@ -838,11 +833,11 @@ public final class CryptoTools {
     public static final String DEFAULT_JCE_PROVIDER = "BC";
     private static final byte DEFAULT_SALT[] = "LiquidNightClubPanam".getBytes();
     private static final int DEFAULT_ITERATION_COUNT = 2048;
-    public static final byte[] hexTable = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+    private static final byte[] HEX_TABLE = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
     private static SecureRandom randSource;
 
     public final static String DEFAULT_KEYSTORE = System.getProperty("user.home") + "/.neuclear/keystore.jks";
     public static final int RAND_BIT_LENGTH = 128;
-    private static final long YPLUS20 = 20*365*24*60*60;
+    private static final long YPLUS20 = 20 * 365 * 24 * 60 * 60;
 }

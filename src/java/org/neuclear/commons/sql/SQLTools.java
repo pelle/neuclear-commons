@@ -26,6 +26,9 @@ import java.util.Properties;
  * To change this template use Options | File Templates.
  */
 public final class SQLTools {
+    private SQLTools() {
+    }
+
     private static final String PROPS_FILE = "neuclear-sql.properties";
 
     public final static java.sql.Connection getConnection() throws SQLException, IOException {
@@ -39,19 +42,16 @@ public final class SQLTools {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();  //To change body of catch statement use Options | File Templates.
         }
-        return DriverManager.getConnection(
-                props.getProperty("jdbc.url"),
+        return DriverManager.getConnection(props.getProperty("jdbc.url"),
                 props.getProperty("jdbc.username"),
-                props.getProperty("jdbc.password")
-        );
+                props.getProperty("jdbc.password"));
 
     }
 
 
     static Properties loadProperties() throws IOException {
         final Properties props = new Properties();
-        final File propsFile = new File(
-                System.getProperty("user.home") +
+        final File propsFile = new File(System.getProperty("user.home") +
                 System.getProperty("file.separator") +
                 PROPS_FILE);
         if (!propsFile.exists()) {

@@ -1,6 +1,9 @@
 /*
- * $Id: TimeTools.java,v 1.8 2004/01/03 20:36:33 pelle Exp $
+ * $Id: TimeTools.java,v 1.9 2004/02/19 15:29:11 pelle Exp $
  * $Log: TimeTools.java,v $
+ * Revision 1.9  2004/02/19 15:29:11  pelle
+ * Various cleanups and corrections
+ *
  * Revision 1.8  2004/01/03 20:36:33  pelle
  * Renamed HeldTransfer to Exchange
  * Dropped valuetime from the request objects.
@@ -77,7 +80,6 @@
 */
 package org.neuclear.commons.time;
 
-import org.neuclear.commons.NeuClearException;
 import org.neuclear.commons.Utility;
 
 import java.sql.Timestamp;
@@ -94,6 +96,8 @@ import java.util.TimeZone;
  */
 
 public final class TimeTools {
+    private TimeTools() {
+    }
 
 
     public static Date addDaysToDate(final Date d, final int iDays) {
@@ -133,13 +137,14 @@ public final class TimeTools {
     public static Timestamp parseTimeStamp(final String ts) throws ParseException {
         if (Utility.isEmpty(ts))
             return null;
-         return convertDateToTimestamp(getDateFormatter().parse(ts));
+        return convertDateToTimestamp(getDateFormatter().parse(ts));
 
     }
 
     public static String formatTimeStamp(final Date time) {
         return getDateFormatter().format(time);
     }
+
     public static String formatTimeStampShort(final Date time) {
         return DFS.format(time);
     }
@@ -147,11 +152,13 @@ public final class TimeTools {
     private static SimpleDateFormat getDateFormatter() {
         return DF;
     }
-    public static Date get2020(){
-        Calendar calendar=Calendar.getInstance();
-        calendar.set(2020,0,0,0,0,0);
+
+    public static Date get2020() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2020, 0, 0, 0, 0, 0);
         return calendar.getTime();
     }
+
     /**
      * Base ISO 8601 Date format yyyy-MM-ddTHH:mm:ss,SSSzzz i.e., 2002-12-25T14:32:12,333-500 for
      * the 25th day of December in the year 2002 at 2 pm 32 min 12 secs 333 mills -5 hours from GMT
@@ -173,6 +180,7 @@ public final class TimeTools {
     /**
      * Really just a simple placeholder.
      * Eventually this should return UTC current time.
+     *
      * @return
      */
     public static Timestamp now() {

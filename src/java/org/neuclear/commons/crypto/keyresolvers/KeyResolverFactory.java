@@ -20,8 +20,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: KeyResolverFactory.java,v 1.2 2004/01/14 16:34:07 pelle Exp $
+$Id: KeyResolverFactory.java,v 1.3 2004/02/19 15:29:09 pelle Exp $
 $Log: KeyResolverFactory.java,v $
+Revision 1.3  2004/02/19 15:29:09  pelle
+Various cleanups and corrections
+
 Revision 1.2  2004/01/14 16:34:07  pelle
 New model of references and signatures now pretty much works.
 I am still not 100% sure on the created enveloping signatures. I need to do more testing.
@@ -41,11 +44,14 @@ Added KeyResolver interface and KeyResolverFactory Class. At the moment no imple
  * Time: 9:56:57 PM
  */
 public class KeyResolverFactory {
-    public synchronized final static KeyResolver getInstance(){
-        if (instance==null){
-            String impl=System.getProperty("org.neuclear.commons.crypto.keyresolvers.default");
+    private KeyResolverFactory() {
+    }
+
+    public synchronized final static KeyResolver getInstance() {
+        if (instance == null) {
+            String impl = System.getProperty("org.neuclear.commons.crypto.keyresolvers.default");
             if (Utility.isEmpty(impl))
-                impl=DEFAULT;
+                impl = DEFAULT;
             try {
                 instance = (KeyResolver) Class.forName(impl).newInstance();
             } catch (InstantiationException e) {
@@ -60,6 +66,6 @@ public class KeyResolverFactory {
         return instance;
     }
 
-    public final static String DEFAULT="org.neuclear.commons.crypto.keyresolvers.NullResolver";
+    public final static String DEFAULT = "org.neuclear.commons.crypto.keyresolvers.NullResolver";
     private static KeyResolver instance;
 }

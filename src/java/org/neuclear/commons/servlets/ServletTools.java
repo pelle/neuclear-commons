@@ -1,5 +1,8 @@
-/* $Id: ServletTools.java,v 1.6 2003/12/22 22:14:37 pelle Exp $
+/* $Id: ServletTools.java,v 1.7 2004/02/19 15:29:10 pelle Exp $
  * $Log: ServletTools.java,v $
+ * Revision 1.7  2004/02/19 15:29:10  pelle
+ * Various cleanups and corrections
+ *
  * Revision 1.6  2003/12/22 22:14:37  pelle
  * Last minute cleanups and documentation prior to release 0.8.1
  *
@@ -61,15 +64,17 @@ package org.neuclear.commons.servlets;
 
 import org.neuclear.commons.Utility;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.ServletConfig;
+import javax.servlet.http.HttpServletRequest;
 import java.io.PrintWriter;
 
 /**
  * @author pelleb
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public final class ServletTools {
+    private ServletTools() {
+    }
 
     public static String getAbsoluteURL(final HttpServletRequest request, final String item) {
         return request.getScheme() + "://" + request.getServerName() +
@@ -91,7 +96,7 @@ public final class ServletTools {
 
     }
 
-    public static String getInitParam(String name, ServletConfig config){
-        return Utility.denullString(config.getInitParameter(name),config.getServletContext().getInitParameter(name));
+    public static String getInitParam(String name, ServletConfig config) {
+        return Utility.denullString(config.getInitParameter(name), config.getServletContext().getInitParameter(name));
     }
 }

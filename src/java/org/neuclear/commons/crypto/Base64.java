@@ -1,5 +1,8 @@
-/* $Id: Base64.java,v 1.4 2004/02/19 00:27:34 pelle Exp $
+/* $Id: Base64.java,v 1.5 2004/02/19 15:29:10 pelle Exp $
  * $Log: Base64.java,v $
+ * Revision 1.5  2004/02/19 15:29:10  pelle
+ * Various cleanups and corrections
+ *
  * Revision 1.4  2004/02/19 00:27:34  pelle
  * Discovered several incompatabilities with the xmlsig implementation. Have been working on getting it working.
  * Currently there is still a problem with enveloping signatures and it seems enveloped signatures done via signers.
@@ -60,6 +63,7 @@
  *
  */
 package org.neuclear.commons.crypto;
+
 import java.math.BigInteger;
 
 
@@ -78,14 +82,16 @@ import java.math.BigInteger;
  */
 public final class Base64 {
 
-    /** Field LINE_SEPARATOR */
+    /**
+     * Field LINE_SEPARATOR
+     */
     public static final String LINE_SEPARATOR = "\n";
 
-    /** Field BASE64DEFAULTLENGTH */
+    /**
+     * Field BASE64DEFAULTLENGTH
+     */
     public static final int BASE64DEFAULTLENGTH = 76;
 
-    /** Field _base64length */
-    static final int _base64length = Base64.BASE64DEFAULTLENGTH;
 
     private Base64() {
         // we don't allow instantiation
@@ -98,13 +104,13 @@ public final class Base64 {
      * @return
      */
     public static int getBase64WrapLength() {
-        return Base64._base64length;
+        return BASE64DEFAULTLENGTH;
     }
 
     /**
      * Returns a byte-array representation of a <code>{@link java.math.BigInteger}<code>.
      * No sign-bit is outputed.
-     *
+     * <p/>
      * <p><b>N.B.:</B> <code>{@link java.math.BigInteger}<code>'s toByteArray
      * retunrs eventually longer arrays because of the leading sign-bit.
      *
@@ -113,7 +119,7 @@ public final class Base64 {
      */
     public static byte[] getBytes(final BigInteger big) {
 
-        int bitlen= big.bitLength();
+        int bitlen = big.bitLength();
         //round bitlen
         bitlen = ((bitlen + 7) >> 3) << 3;
 
@@ -161,16 +167,14 @@ public final class Base64 {
 
 
     public static String encodeClean(final byte[] bytes) {
-        return LINE_SEPARATOR+ encode(bytes,76)+LINE_SEPARATOR;
+        return LINE_SEPARATOR + encode(bytes, BASE64DEFAULTLENGTH) + LINE_SEPARATOR;
     }
 
 
     /**
      * Method decodeBase64Element
      *
-     *
      * @param base64
-     *
      * @return
      */
     public static byte[] decode(final byte[] base64) throws CryptoException {
@@ -192,25 +196,25 @@ public final class Base64 {
      * <p>Encode a byte array in Base64 format and return an optionally
      * wrapped line</p>
      *
-     * @param raw <code>byte[]</code> data to be encoded
+     * @param raw  <code>byte[]</code> data to be encoded
      * @param wrap <code>int<code> length of wrapped lines; No wrapping if less than 4.
      * @return a <code>String</code> with encoded data
      */
     public static String encode(final byte[] raw, final int wrap) {
-        final byte[] b64=org.bouncycastle.util.encoders.Base64.encode(raw);
+        final byte[] b64 = org.bouncycastle.util.encoders.Base64.encode(raw);
 
         //calculate length of encoded string
         final int encLen = b64.length;
 
         final int lines = (encLen / wrap);
 
-        final byte[] encoded = new byte[encLen+lines];
-        int sx=0,dx=0;
-        for (sx = 0; sx < (lines*wrap); sx+=wrap,dx+=(wrap+1)) {
-            System.arraycopy(b64,sx,encoded, dx,wrap);
-            encoded[dx+wrap]='\n';
+        final byte[] encoded = new byte[encLen + lines];
+        int sx = 0, dx = 0;
+        for (sx = 0; sx < (lines * wrap); sx += wrap, dx += (wrap + 1)) {
+            System.arraycopy(b64, sx, encoded, dx, wrap);
+            encoded[dx + wrap] = '\n';
         }
-        System.arraycopy(b64,sx,encoded, dx,encLen-sx);
+        System.arraycopy(b64, sx, encoded, dx, encLen - sx);
 
 
         return new String(encoded);

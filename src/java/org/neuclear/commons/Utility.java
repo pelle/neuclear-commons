@@ -1,6 +1,9 @@
 /*
- * $Id: Utility.java,v 1.5 2003/12/19 18:02:53 pelle Exp $
+ * $Id: Utility.java,v 1.6 2004/02/19 15:29:11 pelle Exp $
  * $Log: Utility.java,v $
+ * Revision 1.6  2004/02/19 15:29:11  pelle
+ * Various cleanups and corrections
+ *
  * Revision 1.5  2003/12/19 18:02:53  pelle
  * Revamped a lot of exception handling throughout the framework, it has been simplified in most places:
  * - For most cases the main exception to worry about now is InvalidNamedObjectException.
@@ -140,13 +143,15 @@
  */
 package org.neuclear.commons;
 
-import org.neuclear.commons.NeuClearException;
-
 import java.io.*;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class Utility {
+
+    private Utility() {
+    }
+
     public static boolean isEmpty(final Object obj) {
         return (obj == null || obj.toString().equals(""));
     }
@@ -199,37 +204,40 @@ public final class Utility {
         return getIntValue(strValue, 0);
     }
 
-    public static int getEnumVal(final String[] enum, final String key) {
-        return getEnumVal(enum, key, -1);
+    public static int getEnumVal(final String[] enumArray, final String key) {
+        return getenumArrayVal(enumArray, key, -1);
     }
 
-    public static int getEnumVal(final String[] enum, final String key, final int def) {
-        if (enum == null || key == null)
+    public static int getenumArrayVal(final String[] enumArray, final String key, final int def) {
+        if (enumArray == null || key == null)
             return def;
-        for (int i = 0; i < enum.length; i++)
-            if (key.equals(enum[i]))
+        for (int i = 0; i < enumArray.length; i++)
+            if (key.equals(enumArray[i]))
                 return i;
         return def;
     }
+
     /**
      * Asks the User Y/N on the Console
+     *
      * @return
      */
-    public static boolean getAffirmative(final boolean def)  {
-        final String prompt = def?"(yes)/no":"yes/(no)";
-        String line=prompt(prompt).toLowerCase();
+    public static boolean getAffirmative(final boolean def) {
+        final String prompt = def ? "(yes)/no" : "yes/(no)";
+        String line = prompt(prompt).toLowerCase();
         System.out.println();
         if (isEmpty(line))
             return def;
-        return (line.equals("y")||line.equals("yes"));
+        return (line.equals("y") || line.equals("yes"));
     }
 
-    public static String prompt(String prompt)  {
+    public static String prompt(String prompt) {
         System.out.print(prompt);
         return readLine();
     }
-    public static String readLine()  {
-        BufferedReader reader=new BufferedReader(new InputStreamReader(System.in));
+
+    public static String readLine() {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         try {
             return reader.readLine();
         } catch (IOException e) {
@@ -237,25 +245,26 @@ public final class Utility {
         }
     }
 
-    public static String getExecutable(Class reference){
-        Pattern p=Pattern.compile("\\.");
-        Matcher m=p.matcher(reference.getName());
-        String classfile=m.replaceAll("/")+".class";
-        String url=reference.getClassLoader().getResource(classfile).toExternalForm();
-        Pattern r2=Pattern.compile("^jar:file:(.*)!/.*$");
-        Matcher m2=r2.matcher(url);
-        if(m2.matches()){
-            String path=m2.group(1);
-            String cd=System.getProperty("user.dir");
+    public static String getExecutable(Class reference) {
+        Pattern p = Pattern.compile("\\.");
+        Matcher m = p.matcher(reference.getName());
+        String classfile = m.replaceAll("/") + ".class";
+        String url = reference.getClassLoader().getResource(classfile).toExternalForm();
+        Pattern r2 = Pattern.compile("^jar:file:(.*)!/.*$");
+        Matcher m2 = r2.matcher(url);
+        if (m2.matches()) {
+            String path = m2.group(1);
+            String cd = System.getProperty("user.dir");
             if (path.startsWith(cd))
-                return SYSTEM_PROMPT+"java -jar "+path.substring(cd.length()+1);
-            return SYSTEM_PROMPT+"java -jar "+path;
+                return SYSTEM_PROMPT + "java -jar " + path.substring(cd.length() + 1);
+            return SYSTEM_PROMPT + "java -jar " + path;
         }
-        return SYSTEM_PROMPT+"java "+reference.getName();
+        return SYSTEM_PROMPT + "java " + reference.getName();
     }
 
-    private static String getSystemConsolePrompt(){
-        return (File.separatorChar=='/')?(System.getProperty("user.name")+"$ "):("C:\\"+System.getProperty("user.dir")+">");
+    private static String getSystemConsolePrompt() {
+        return (File.separatorChar == '/') ? (System.getProperty("user.name") + "$ ") : ("C:\\" + System.getProperty("user.dir") + ">");
     }
-    final static public String SYSTEM_PROMPT=getSystemConsolePrompt();
+
+    final static public String SYSTEM_PROMPT = getSystemConsolePrompt();
 }

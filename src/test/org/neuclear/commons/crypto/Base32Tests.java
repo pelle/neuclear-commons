@@ -20,8 +20,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: Base32Tests.java,v 1.5 2004/02/18 00:13:42 pelle Exp $
+$Id: Base32Tests.java,v 1.6 2004/02/19 15:29:13 pelle Exp $
 $Log: Base32Tests.java,v $
+Revision 1.6  2004/02/19 15:29:13  pelle
+Various cleanups and corrections
+
 Revision 1.5  2004/02/18 00:13:42  pelle
 Many, many clean ups. I've readded Targets in a new method.
 Gotten rid of NamedObjectBuilder and revamped Identity and Resolvers
@@ -48,33 +51,34 @@ Added user creatable Identity for Public Keys
  * Date: Jan 16, 2004
  * Time: 9:52:41 PM
  */
-public class Base32Tests extends TestCase{
+public class Base32Tests extends TestCase {
     public Base32Tests(String string) {
         super(string);
     }
 
     public void testLength() throws CryptoException {
-        assertEquals(32,Base32.encode(CryptoTools.digest("hello")).length());
-        assertEquals(8,Base32.encode("hello").length());
-        assertEquals(10,Base32.encode("hello1").length());
-        assertEquals(12,Base32.encode("hello12").length());
-        assertEquals(13,Base32.encode("hello123").length());
-        assertEquals(15,Base32.encode("hello1234").length());
-        assertEquals(16,Base32.encode("hello12345").length());
-        assertEquals(18,Base32.encode("hello123456").length());
+        assertEquals(32, Base32.encode(CryptoTools.digest("hello")).length());
+        assertEquals(8, Base32.encode("hello").length());
+        assertEquals(10, Base32.encode("hello1").length());
+        assertEquals(12, Base32.encode("hello12").length());
+        assertEquals(13, Base32.encode("hello123").length());
+        assertEquals(15, Base32.encode("hello1234").length());
+        assertEquals(16, Base32.encode("hello12345").length());
+        assertEquals(18, Base32.encode("hello123456").length());
 
     }
+
     public void testBase32Codec() throws CryptoException {
 
-        for (int i=0;i<TESTSTRINGS.length;i++){
+        for (int i = 0; i < TESTSTRINGS.length; i++) {
 //            System.out.print("Encoding: "+TESTSTRINGS[i]+" ...");
             final String encoded = Base32.encode(TESTSTRINGS[i]);
-           System.out.println(" ->"+encoded);
-            assertEquals("TESTSTRINGS["+i+"]",TESTSTRINGS[i].getBytes(),Base32.decode(encoded));
+            System.out.println(" ->" + encoded);
+            assertEquals("TESTSTRINGS[" + i + "]", TESTSTRINGS[i].getBytes(), Base32.decode(encoded));
         }
     }
 
-    public void testSHABase32() throws CryptoException {
+/*    public void testSHABase32() throws CryptoException {
         for (int i=0;i<TESTSTRINGS.length;i++){
 //            System.out.print("Encoding: "+TESTSTRINGS[i]+" ...");
             final String hash = com.waterken.url.Base32.encode(CryptoTools.digest(TESTSTRINGS[i]));
@@ -113,27 +117,29 @@ public class Base32Tests extends TestCase{
             assertEquals("TESTSTRINGS["+i+"]",TESTSTRINGS[i].getBytes(),decoded);
         }
     }
-    public void assertEquals(String description,byte a[],byte b[]) {
-        assertEquals(description+" length",a.length,b.length);
-        for (int i=0;i<a.length;i++)
-            assertEquals(description+"["+i+"]",a[i],b[i]);
+*/
+    public void assertEquals(String description, byte a[], byte b[]) {
+        assertEquals(description + " length", a.length, b.length);
+        for (int i = 0; i < a.length; i++)
+            assertEquals(description + "[" + i + "]", a[i], b[i]);
 
     }
-    static final String  TESTSTRINGS[] =new String[]{
-            "",
-            "0",
-            "01",
-            "012",
-            "0123",
-            "01234",
-            "012345",
-            "0123456",
-            "01234567",
-            "012345678",
-            "0123456789",
-            "0123456789A",
-            "0123456789A0123456789As0123456789A",
-            new String(CryptoTools.digest("0123456"))
+
+    static final String TESTSTRINGS[] = new String[]{
+        "",
+        "0",
+        "01",
+        "012",
+        "0123",
+        "01234",
+        "012345",
+        "0123456",
+        "01234567",
+        "012345678",
+        "0123456789",
+        "0123456789A",
+        "0123456789A0123456789As0123456789A",
+        new String(CryptoTools.digest("0123456"))
 
     };
 
