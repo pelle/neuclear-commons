@@ -15,8 +15,12 @@ import java.awt.event.KeyListener;
 import java.net.URL;
 
 /*
-$Id: SimpleDialog.java,v 1.4 2004/04/14 00:10:52 pelle Exp $
+$Id: SimpleDialog.java,v 1.5 2004/04/15 15:34:41 pelle Exp $
 $Log: SimpleDialog.java,v $
+Revision 1.5  2004/04/15 15:34:41  pelle
+Got rid of the looping InvalidPassphraseException in DefaultSigner.
+Added initial focus for all dialogs.
+
 Revision 1.4  2004/04/14 00:10:52  pelle
 Added a MessageLabel for handling errors, validation and info
 Save works well now.
@@ -170,6 +174,7 @@ public class SimpleDialog {
                 message.invalid("You entered an invalid passphrase. Try again...");
             dialog.pack();
             dialog.show();
+            passphrase.requestFocus();
             System.out.println(Thread.currentThread());
 
         }

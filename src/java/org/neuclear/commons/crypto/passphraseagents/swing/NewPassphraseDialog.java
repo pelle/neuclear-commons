@@ -15,8 +15,12 @@ import java.awt.event.KeyListener;
 import java.net.URL;
 
 /*
-$Id: NewPassphraseDialog.java,v 1.1 2004/04/14 00:10:51 pelle Exp $
+$Id: NewPassphraseDialog.java,v 1.2 2004/04/15 15:34:41 pelle Exp $
 $Log: NewPassphraseDialog.java,v $
+Revision 1.2  2004/04/15 15:34:41  pelle
+Got rid of the looping InvalidPassphraseException in DefaultSigner.
+Added initial focus for all dialogs.
+
 Revision 1.1  2004/04/14 00:10:51  pelle
 Added a MessageLabel for handling errors, validation and info
 Save works well now.
@@ -180,6 +184,7 @@ public class NewPassphraseDialog {
         public void run() {
             runner = this;
             ok.setEnabled(false);
+            passphrase.requestFocus();
             alias.setText(req);
             dialog.pack();
             dialog.show();

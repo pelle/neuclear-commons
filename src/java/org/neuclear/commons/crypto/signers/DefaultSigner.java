@@ -31,8 +31,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: DefaultSigner.java,v 1.9 2004/04/14 00:10:52 pelle Exp $
+$Id: DefaultSigner.java,v 1.10 2004/04/15 15:34:41 pelle Exp $
 $Log: DefaultSigner.java,v $
+Revision 1.10  2004/04/15 15:34:41  pelle
+Got rid of the looping InvalidPassphraseException in DefaultSigner.
+Added initial focus for all dialogs.
+
 Revision 1.9  2004/04/14 00:10:52  pelle
 Added a MessageLabel for handling errors, validation and info
 Save works well now.
@@ -89,40 +93,39 @@ as SmartCards for end user applications.
  * Time: 3:22:17 PM
  */
 public final class DefaultSigner implements BrowsableSigner {
-    public DefaultSigner(final InteractiveAgent agent) throws UserCancellationException, InvalidPassphraseException {
+    public DefaultSigner(final InteractiveAgent agent) throws UserCancellationException {
         prefs = Preferences.userNodeForPackage(DefaultSigner.class);
         this.agent = agent;
         filename = prefs.get(KEYSTORE, CryptoTools.DEFAULT_KEYSTORE);
         File file = new File(filename);
         if (file.exists() && file.length() == 0)
             file.delete(); // Delete empty file
-        InputStream is = null;
-        if (file.exists()) {
-            passphrase = agent.getPassPhrase(filename);
-            try {
-                is = new FileInputStream(file);
-            } catch (FileNotFoundException e) {
-                throw new LowLevelException(e);
-            }
-        }
         try {
             prefs.flush();
         } catch (BackingStoreException e) {
             e.printStackTrace();
         }
-        if (passphrase != null)
-            signer = loadSigner(is, agent);
-        else
-            signer = new JCESigner(filename, is, "jks", "SUN", agent);
-
-
+        signer = loadSigner(file, agent, false);
     }
 
-    private JCESigner loadSigner(InputStream is, final InteractiveAgent agent) throws InvalidPassphraseException {
+    private JCESigner loadSigner(final File file, final InteractiveAgent agent, final boolean wrong) throws UserCancellationException {
         try {
-            return new JCESigner(filename, is, "jks", "SUN", agent, passphrase);
+            if (file.exists() && file.length() > 0) {
+                passphrase = agent.getPassPhrase(filename, wrong);
+                try {
+                    InputStream is = new FileInputStream(file);
+                    return new JCESigner(filename, is, "jks", "SUN", agent, passphrase);
+                } catch (FileNotFoundException e) {  // Lets just return an empty signer then
+//                    throw new LowLevelException(e);
+                }
+            }
         } catch (InvalidPassphraseException e) {
-            return loadSigner(is, agent);
+            return loadSigner(file, agent, true);
+        }
+        try {
+            return new JCESigner(filename, null, "jks", "SUN", agent);
+        } catch (InvalidPassphraseException e) {
+            throw new LowLevelException(e);
         }
     }
 

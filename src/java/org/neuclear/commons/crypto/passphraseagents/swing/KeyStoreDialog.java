@@ -30,8 +30,12 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /*
-$Id: KeyStoreDialog.java,v 1.5 2004/04/14 23:39:57 pelle Exp $
+$Id: KeyStoreDialog.java,v 1.6 2004/04/15 15:34:41 pelle Exp $
 $Log: KeyStoreDialog.java,v $
+Revision 1.6  2004/04/15 15:34:41  pelle
+Got rid of the looping InvalidPassphraseException in DefaultSigner.
+Added initial focus for all dialogs.
+
 Revision 1.5  2004/04/14 23:39:57  pelle
 Fixed a few things in the ServletSignerFactory
 Added testkeys.jks where it should be.
@@ -310,9 +314,10 @@ public class KeyStoreDialog {
                 message.invalidPassphrase();
             else
                 message.clear();
-            passphrase.requestFocus();
             frame.pack();
             frame.show();
+            frame.toFront();
+            passphrase.requestFocus();
             sign.setEnabled(false);
         }
 

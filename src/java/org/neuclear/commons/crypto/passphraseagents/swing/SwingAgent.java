@@ -2,11 +2,11 @@ package org.neuclear.commons.crypto.passphraseagents.swing;
 
 import com.jgoodies.plaf.Options;
 import org.neuclear.commons.crypto.Base64;
+import org.neuclear.commons.crypto.CryptoTools;
 import org.neuclear.commons.crypto.passphraseagents.InteractiveAgent;
 import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
 import org.neuclear.commons.crypto.signers.BrowsableSigner;
 import org.neuclear.commons.crypto.signers.DefaultSigner;
-import org.neuclear.commons.crypto.signers.InvalidPassphraseException;
 import org.neuclear.commons.crypto.signers.SetPublicKeyCallBack;
 
 import javax.swing.*;
@@ -14,8 +14,12 @@ import java.io.File;
 import java.security.PublicKey;
 
 /*
-$Id: SwingAgent.java,v 1.7 2004/04/14 00:10:52 pelle Exp $
+$Id: SwingAgent.java,v 1.8 2004/04/15 15:34:41 pelle Exp $
 $Log: SwingAgent.java,v $
+Revision 1.8  2004/04/15 15:34:41  pelle
+Got rid of the looping InvalidPassphraseException in DefaultSigner.
+Added initial focus for all dialogs.
+
 Revision 1.7  2004/04/14 00:10:52  pelle
 Added a MessageLabel for handling errors, validation and info
 Save works well now.
@@ -76,27 +80,24 @@ public class SwingAgent implements InteractiveAgent {
     public static void main(final String[] args) {
         final InteractiveAgent dia = new SwingAgent();
         try {
-            try {
+            CryptoTools.ensureProvider();
 //                System.out.println(dia.getPassPhrase("test"));
-                final BrowsableSigner signer = new DefaultSigner(dia);
-                while (true) {
-                    byte sig[] = signer.sign("testdata".getBytes(), new SetPublicKeyCallBack() {
-                        public void setPublicKey(PublicKey pub) {
-                            System.out.println("PublicKey:");
-                            System.out.println(pub);
-                        }
-                    });
-                    System.out.println(Base64.encode(sig));
-                }
+            final BrowsableSigner signer = new DefaultSigner(dia);
+            while (true) {
+                byte sig[] = signer.sign("testdata".getBytes(), new SetPublicKeyCallBack() {
+                    public void setPublicKey(PublicKey pub) {
+                        System.out.println("PublicKey:");
+                        System.out.println(pub);
+                    }
+                });
+                System.out.println(Base64.encode(sig));
+            }
 //                System.out.println("Getting passphrase... " + new String(dia.getPassPhrase((BrowsableSigner) signer)));
 //                System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("neu://pelle@test", true)));
-            } catch (UserCancellationException e) {
-                System.out.print("User Cancellation by: " + e.getName());
-            }
-
-        } catch (InvalidPassphraseException e) {
-            e.printStackTrace();
+        } catch (UserCancellationException e) {
+            System.out.print("User Cancellation by: " + e.getName());
         }
+
 
         System.exit(0);
     }

@@ -14,8 +14,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 /*
-$Id: NewAliasDialog.java,v 1.5 2004/04/14 00:10:51 pelle Exp $
+$Id: NewAliasDialog.java,v 1.6 2004/04/15 15:34:41 pelle Exp $
 $Log: NewAliasDialog.java,v $
+Revision 1.6  2004/04/15 15:34:41  pelle
+Got rid of the looping InvalidPassphraseException in DefaultSigner.
+Added initial focus for all dialogs.
+
 Revision 1.5  2004/04/14 00:10:51  pelle
 Added a MessageLabel for handling errors, validation and info
 Save works well now.
@@ -227,6 +231,7 @@ public class NewAliasDialog implements Runnable {
         alias.setEnabled(true);
         passphrase2.setEnabled(true);
         setMainPanel();
+        alias.requestFocus();
     }
 
     private void createAlias() {
