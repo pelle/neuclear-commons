@@ -1,5 +1,12 @@
-/* $Id: Base64.java,v 1.2 2003/11/21 04:43:41 pelle Exp $
+/* $Id: Base64.java,v 1.3 2004/01/10 00:01:40 pelle Exp $
  * $Log: Base64.java,v $
+ * Revision 1.3  2004/01/10 00:01:40  pelle
+ * Implemented new Schema for Transfer*
+ * Working on it for Exchange*, so far all Receipts are implemented.
+ * Added SignedNamedDocument which is a generic SignedNamedObject that works with all Signed XML.
+ * Changed SignedNamedObject.getDigest() from byte array to String.
+ * The whole malarchy in neuclear-pay does not build yet. The refactoring is a big job, but getting there.
+ *
  * Revision 1.2  2003/11/21 04:43:41  pelle
  * EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
  * Otherwise You will Finaliate.
@@ -216,5 +223,15 @@ public final class Base64 {
 //        return encode(raw, Base64.getBase64WrapLength());
     }
 
+    /**
+     * Encode a String as base64
+     *
+     * @param raw <code>byte[]<code> to be base64 encoded
+     * @return the <code>String<code> with encoded data
+     */
+    public static String encode(final String raw) {
+        return new String(org.bouncycastle.util.encoders.Base64.encode(raw.getBytes()));
+//        return encode(raw, Base64.getBase64WrapLength());
+    }
 
 }
