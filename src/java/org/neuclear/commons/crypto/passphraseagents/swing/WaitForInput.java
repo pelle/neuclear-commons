@@ -3,8 +3,11 @@ package org.neuclear.commons.crypto.passphraseagents.swing;
 import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
 
 /*
-$Id: WaitForInput.java,v 1.4 2004/04/15 20:03:52 pelle Exp $
+$Id: WaitForInput.java,v 1.5 2004/05/14 19:11:27 pelle Exp $
 $Log: WaitForInput.java,v $
+Revision 1.5  2004/05/14 19:11:27  pelle
+Added OpenSignerDialog, which has been integrated with PersonalSigner.
+
 Revision 1.4  2004/04/15 20:03:52  pelle
 Added license screen to Personal Signer.
 Added Sign document menu to  Personal Signer.
@@ -53,7 +56,7 @@ public abstract class WaitForInput implements Runnable {
         }
     }
 
-    protected void cancel() {
+    public void cancel() {
         cancelled = true;
         synchronized (monitor) {
             monitor.notifyAll();

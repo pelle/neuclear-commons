@@ -132,7 +132,8 @@ public class KeyStorePanel extends JPanel {
 
     private void fillAliasList() {
         try {
-
+            if (signer == null)
+                return;
             Iterator iter = signer.iterator();
             Vector vector = new Vector();
             while (iter.hasNext()) {

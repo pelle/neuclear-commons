@@ -13,8 +13,11 @@ import java.io.File;
 import java.security.PublicKey;
 
 /*
-$Id: SwingAgent.java,v 1.13 2004/05/11 15:38:04 pelle Exp $
+$Id: SwingAgent.java,v 1.14 2004/05/14 19:11:27 pelle Exp $
 $Log: SwingAgent.java,v $
+Revision 1.14  2004/05/14 19:11:27  pelle
+Added OpenSignerDialog, which has been integrated with PersonalSigner.
+
 Revision 1.13  2004/05/11 15:38:04  pelle
 Removed a few compilation errors
 
@@ -176,15 +179,5 @@ public class SwingAgent implements InteractiveAgent {
         fc.setDialogTitle(title);
     }
 
-    class JKSFilter extends javax.swing.filechooser.FileFilter {
-        public boolean accept(File file) {
-            String filename = file.getName();
-            return file.isDirectory() || filename.endsWith(".jks");
-        }
-
-        public String getDescription() {
-            return "*.jks";
-        }
-    }
 
 }
