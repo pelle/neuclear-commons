@@ -1,6 +1,9 @@
 /*
-  $Id: CryptoToolsTest.java,v 1.4 2004/08/26 01:06:37 pelle Exp $
+  $Id: CryptoToolsTest.java,v 1.5 2004/08/26 01:54:10 pelle Exp $
   $Log: CryptoToolsTest.java,v $
+  Revision 1.5  2004/08/26 01:54:10  pelle
+  Updated the CryptoToolsTest to better see performance
+
   Revision 1.4  2004/08/26 01:06:37  pelle
   Fixed a bug in CryptoTools with regards to seeding the srng
 
@@ -178,8 +181,9 @@ public final class CryptoToolsTest extends TestCase {
     }
 
     public final void testRSAKeyClash() throws NoSuchAlgorithmException {
-        testRSAKeyClash(5); // To bring the JIT up to speed
-        final int iterations = 10;
+        System.out.println("RSA1024");
+        testRSAKeyClash(1); // To bring the JIT up to speed
+        final int iterations = 1000;
         final long start = System.currentTimeMillis();
         testRSAKeyClash(iterations);
         final long dur = System.currentTimeMillis() - start;
@@ -191,7 +195,7 @@ public final class CryptoToolsTest extends TestCase {
     public final void testRSAKeyClash(final int iterations) throws NoSuchAlgorithmException {
         HashSet set = new HashSet();
         for (int i = 0; i < iterations; i++) {
-            if ((i % 10) == 0)
+            if ((i % 10) == 1)
                 System.out.print(".");
             String key = CryptoTools.encodeBase32(CryptoTools.digest(CryptoTools.createKeyPair("RSA").getPublic().getEncoded()));
             assertFalse(set.contains(key));
@@ -200,8 +204,9 @@ public final class CryptoToolsTest extends TestCase {
     }
 
     public final void testTinyRSAKeyClash() throws NoSuchAlgorithmException {
-        testTinyRSAKeyClash(5); // To bring the JIT up to speed
-        final int iterations = 10;
+        System.out.println("RSA512");
+        testTinyRSAKeyClash(1); // To bring the JIT up to speed
+        final int iterations = 1000;
         final long start = System.currentTimeMillis();
         testTinyRSAKeyClash(iterations);
         final long dur = System.currentTimeMillis() - start;
@@ -213,7 +218,7 @@ public final class CryptoToolsTest extends TestCase {
     public final void testTinyRSAKeyClash(final int iterations) throws NoSuchAlgorithmException {
         HashSet set = new HashSet();
         for (int i = 0; i < iterations; i++) {
-            if ((i % 10) == 0)
+            if ((i % 10) == 1)
                 System.out.print(".");
             String key = CryptoTools.encodeBase32(CryptoTools.digest(CryptoTools.createTinyRSAKeyPair().getPublic().getEncoded()));
             assertFalse(set.contains(key));
@@ -222,8 +227,10 @@ public final class CryptoToolsTest extends TestCase {
     }
 
     public final void testTinyDSAKeyClash() throws NoSuchAlgorithmException {
-        testTinyDSAKeyClash(5); // To bring the JIT up to speed
-        final int iterations = 10;
+        System.out.println("DSA512");
+
+        testTinyDSAKeyClash(1); // To bring the JIT up to speed
+        final int iterations = 1000;
         final long start = System.currentTimeMillis();
         testTinyDSAKeyClash(iterations);
         final long dur = System.currentTimeMillis() - start;
@@ -235,7 +242,7 @@ public final class CryptoToolsTest extends TestCase {
     public final void testTinyDSAKeyClash(final int iterations) throws NoSuchAlgorithmException {
         HashSet set = new HashSet();
         for (int i = 0; i < iterations; i++) {
-            if ((i % 10) == 0)
+            if ((i % 10) == 1)
                 System.out.print(".");
             String key = CryptoTools.encodeBase32(CryptoTools.digest(CryptoTools.createTinyDSAKeyPair().getPublic().getEncoded()));
             assertFalse(set.contains(key));
@@ -244,8 +251,9 @@ public final class CryptoToolsTest extends TestCase {
     }
 
     public final void testDSAKeyClash() throws NoSuchAlgorithmException {
-        testDSAKeyClash(5); // To bring the JIT up to speed
-        final int iterations = 10;
+        System.out.println("DSA1024");
+        testDSAKeyClash(1); // To bring the JIT up to speed
+        final int iterations = 1000;
         final long start = System.currentTimeMillis();
         testDSAKeyClash(iterations);
         final long dur = System.currentTimeMillis() - start;
@@ -257,7 +265,7 @@ public final class CryptoToolsTest extends TestCase {
     public final void testDSAKeyClash(final int iterations) throws NoSuchAlgorithmException {
         HashSet set = new HashSet();
         for (int i = 0; i < iterations; i++) {
-            if ((i % 10) == 0)
+            if ((i % 10) == 1)
                 System.out.print(".");
             String key = CryptoTools.encodeBase32(CryptoTools.digest(CryptoTools.createKeyPair("DSA").getPublic().getEncoded()));
             assertFalse(set.contains(key));
