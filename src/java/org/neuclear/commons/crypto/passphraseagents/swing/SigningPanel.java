@@ -16,7 +16,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -24,9 +23,9 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /*
-$Id: KeyStoreDialog.java,v 1.12 2004/05/06 21:40:29 pelle Exp $
-$Log: KeyStoreDialog.java,v $
-Revision 1.12  2004/05/06 21:40:29  pelle
+$Id: SigningPanel.java,v 1.1 2004/05/06 21:40:30 pelle Exp $
+$Log: SigningPanel.java,v $
+Revision 1.1  2004/05/06 21:40:30  pelle
 More swing refactorings
 
 Revision 1.11  2004/05/05 23:39:45  pelle
@@ -87,13 +86,14 @@ The XMLSig classes have also been updated to support this.
  * Date: Apr 7, 2004
  * Time: 9:55:37 AM
  */
-public class KeyStoreDialog {
-    public KeyStoreDialog(BrowsableSigner signer) {
+public class SigningPanel extends JPanel {
+    public SigningPanel(BrowsableSigner signer) {
         SwingTools.setLAF();
         this.signer = signer;
         prefs = Preferences.userNodeForPackage(DefaultSigner.class);
 //        AgentMessages.updateLocale("es", "ES");
         caps = AgentMessages.getMessages();
+        setLayout(new BorderLayout());
         keys = new KeyStorePanel(signer);
         cache = new HashMap();
         sign = new JButton(caps.getString("sign"));
@@ -104,25 +104,12 @@ public class KeyStoreDialog {
         message = new MessageLabel();
         remember = new JCheckBox(caps.getString("remember"), prefs.getBoolean(REMEMBER_PASSPHRASE, false));
         passphrase = new JPasswordField();
-        frame = new JFrame();
+        buildPanel();
 
-        final URL imageurl = this.getClass().getClassLoader().getResource("org/neuclear/commons/crypto/passphraseagents/neuclear.png");
-        if (imageurl != null) {
-            final ImageIcon icon = new ImageIcon(imageurl);
-            frame.setIconImage(icon.getImage());
-            this.icon = new JLabel(icon);
-        } else
-            icon = new JLabel("NeuClear");
-
-        frame.setTitle("NeuClear " + caps.getString("signingagent"));
-        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        frame.getContentPane().add(buildPanel());
-        frame.pack();
         cancel.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent actionEvent) {
                 synchronized (passphrase) {
                     passphrase.setText("");
-                    frame.hide();
                     runner.cancel();
                 }
 
@@ -132,7 +119,7 @@ public class KeyStoreDialog {
         final ActionListener action = new ActionListener() {
             public void actionPerformed(final ActionEvent actionEvent) {
                 synchronized (passphrase) {
-                    if (validate()) {
+                    if (isReady()) {
                         runner.execute();
                     }
                 }
@@ -147,7 +134,7 @@ public class KeyStoreDialog {
             }
 
             public void keyReleased(KeyEvent e) {
-                sign.setEnabled(validate());
+                sign.setEnabled(isReady());
 
             }
 
@@ -175,34 +162,32 @@ public class KeyStoreDialog {
 
     }
 
-    private Component buildPanel() {
+    private void buildPanel() {
         FormLayout layout = new FormLayout("right:pref, 3dlu, pref:grow ",
-                "pref,3dlu,pref, 3dlu, fill:pref:grow, 3dlu, pref, 3dlu, pref,3dlu, pref, 7dlu, pref");
+                "fill:pref:grow, 3dlu,pref,3dlu,pref, 3dlu, pref, 7dlu, pref");
         PanelBuilder builder = new PanelBuilder(layout);
         CellConstraints cc = new CellConstraints();
 
         builder.setDefaultDialogBorder();
 
-        builder.add(icon, cc.xyw(1, 3, 1, CellConstraints.LEFT, CellConstraints.TOP));
-        builder.addSeparator(caps.getString("sign"), cc.xyw(2, 3, 2));
-
-        builder.add(keys, cc.xyw(1, 5, 3));
-        final JLabel pslabel = builder.addLabel(caps.getString("passphrase"), cc.xy(1, 7));
+        builder.add(keys, cc.xyw(1, 1, 3));
+        final JLabel pslabel = builder.addLabel(caps.getString("passphrase"), cc.xy(1, 3));
         pslabel.setLabelFor(passphrase);
         pslabel.setIcon(IconTools.getPassword());
 
-        builder.add(passphrase, cc.xy(3, 7));
-        builder.add(remember, cc.xy(3, 9));
-        builder.add(message, cc.xyw(1, 11, 3));
+        builder.add(passphrase, cc.xy(3, 3));
+        builder.add(remember, cc.xy(3, 5));
+        builder.add(message, cc.xyw(1, 7, 3));
+        this.add(builder.getPanel(), BorderLayout.CENTER);
 
         ButtonBarBuilder bb = new ButtonBarBuilder();
         bb.addGlue();
         bb.addUnrelatedGap();
         bb.addGridded(sign);
         bb.addGridded(cancel);
-        builder.add(bb.getPanel(), cc.xyw(1, 13, 3));
-
-        return builder.getPanel();
+        this.add(bb.getPanel(), BorderLayout.SOUTH);
+//        builder.add(bb.getPanel(), cc.xyw(1, 9, 3));
+//        return builder.getPanel();
     }
 
 
@@ -210,11 +195,8 @@ public class KeyStoreDialog {
         return signer;
     }
 
-    JFrame getFrame() {
-        return frame;
-    }
 
-    private boolean validate() {
+    private boolean isReady() {
         return (keys.getSelectedIndex() >= 0 && passphrase.getPassword().length > 0);
     }
 
@@ -230,9 +212,7 @@ public class KeyStoreDialog {
     private final JCheckBox remember;
     private final KeyStorePanel keys;
     private final JPasswordField passphrase;
-    private final JFrame frame;
     private final Map cache;
-    private final JLabel icon;
     private final Preferences prefs;
     private DialogRunner runner;
 
@@ -261,12 +241,7 @@ public class KeyStoreDialog {
                 message.invalidPassphrase();
             else
                 message.clear();
-            sign.setEnabled(validate());
-
-
-            frame.pack();
-            frame.show();
-            frame.toFront();
+            sign.setEnabled(isReady());
             passphrase.requestFocus();
         }
 
@@ -286,7 +261,6 @@ public class KeyStoreDialog {
             try {
                 final byte[] sig = signer.sign(keys.getSelectedValue().toString(), phrase, data, cb);
                 invalid = false;
-                frame.hide();
                 setResult(sig);
             } catch (InvalidPassphraseException e) {
                 invalid = true;
@@ -307,9 +281,12 @@ public class KeyStoreDialog {
 
     public static void main(String args[]) {
         try {
-            final KeyStoreDialog dia = new KeyStoreDialog(new TestCaseSigner());
-            dia.frame.show();
-
+            final SigningPanel panel = new SigningPanel(new TestCaseSigner());
+            JDialog dia = new JDialog();
+            dia.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            dia.getContentPane().add(panel);
+            dia.pack();
+            dia.show();
         } catch (InvalidPassphraseException e) {
             e.printStackTrace();
             System.exit(1);

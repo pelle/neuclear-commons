@@ -4,6 +4,7 @@ import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
 import org.neuclear.commons.crypto.signers.BrowsableSigner;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 /*
 NeuClear Distributed Transaction Clearing Platform
@@ -23,8 +24,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: SaveKeyStoreAction.java,v 1.2 2004/05/06 17:36:28 pelle Exp $
+$Id: SaveKeyStoreAction.java,v 1.3 2004/05/06 21:40:29 pelle Exp $
 $Log: SaveKeyStoreAction.java,v $
+Revision 1.3  2004/05/06 21:40:29  pelle
+More swing refactorings
+
 Revision 1.2  2004/05/06 17:36:28  pelle
 Further slight mods in the gui
 
@@ -42,6 +46,8 @@ I am creating actions, panels and dialogs.
 public class SaveKeyStoreAction extends SignerAction {
     public SaveKeyStoreAction(BrowsableSigner signer) {
         super("savekeys", IconTools.getSaveAs(), signer);
+        putValue(SHORT_DESCRIPTION, caps.getString("savekeys"));
+        putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_S));
 
     }
 

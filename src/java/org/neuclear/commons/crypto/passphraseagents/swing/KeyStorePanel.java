@@ -20,6 +20,8 @@ package org.neuclear.commons.crypto.passphraseagents.swing;
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import com.jgoodies.plaf.HeaderStyle;
+import com.jgoodies.plaf.Options;
 import org.neuclear.commons.crypto.passphraseagents.AgentMessages;
 import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
 import org.neuclear.commons.crypto.passphraseagents.swing.actions.NewPersonalityAction;
@@ -47,8 +49,9 @@ import java.util.prefs.Preferences;
  * Time: 9:55:37 AM
  */
 public class KeyStorePanel extends JPanel {
-    public KeyStorePanel() {
-        SwingTools.setLAF();
+    public KeyStorePanel(BrowsableSigner signer) {
+//        SwingTools.setLAF();
+        this.signer = signer;
         prefs = Preferences.userNodeForPackage(DefaultSigner.class);
 
 //        AgentMessages.updateLocale("es", "ES");
@@ -56,16 +59,22 @@ public class KeyStorePanel extends JPanel {
 
         setLayout(new BorderLayout());
         toolbar = new JToolBar();
+        toolbar.putClientProperty(Options.HEADER_STYLE_KEY, HeaderStyle.SINGLE);
         toolbar.setFloatable(true);
         toolbar.setRollover(true);
 
-        open = new JButton(new OpenKeyStoreAction());
+        open = new JButton(new OpenKeyStoreAction(signer));
+        open.setText("");
+        open.putClientProperty(Options.IS_NARROW_KEY, Boolean.TRUE);
         toolbar.add(open);
-        save = new JButton(new SaveKeyStoreAction());
+        save = new JButton(new SaveKeyStoreAction(signer));
+        save.setText("");
+        save.putClientProperty(Options.IS_NARROW_KEY, Boolean.TRUE);
         toolbar.add(save);
         toolbar.addSeparator();
 
-        newId = new JButton(new NewPersonalityAction());
+        newId = new JButton(new NewPersonalityAction(signer));
+        newId.setText("");
         toolbar.add(newId);
         add(toolbar, BorderLayout.NORTH);
 
@@ -139,16 +148,11 @@ public class KeyStorePanel extends JPanel {
         return signer;
     }
 
-    public void setSigner(BrowsableSigner signer) {
-        this.signer = signer;
-        fillAliasList();
-    }
-
     public String getSelectedValue() {
         return (String) list.getSelectedValue();
     }
 
-    private BrowsableSigner signer;
+    final private BrowsableSigner signer;
     private String lastSelected;
     private final JButton newId;
     private final JButton save;
@@ -165,16 +169,33 @@ public class KeyStorePanel extends JPanel {
     public static void main(String args[]) {
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        final KeyStorePanel panel = new KeyStorePanel();
-        frame.getContentPane().add(panel);
         try {
-            panel.setSigner(new TestCaseSigner());
+            final KeyStorePanel panel = new KeyStorePanel(new TestCaseSigner());
+            frame.getContentPane().add(panel);
         } catch (InvalidPassphraseException e) {
             e.printStackTrace();
             System.exit(1);
         }
         frame.pack();
         frame.show();
+    }
+
+    public int getSelectedIndex() {
+        return list.getSelectedIndex();
+    }
+
+    public void setSelectedIndex(int i) {
+        list.setSelectedIndex(i);
+
+    }
+
+    public void setSelectedValue(String s, boolean b) {
+        list.setSelectedValue(s, b);
+
+    }
+
+    public ListModel getModel() {
+        return list.getModel();
     }
 
 
