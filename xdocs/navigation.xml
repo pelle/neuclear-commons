@@ -1,21 +1,21 @@
 <project name="NeuClear" repository="NeuClear" href="http://NeuClear.org">
 
-	<title>NeuClear - Distributed Clearing System</title>
+    <title>NeuClear - Distributed Clearing System</title>
 
-	<body>
-		<links>
-<!--            <item name="NeuClear Live!" href="http://NeuClear.org:8080/NeuClearframework/"/>-->
-            <item name="NeuClear" href="http://neuclear.org/index.html"/>
-            <item name="Wiki" href="http://wiki.neuclear.org/"/>
-			<item name="Talk.org" href="http://talk.org"/>
-			<item name="SourceForge" href="http://sourceforge.net/projects/neuclear/"/>
-		</links>
-		<menu name="NeuClear">
-			<item name="Front Page"            href="/index.html"/>
+    <body>
+        <links>
+            <!--            <item name="NeuClear Live!" href="http://NeuClear.org:8080/NeuClearframework/"/>-->
+            <item name="NeuClear" href="http://neuclear.org/"/>
+            <item name="Issue Tracker" href="http://jira.neuclear.org/"/>
+            <item name="Talk.org" href="http://talk.org"/>
+            <item name="SourceForge" href="http://sourceforge.net/projects/neuclear/"/>
+        </links>
+        <menu name="NeuClear">
+            <item name="Front Page" href="/index.html"/>
             <item name="Installation" href="/installation.html"/>
             <item name="Downloads" href="http://sourceforge.net/project/showfiles.php?group_id=90470"/>
-			<item name="SourceForge" href="http://sourceforge.net/projects/neuclear/"/>
-		</menu>
-	</body>
+            <item name="SourceForge" href="http://sourceforge.net/projects/neuclear/"/>
+        </menu>
+    </body>
 
 </project>

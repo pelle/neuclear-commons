@@ -1,15 +1,16 @@
 <?xml version="1.0"?>
 <document>
 
-	<properties>
-		<title>Installing</title>
-		<author email="pelle@neubia.com">Pelle Braendgaard</author>
-	</properties>
+    <properties>
+        <title>Installing</title>
+        <author email="pelle@neubia.com">Pelle Braendgaard</author>
+    </properties>
 
-	<body>
-		<section name="Requirements">
+    <body>
+        <section name="Requirements">
             <p>
-                To build the NeuClear framework you first need to install <a href="http://maven.apache.org/">Maven</a>.
+                To build the NeuClear framework you first need to install
+                <a href="http://maven.apache.org/">Maven</a>.
                 Follow their installation instructions and you should be ok. I haven't tried this under windows yet, but I'm guessing
                 it should work fine. Maven fetches all the required libraries you need the first time you attempt to build it. There are however
                 two required libraries that are not yet part of their central repository. Some of the required libraries are not in maven's own repositories,
@@ -19,22 +20,25 @@
                 Simply unpack it in mavens home directory retaining the directory structure and you should be allright.
             </p>
             <p>
-                If you want to get them yourself. Get the latest version of <a href="http://www.opensymphony.org">OSCore</a> and
+                If you want to get them yourself. Get the latest version of
                 <a href="http://www.bouncycastle.org">Bouncy Castle Crypto</a>. For Bouncy Castle Crypto you need a JCE and a provider.
                 If you're using JDK1.4 you will allready have a JCE. Otherwise the easiest thing todo is to get their combined JCE/Provider.
                 I would also recommend getting the signed jar for your version of the JDK and install it as an extension in
                 <tt>$JAVA_HOME/jre/lib/ext</tt>.
             </p>
             <p>
-                Remember to edit your <tt>$JAVA_HOME/jre/lib/security/java.security</tt> file as well. Adding the following line:
+                Remember to edit your
+                <tt>$JAVA_HOME/jre/lib/security/java.security</tt> file as well. Adding the following line:
             </p>
             <source>
 security.provider.6=org.bouncycastle.jce.provider.BouncyCastleProvider
             </source>
             <p>Making sure to change the 6 to whatever the last number is in the sequence of providers</p>
             <p>
-                In Addition to play around with it you will need a J2EE compliant servlet engine such as <a href="http://jakarta.apache.org/tomcat/">Jakarta Tomcat</a>
-                or <a href="http://jetty.mortbay.org">Jetty</a>. Install this as required.
+                In Addition to play around with it you will need a J2EE compliant servlet engine such as
+                <a href="http://jakarta.apache.org/tomcat/">Jakarta Tomcat</a>
+                or
+                <a href="http://jetty.mortbay.org">Jetty</a>. Install this as required.
             </p>
         </section>
         <section name="Building">

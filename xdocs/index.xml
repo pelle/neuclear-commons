@@ -1,39 +1,59 @@
 <?xml version="1.0"?>
 <document>
 
-	<properties>
-		<title>NeuClear - Commons</title>
-		<author email="pelle@neubia.com">Pelle Braendgaard</author>
-	</properties>
+    <properties>
+        <title>NeuClear - Commons</title>
+        <author email="pelle@neubia.com">Pelle Braendgaard</author>
+    </properties>
 
-	<body>
-		<section name="Introduction">
-			<p>
+    <body>
+        <section name="Introduction">
+            <p>
 				This is a collection of common tools and utilities used throughout the
                 NeuClear framework. They concern them selves with all the little generalistic
-                bits and pieces that dont quite fit neatly elsewhere.
+                bits and pieces that dont quite fit neatly elsewhere. It is not really intended as a
+                library for use outside the NeuClear framework, as such it is currently not well documented.
             </p>
-		</section>
-          <section name="[12 December, 2003] New release 0.5">
+        </section>
+        <section name="[23 March, 2004] New release 0.6">
+            <p>
+                Panama City, 12th of December, 2004. We are happy to announce
+                the 0.6 release of NeuClear Commons.
+            </p>
+            <p>
+                Main goal of this release is to support the coming
+                <a href="http://neuclear.org/id/">0.9 release
+                of NeuClear ID</a>.
+                <a href="http://sourceforge.net/project/showfiles.php?group_id=90470">Download it today and join in the NeuClear revolution</a>.
+            </p>
+
+        </section>
+        <section name="[12 December, 2003] New release 0.5">
             <p>
                 Panama City, 12th of December, 2004. We are happy to announce
                 the 0.5 release of NeuClear Commons. Major new features are:
             </p>
             <ul>
                 <li>Support for JNDI datasources</li>
-                <li>Transaction support via <a href="http://jotm.objectweb.org">JOTM</a></li>
+                <li>Transaction support via
+                    <a href="http://jotm.objectweb.org">JOTM</a>
+                </li>
             </ul>
             <p>
-                Main goal of this release is to support the latest <a href="http://neuclear.org/id/">0.8 release
+                Main goal of this release is to support the latest
+                <a href="http://neuclear.org/id/">0.8 release
                 of NeuClear ID</a>.
                 <a href="http://sourceforge.net/project/showfiles.php?group_id=90470">Download it today and join in the NeuClear revolution</a>.
             </p>
 
-        </section>      <section name="[11 November, 2003] Released 0.4">
+        </section>
+        <section name="[11 November, 2003] Released 0.4">
             <p>
                 This release is very quick after 0.3, but we deemed it necessary
-                to move a bunch of crypto code from <a href="http://neuclear.org/id/">NeuClear ID</a>
-                and <a href="http://neuclear.org/xmlsig/">NeuClear XMLSig</a> to here.
+                to move a bunch of crypto code from
+                <a href="http://neuclear.org/id/">NeuClear ID</a>
+                and
+                <a href="http://neuclear.org/xmlsig/">NeuClear XMLSig</a> to here.
                 If you are using any of the CVS modules as well as the latest release 0.10 of
                 XMLSig please update to this release.
             </p>
@@ -44,6 +64,6 @@
                 download.
             </p>
         </section>
-	</body>
+    </body>
 
 </document>
