@@ -2,6 +2,9 @@ package org.neuclear.commons.crypto.passphraseagents;
 
 import org.neuclear.commons.LowLevelException;
 
+import java.util.Map;
+import java.util.HashMap;
+
 /*
 NeuClear Distributed Transaction Clearing Platform
 (C) 2003 Pelle Braendgaard
@@ -20,8 +23,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: AskAtStartupAgent.java,v 1.5 2003/12/19 18:02:53 pelle Exp $
+$Id: AskAtStartupAgent.java,v 1.6 2003/12/22 13:45:25 pelle Exp $
 $Log: AskAtStartupAgent.java,v $
+Revision 1.6  2003/12/22 13:45:25  pelle
+Added a naive benchmarking tool.
+Fixed a bug in AskAtStartupAgent
+
 Revision 1.5  2003/12/19 18:02:53  pelle
 Revamped a lot of exception handling throughout the framework, it has been simplified in most places:
 - For most cases the main exception to worry about now is InvalidNamedObjectException.
@@ -56,15 +63,15 @@ The IdentityCreator now fully works with the new Signer architecture.
 */
 
 /**
- * User: pelleb
- * Date: Oct 30, 2003
- * Time: 5:09:36 PM
+ * AskAtStartupAgent encapsulates another passphraseagent, but  caches each request.
+ * It is given an initial argument, which it asks at startup, thus not requiring it to ask the admin
+ * for the passphrase at alls.
  */
 public final class AskAtStartupAgent implements PassPhraseAgent {
     public AskAtStartupAgent(final InteractiveAgent agent, final String name) throws UserCancellationException {
-        this.name = name;
         this.agent=agent;
-        this.passphrase = agent.getPassPhrase(name);
+        cache=new  HashMap();
+        getPassPhrase(name);
     }
 
     /**
@@ -73,25 +80,26 @@ public final class AskAtStartupAgent implements PassPhraseAgent {
      * @param name 
      * @return 
      */
-    public final char[] getPassPhrase(final String name) {
-        if (name.equals(this.name))
+    public final char[] getPassPhrase(final String name) throws UserCancellationException {
+        if (cache.containsKey(name))
+            return (char[]) cache.get(name);
+        else {
+            char passphrase[] =agent.getPassPhrase(name);
+            cache.put(name,passphrase);
             return passphrase;
-        else
-            return new char[0];
+        }
     }
 
     public char[] getPassPhrase(String name, boolean incorrect) throws UserCancellationException {
         if (incorrect) {
-            if (name.equals(this.name))
-                passphrase=agent.getPassPhrase(name);
-            else
-                throw new LowLevelException(getClass().getName()+"\nCan not provide passphrase for: "+name);
-        }
+             char passphrase[] =agent.getPassPhrase(name,incorrect);
+             cache.put(name,passphrase);
+             return passphrase;
+         }
         return getPassPhrase(name);
     }
 
-    private final String name;
-    private char[] passphrase;
+    private final Map cache;
     private final PassPhraseAgent agent;
 
 }
