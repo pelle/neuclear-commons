@@ -4,6 +4,7 @@ import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.plaf.Options;
 import org.neuclear.commons.crypto.Base64;
 import org.neuclear.commons.crypto.passphraseagents.InteractiveAgent;
 import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
@@ -13,9 +14,13 @@ import org.neuclear.commons.crypto.signers.SetPublicKeyCallBack;
 import org.neuclear.commons.crypto.signers.TestCaseSigner;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.net.URL;
 import java.security.KeyStoreException;
 import java.security.PublicKey;
@@ -25,8 +30,12 @@ import java.util.Map;
 import java.util.Vector;
 
 /*
-$Id: SwingAgent.java,v 1.1 2004/04/07 17:22:08 pelle Exp $
+$Id: SwingAgent.java,v 1.2 2004/04/09 22:56:44 pelle Exp $
 $Log: SwingAgent.java,v $
+Revision 1.2  2004/04/09 22:56:44  pelle
+SwingAgent now manages key creation as well through the NewAliasDialog.
+Many small uservalidation features have also been added.
+
 Revision 1.1  2004/04/07 17:22:08  pelle
 Added support for the new improved interactive signing model. A new Agent is also available with SwingAgent.
 The XMLSig classes have also been updated to support this.
@@ -42,11 +51,13 @@ public class SwingAgent implements InteractiveAgent {
     public SwingAgent() {
         try {
             UIManager.setLookAndFeel("com.jgoodies.plaf.plastic.PlasticXPLookAndFeel");
+            UIManager.put(Options.USE_SYSTEM_FONTS_APP_KEY, Boolean.TRUE);
         } catch (Exception e) {
             // Likely PlasticXP is not in the class path; ignore.
         }
         cache = new HashMap();
         sign = new JButton("Sign");
+        sign.setEnabled(false);
         cancel = new JButton("Cancel");
         newId = new JButton("New ...");
         list = new JList(new String[]{"bob", "carol", "alice"});
@@ -58,11 +69,12 @@ public class SwingAgent implements InteractiveAgent {
         else
             icon = new JLabel("NeuClear");
 
-        frame = new JFrame();
-        frame.setTitle("NeuClear Signing Agent");
-        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        frame.getContentPane().add(buildPanel());
-        frame.pack();
+        dialog = new JDialog();
+        dialog.setTitle("NeuClear Signing Agent");
+        dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        dialog.getContentPane().add(buildPanel());
+        dialog.pack();
+        nad = new NewAliasDialog(this);
 
         cancel.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent actionEvent) {
@@ -78,20 +90,61 @@ public class SwingAgent implements InteractiveAgent {
         final ActionListener action = new ActionListener() {
             public void actionPerformed(final ActionEvent actionEvent) {
                 synchronized (passphrase) {
-                    isCancel = false;
-                    passphrase.notifyAll();
+                    if (validate()) {
+                        isCancel = false;
+                        passphrase.notifyAll();
+                    }
                 }
 
             }
         };
         sign.addActionListener(action);
         passphrase.addActionListener(action);
+        final KeyListener validate = new KeyListener() {
+            public void keyPressed(KeyEvent e) {
+
+            }
+
+            public void keyReleased(KeyEvent e) {
+                sign.setEnabled(validate());
+
+            }
+
+            public void keyTyped(KeyEvent e) {
+
+            }
+        };
+        passphrase.addKeyListener(validate);
+        list.addListSelectionListener(new ListSelectionListener() {
+            /**
+             * Called whenever the value of the selection changes.
+             *
+             * @param e the event that characterizes the change.
+             */
+            public void valueChanged(ListSelectionEvent e) {
+                sign.setEnabled(validate());
+            }
+
+        });
+
+        newId.addActionListener(new ActionListener() {
+            public void actionPerformed(final ActionEvent actionEvent) {
+                SwingUtilities.invokeLater(nad);
+            }
+        });
 
 
+//        dialog.show();
 
-//        frame.show();
 
+    }
 
+    void updateList(String alias) {
+        if (alias != null) {
+            fillAliasList();
+            list.setSelectedValue(alias, true);
+            dialog.pack();
+        }
     }
 
     private Component buildPanel() {
@@ -129,18 +182,8 @@ public class SwingAgent implements InteractiveAgent {
      */
     public byte[] sign(BrowsableSigner signer, byte data[], SetPublicKeyCallBack callback) throws UserCancellationException {
         synchronized (passphrase) {//We dont want multiple agents popping up at the same time
-            try {
-
-                Iterator iter = signer.iterator();
-                Vector vector = new Vector();
-                while (iter.hasNext()) {
-                    Object o = iter.next();
-                    vector.add(o);
-                }
-                list.setListData(vector);
-            } catch (KeyStoreException e) {
-                e.printStackTrace();
-            }
+            this.signer = signer;
+            fillAliasList();
 
 //           if (cache.containsKey(name))
 //               passphrase.setText((String) cache.get(name));
@@ -153,16 +196,17 @@ public class SwingAgent implements InteractiveAgent {
 //            nameLabel.setVisible(true);
 //
 //            nameLabel.setText(name);
-            frame.pack();
-            frame.show();
-//           frame.setVisible(true);
+            dialog.pack();
+            dialog.show();
+            sign.setEnabled(false);
+//           dialog.setVisible(true);
             try {
                 passphrase.wait();
             } catch (InterruptedException e) {
                 ;
             }
-            frame.hide();
-//           frame.setVisible(false);
+            dialog.hide();
+//           dialog.setVisible(false);
             final String phrase = passphrase.getText();
 //            if (remember.getState())
 //                cache.put(name, phrase);
@@ -171,8 +215,23 @@ public class SwingAgent implements InteractiveAgent {
                 //Todo handle when an alias hasnt been selected
                 return signer.sign(list.getSelectedValue().toString(), phrase.toCharArray(), data, callback);
             } catch (InvalidPassphraseException e) {
-                return new byte[0];//TODO handle invalid passphrase
+                return sign(signer, data, callback);
             }
+        }
+    }
+
+    private void fillAliasList() {
+        try {
+
+            Iterator iter = signer.iterator();
+            Vector vector = new Vector();
+            while (iter.hasNext()) {
+                Object o = iter.next();
+                vector.add(o);
+            }
+            list.setListData(vector);
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
         }
     }
 
@@ -200,14 +259,14 @@ public class SwingAgent implements InteractiveAgent {
 //            nameLabel.setVisible(true);
 //
 //            nameLabel.setText(name);
-            frame.pack();
-            frame.setVisible(true);
+            dialog.pack();
+            dialog.setVisible(true);
             try {
                 passphrase.wait();
             } catch (InterruptedException e) {
                 ;
             }
-            frame.setVisible(false);
+            dialog.setVisible(false);
             if (isCancel)
                 throw new UserCancellationException(name);
             final String phrase = passphrase.getText();
@@ -218,13 +277,26 @@ public class SwingAgent implements InteractiveAgent {
         }
     }
 
+    BrowsableSigner getSigner() {
+        return signer;
+    }
 
+    JDialog getDialog() {
+        return dialog;
+    }
+
+    private boolean validate() {
+        return (list.getSelectedIndex() > 0 && passphrase.getPassword().length > 0);
+    }
+
+    private BrowsableSigner signer;
     private final JButton sign;
     private final JButton cancel;
     private final JButton newId;
     private final JList list;
-    private final JTextField passphrase;
-    private final JFrame frame;
+    private final JPasswordField passphrase;
+    private final JDialog dialog;
+    private final NewAliasDialog nad;
     private final Map cache;
     private boolean isCancel;
     private final JLabel icon;
@@ -232,8 +304,8 @@ public class SwingAgent implements InteractiveAgent {
     public static void main(final String[] args) {
         final InteractiveAgent dia = new SwingAgent();
         try {
-            final BrowsableSigner signer = new TestCaseSigner(dia);
             try {
+                final BrowsableSigner signer = new TestCaseSigner(dia);
                 byte sig[] = signer.sign("testdata".getBytes(), new SetPublicKeyCallBack() {
                     public void setPublicKey(PublicKey pub) {
                         System.out.println("PublicKey:");

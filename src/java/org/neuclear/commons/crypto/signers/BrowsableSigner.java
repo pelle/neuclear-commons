@@ -1,5 +1,6 @@
 package org.neuclear.commons.crypto.signers;
 
+import org.neuclear.commons.crypto.CryptoException;
 import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
 
 import java.security.KeyStoreException;
@@ -23,8 +24,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: BrowsableSigner.java,v 1.3 2004/04/09 18:40:45 pelle Exp $
+$Id: BrowsableSigner.java,v 1.4 2004/04/09 22:56:44 pelle Exp $
 $Log: BrowsableSigner.java,v $
+Revision 1.4  2004/04/09 22:56:44  pelle
+SwingAgent now manages key creation as well through the NewAliasDialog.
+Many small uservalidation features have also been added.
+
 Revision 1.3  2004/04/09 18:40:45  pelle
 BrowsableSigner now inherits Signer and PublicKeySource, which means implementations only need to implement BrowsableSigner now.
 Added NewAliasDialog, which isnt yet complete.
@@ -52,4 +57,5 @@ public interface BrowsableSigner extends Signer, PublicKeySource {
 
     byte[] sign(String alias, char passphrase[], byte data[], SetPublicKeyCallBack callback) throws InvalidPassphraseException;
 
+    void createKeyPair(String alias, char passphrase[]) throws CryptoException;
 }

@@ -1,6 +1,10 @@
 /*
- * $Id: JCESigner.java,v 1.20 2004/04/09 18:40:45 pelle Exp $
+ * $Id: JCESigner.java,v 1.21 2004/04/09 22:56:45 pelle Exp $
  * $Log: JCESigner.java,v $
+ * Revision 1.21  2004/04/09 22:56:45  pelle
+ * SwingAgent now manages key creation as well through the NewAliasDialog.
+ * Many small uservalidation features have also been added.
+ *
  * Revision 1.20  2004/04/09 18:40:45  pelle
  * BrowsableSigner now inherits Signer and PublicKeySource, which means implementations only need to implement BrowsableSigner now.
  * Added NewAliasDialog, which isnt yet complete.
@@ -436,9 +440,10 @@ public class JCESigner implements BrowsableSigner {
 
     public byte[] sign(String name, char pass[], byte data[], SetPublicKeyCallBack callback) throws InvalidPassphraseException {
         try {
+            final byte[] bytes = CryptoTools.sign(getKey(name, pass), data);
             if (callback != null)
                 callback.setPublicKey(getPublicKey(name));
-            return CryptoTools.sign(getKey(name, pass), data);
+            return bytes;
         } catch (UnrecoverableKeyException e) {
             throw new InvalidPassphraseException(name);
         } catch (NoSuchAlgorithmException e) {
@@ -447,6 +452,20 @@ public class JCESigner implements BrowsableSigner {
             // Could try to reload it here but I wont for now
             throw new LowLevelException(e);
         } catch (CryptoException e) {
+            throw new LowLevelException(e);
+        }
+    }
+
+    public void createKeyPair(String alias, char passphrase[]) throws CryptoException {
+        try {
+            final KeyPair kp = kpg.generateKeyPair();
+            ks.setKeyEntry(alias, kp.getPrivate(), passphrase, new Certificate[]{CryptoTools.createCertificate(alias, kp)});
+            if (!Utility.isEmpty(filename)) save();
+        } catch (KeyStoreException e) {
+            throw new LowLevelException(e);
+        } catch (SignatureException e) {
+            throw new LowLevelException(e);
+        } catch (InvalidKeyException e) {
             throw new LowLevelException(e);
         }
     }
