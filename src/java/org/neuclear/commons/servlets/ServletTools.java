@@ -1,5 +1,8 @@
-/* $Id: ServletTools.java,v 1.10 2004/04/21 23:10:14 pelle Exp $
+/* $Id: ServletTools.java,v 1.11 2004/06/06 21:26:47 pelle Exp $
  * $Log: ServletTools.java,v $
+ * Revision 1.11  2004/06/06 21:26:47  pelle
+ * Localized LedgerBrowserServlet to Spanish
+ *
  * Revision 1.10  2004/04/21 23:10:14  pelle
  * Fixed mac look and feel
  *
@@ -79,7 +82,7 @@ import java.io.PrintWriter;
 
 /**
  * @author pelleb
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public final class ServletTools {
     private ServletTools() {
@@ -90,6 +93,7 @@ public final class ServletTools {
                 ((request.getServerPort() == 80) ? "" : ":" + Integer.toString(request.getServerPort()))
                 + request.getContextPath() + item;
     }
+
 
     public static void printHeader(final PrintWriter out, final HttpServletRequest request, final String title, final String sub) {
         out.print("<html><head><title>");
