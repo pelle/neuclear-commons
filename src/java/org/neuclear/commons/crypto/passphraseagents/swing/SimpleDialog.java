@@ -5,6 +5,7 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.plaf.Options;
+import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,8 +16,12 @@ import java.awt.event.KeyListener;
 import java.net.URL;
 
 /*
-$Id: SimpleDialog.java,v 1.6 2004/04/21 23:10:13 pelle Exp $
+$Id: SimpleDialog.java,v 1.7 2004/04/22 23:59:51 pelle Exp $
 $Log: SimpleDialog.java,v $
+Revision 1.7  2004/04/22 23:59:51  pelle
+Added various statistics to Ledger as well as AssetController
+Improved look and feel in the web app.
+
 Revision 1.6  2004/04/21 23:10:13  pelle
 Fixed mac look and feel
 
@@ -65,8 +70,10 @@ public class SimpleDialog {
             // Likely PlasticXP is not in the class path; ignore.
         }
         ok = new JButton("Open");
+        ok.setIcon(IconTools.getOK());
         ok.setEnabled(false);
         cancel = new JButton("Cancel");
+        cancel.setIcon(IconTools.getCancel());
         alias = new JLabel();
         passphrase = new JPasswordField();
         message = new MessageLabel();
@@ -134,7 +141,9 @@ public class SimpleDialog {
         builder.addSeparator("Enter passphrase", cc.xyw(1, 3, 3));
         builder.addLabel("open:", cc.xy(1, 5)).setLabelFor(alias);
         builder.add(alias, cc.xy(3, 5));
-        builder.addLabel("Passphrase:", cc.xy(1, 7)).setLabelFor(passphrase);
+        final JLabel label = builder.addLabel("Passphrase:", cc.xy(1, 7));
+        label.setLabelFor(passphrase);
+        label.setIcon(IconTools.getPassword());
         builder.add(passphrase, cc.xy(3, 7));
         builder.add(message, cc.xyw(1, 9, 3));
 
