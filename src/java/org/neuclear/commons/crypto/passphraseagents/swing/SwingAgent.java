@@ -10,11 +10,16 @@ import org.neuclear.commons.crypto.signers.InvalidPassphraseException;
 import org.neuclear.commons.crypto.signers.SetPublicKeyCallBack;
 
 import javax.swing.*;
+import java.io.File;
 import java.security.PublicKey;
 
 /*
-$Id: SwingAgent.java,v 1.4 2004/04/12 23:50:07 pelle Exp $
+$Id: SwingAgent.java,v 1.5 2004/04/13 17:32:05 pelle Exp $
 $Log: SwingAgent.java,v $
+Revision 1.5  2004/04/13 17:32:05  pelle
+Now has save dialog
+Remembers passphrases
+
 Revision 1.4  2004/04/12 23:50:07  pelle
 implemented the queue and improved the DefaultSigner
 
@@ -58,15 +63,17 @@ public class SwingAgent implements InteractiveAgent {
         final InteractiveAgent dia = new SwingAgent();
         try {
             try {
-                System.out.println(dia.getPassPhrase("test"));
+//                System.out.println(dia.getPassPhrase("test"));
                 final BrowsableSigner signer = new DefaultSigner(dia);
-                byte sig[] = signer.sign("testdata".getBytes(), new SetPublicKeyCallBack() {
-                    public void setPublicKey(PublicKey pub) {
-                        System.out.println("PublicKey:");
-                        System.out.println(pub);
-                    }
-                });
-                System.out.println(Base64.encode(sig));
+                while (true) {
+                    byte sig[] = signer.sign("testdata".getBytes(), new SetPublicKeyCallBack() {
+                        public void setPublicKey(PublicKey pub) {
+                            System.out.println("PublicKey:");
+                            System.out.println(pub);
+                        }
+                    });
+                    System.out.println(Base64.encode(sig));
+                }
 //                System.out.println("Getting passphrase... " + new String(dia.getPassPhrase((BrowsableSigner) signer)));
 //                System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("neu://pelle@test", true)));
             } catch (UserCancellationException e) {
@@ -110,5 +117,26 @@ public class SwingAgent implements InteractiveAgent {
         return (byte[]) waiter.getResult();
     }
 
+    public File getSaveToFileName(String title, String def) throws UserCancellationException {
+        File file = new File(def);
+        JFileChooser fc = new JFileChooser(file.getParentFile());
+        fc.setFileFilter(new JKSFilter());
+        fc.setSelectedFile(file);
+        fc.setDialogTitle(title);
+        // Show open dialog; this method does not return until the dialog is closed
+        fc.showSaveDialog(ksd.getDialog());
+        return fc.getSelectedFile();
+    }
+
+    class JKSFilter extends javax.swing.filechooser.FileFilter {
+        public boolean accept(File file) {
+            String filename = file.getName();
+            return filename.endsWith(".jks");
+        }
+
+        public String getDescription() {
+            return "*.jks";
+        }
+    }
 
 }

@@ -1,6 +1,10 @@
 /*
- * $Id: JCESigner.java,v 1.22 2004/04/12 23:50:08 pelle Exp $
+ * $Id: JCESigner.java,v 1.23 2004/04/13 17:32:07 pelle Exp $
  * $Log: JCESigner.java,v $
+ * Revision 1.23  2004/04/13 17:32:07  pelle
+ * Now has save dialog
+ * Remembers passphrases
+ *
  * Revision 1.22  2004/04/12 23:50:08  pelle
  * implemented the queue and improved the DefaultSigner
  *
@@ -452,7 +456,7 @@ public class JCESigner implements BrowsableSigner {
         try {
             final KeyPair kp = kpg.generateKeyPair();
             ks.setKeyEntry(alias, kp.getPrivate(), passphrase, new Certificate[]{CryptoTools.createCertificate(alias, kp)});
-            if (!Utility.isEmpty(filename)) save();
+//            if (!Utility.isEmpty(filename)) save();
         } catch (KeyStoreException e) {
             throw new LowLevelException(e);
         } catch (SignatureException e) {
@@ -476,6 +480,7 @@ public class JCESigner implements BrowsableSigner {
         try {
             File ksfile = new File(filename);
             ksfile.getParentFile().mkdirs();
+            System.out.println(Thread.currentThread());
             ks.store(new FileOutputStream(ksfile), agent.getPassPhrase(filename));
         } catch (Exception e) {
             throw new LowLevelException(e);

@@ -6,10 +6,13 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.plaf.Options;
 import org.neuclear.commons.crypto.signers.BrowsableSigner;
+import org.neuclear.commons.crypto.signers.DefaultSigner;
 import org.neuclear.commons.crypto.signers.InvalidPassphraseException;
 import org.neuclear.commons.crypto.signers.SetPublicKeyCallBack;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
@@ -23,10 +26,16 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 
 /*
-$Id: KeyStoreDialog.java,v 1.2 2004/04/12 23:50:07 pelle Exp $
+$Id: KeyStoreDialog.java,v 1.3 2004/04/13 17:32:05 pelle Exp $
 $Log: KeyStoreDialog.java,v $
+Revision 1.3  2004/04/13 17:32:05  pelle
+Now has save dialog
+Remembers passphrases
+
 Revision 1.2  2004/04/12 23:50:07  pelle
 implemented the queue and improved the DefaultSigner
 
@@ -57,11 +66,14 @@ public class KeyStoreDialog {
         } catch (Exception e) {
             // Likely PlasticXP is not in the class path; ignore.
         }
+        prefs = Preferences.userNodeForPackage(DefaultSigner.class);
         cache = new HashMap();
         sign = new JButton("Sign");
         sign.setEnabled(false);
         cancel = new JButton("Cancel");
-        newId = new JButton("New ...");
+        newId = new JButton("New ID ...");
+        save = new JButton("Save ...");
+        remember = new JCheckBox("remember passphrase in current session", prefs.getBoolean(REMEMBER_PASSPHRASE, false));
         list = new JList();
         list.setBorder(BorderFactory.createLoweredBevelBorder());
         passphrase = new JPasswordField();
@@ -115,6 +127,7 @@ public class KeyStoreDialog {
             }
         };
         passphrase.addKeyListener(validate);
+
         list.addListSelectionListener(new ListSelectionListener() {
             /**
              * Called whenever the value of the selection changes.
@@ -122,18 +135,45 @@ public class KeyStoreDialog {
              * @param e the event that characterizes the change.
              */
             public void valueChanged(ListSelectionEvent e) {
+                lastSelected = (String) list.getSelectedValue();
+                if (remember.isSelected() && cache.containsKey(lastSelected))
+                    passphrase.setText((String) cache.get(lastSelected));
+                else
+                    passphrase.setText("");
                 sign.setEnabled(validate());
+
             }
 
         });
 
         newId.addActionListener(new ActionListener() {
             public void actionPerformed(final ActionEvent actionEvent) {
+
                 SwingUtilities.invokeLater(nad);
             }
         });
 
+        save.addActionListener(new ActionListener() {
+            /**
+             * Invoked when an action occurs.
+             */
+            public void actionPerformed(ActionEvent e) {
+                new Thread(new SaveKeyStore(signer)).start();
+            }
 
+        });
+        remember.addChangeListener(new ChangeListener() {
+            /**
+             * Invoked when the target of the listener has changed its state.
+             *
+             * @param e a ChangeEvent object
+             */
+            public void stateChanged(ChangeEvent e) {
+                cache.clear();
+
+            }
+
+        });
 //        dialog.show();
 
 
@@ -149,7 +189,7 @@ public class KeyStoreDialog {
 
     private Component buildPanel() {
         FormLayout layout = new FormLayout("right:pref, 3dlu, pref:grow ",
-                "pref,3dlu,pref, 3dlu, fill:pref:grow, 3dlu, pref, 7dlu, pref");
+                "pref,3dlu,pref, 3dlu, fill:pref:grow, 3dlu, pref, 3dlu, pref, 7dlu, pref");
         PanelBuilder builder = new PanelBuilder(layout);
         CellConstraints cc = new CellConstraints();
 
@@ -160,14 +200,16 @@ public class KeyStoreDialog {
         builder.add(list, cc.xyw(3, 5, 1));
         builder.addLabel("Passphrase:", cc.xy(1, 7));
         builder.add(passphrase, cc.xy(3, 7));
+        builder.add(remember, cc.xy(3, 9));
 
         ButtonBarBuilder bb = new ButtonBarBuilder();
         bb.addGridded(newId);
+        bb.addGridded(save);
         bb.addGlue();
         bb.addUnrelatedGap();
         bb.addGridded(sign);
         bb.addGridded(cancel);
-        builder.add(bb.getPanel(), cc.xyw(1, 9, 3));
+        builder.add(bb.getPanel(), cc.xyw(1, 11, 3));
 
         return builder.getPanel();
     }
@@ -196,7 +238,7 @@ public class KeyStoreDialog {
     }
 
     private boolean validate() {
-        return (list.getSelectedIndex() > 0 && passphrase.getPassword().length > 0);
+        return (list.getSelectedIndex() >= 0 && passphrase.getPassword().length > 0);
     }
 
     WaitForInput createSigningTask(BrowsableSigner bs, byte data[], SetPublicKeyCallBack cb) {
@@ -204,16 +246,21 @@ public class KeyStoreDialog {
     }
 
     private BrowsableSigner signer;
+    private String lastSelected;
     private final JButton sign;
     private final JButton cancel;
     private final JButton newId;
+    private final JButton save;
+    private final JCheckBox remember;
     private final JList list;
     private final JPasswordField passphrase;
     private final JDialog dialog;
     private final NewAliasDialog nad;
     private final Map cache;
     private final JLabel icon;
+    private final Preferences prefs;
     private DialogRunner runner;
+
 
     class DialogRunner extends WaitForInput {
         public DialogRunner(BrowsableSigner bs, byte data[], SetPublicKeyCallBack cb) {
@@ -226,13 +273,30 @@ public class KeyStoreDialog {
             runner = this;
             signer = bs;
             fillAliasList();
-            passphrase.setText("");
+            list.setSelectedValue(prefs.get(DEFAULT_ALIAS, ""), true);
+            if (list.getSelectedIndex() == -1)
+                list.setSelectedIndex(0);
+            if (remember.isSelected() && cache.containsKey(list.getSelectedValue().toString()))
+                passphrase.setText((String) cache.get(list.getSelectedValue()));
+            else
+                passphrase.setText("");
+
             dialog.pack();
             dialog.show();
             sign.setEnabled(false);
         }
 
         public void execute() {
+            if (remember.isSelected())
+                cache.put(list.getSelectedValue().toString(), new String(passphrase.getPassword()));
+            prefs.putBoolean(REMEMBER_PASSPHRASE, remember.isSelected());
+            prefs.put(DEFAULT_ALIAS, list.getSelectedValue().toString());
+            try {
+                prefs.flush();
+            } catch (BackingStoreException e) {
+                e.printStackTrace();
+            }
+
             dialog.hide();
             char phrase[] = passphrase.getPassword();
             passphrase.setText("");
@@ -245,10 +309,14 @@ public class KeyStoreDialog {
 
         }
 
+
         private final byte data[];
         private final SetPublicKeyCallBack cb;
         private final BrowsableSigner bs;
+
     }
 
+    private static final String DEFAULT_ALIAS = "DEFAULT_ALIAS";
+    private static final String REMEMBER_PASSPHRASE = "REMEMBER_PASSPHRASE";
 
 }

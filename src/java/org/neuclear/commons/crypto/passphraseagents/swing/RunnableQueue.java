@@ -1,5 +1,7 @@
 package org.neuclear.commons.crypto.passphraseagents.swing;
 
+import javax.swing.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 
 /*
@@ -20,8 +22,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: RunnableQueue.java,v 1.1 2004/04/12 23:50:07 pelle Exp $
+$Id: RunnableQueue.java,v 1.2 2004/04/13 17:32:05 pelle Exp $
 $Log: RunnableQueue.java,v $
+Revision 1.2  2004/04/13 17:32:05  pelle
+Now has save dialog
+Remembers passphrases
+
 Revision 1.1  2004/04/12 23:50:07  pelle
 implemented the queue and improved the DefaultSigner
 
@@ -41,7 +47,13 @@ public class RunnableQueue implements Runnable {
 
         System.out.println("Starting Crypto Agent Event Queue");
         while (true) {
-            read().run();
+            try {
+                SwingUtilities.invokeAndWait(read());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
 
         }
     }
@@ -62,10 +74,11 @@ public class RunnableQueue implements Runnable {
 
     public void queue(Runnable run) {
         if (thread == null) {
-            thread = new Thread(this);
+            thread = new Thread(this, "Crypto GUI Tasks");
             thread.start();
         }
         synchronized (monitor) {
+            System.out.println("added " + run.getClass().toString());
             queue.add(run);
             monitor.notifyAll();
         }

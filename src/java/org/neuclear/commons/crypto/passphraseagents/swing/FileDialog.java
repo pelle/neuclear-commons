@@ -15,9 +15,9 @@ import java.awt.event.KeyListener;
 import java.net.URL;
 
 /*
-$Id: SimpleDialog.java,v 1.3 2004/04/13 17:32:05 pelle Exp $
-$Log: SimpleDialog.java,v $
-Revision 1.3  2004/04/13 17:32:05  pelle
+$Id: FileDialog.java,v 1.1 2004/04/13 17:32:05 pelle Exp $
+$Log: FileDialog.java,v $
+Revision 1.1  2004/04/13 17:32:05  pelle
 Now has save dialog
 Remembers passphrases
 
@@ -40,8 +40,8 @@ The XMLSig classes have also been updated to support this.
  * Date: Apr 7, 2004
  * Time: 9:55:37 AM
  */
-public class SimpleDialog {
-    public SimpleDialog() {
+public class FileDialog {
+    public FileDialog() {
         try {
             UIManager.setLookAndFeel("com.jgoodies.plaf.plastic.PlasticXPLookAndFeel");
             UIManager.put(Options.USE_SYSTEM_FONTS_APP_KEY, Boolean.TRUE);
@@ -158,8 +158,6 @@ public class SimpleDialog {
             alias.setText(req);
             dialog.pack();
             dialog.show();
-            System.out.println(Thread.currentThread());
-
         }
 
         public void execute() {

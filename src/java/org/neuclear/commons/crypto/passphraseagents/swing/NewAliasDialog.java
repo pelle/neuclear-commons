@@ -8,15 +8,18 @@ import com.jgoodies.plaf.Options;
 import org.neuclear.commons.crypto.CryptoException;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 /*
-$Id: NewAliasDialog.java,v 1.3 2004/04/12 15:00:29 pelle Exp $
+$Id: NewAliasDialog.java,v 1.4 2004/04/13 17:32:05 pelle Exp $
 $Log: NewAliasDialog.java,v $
+Revision 1.4  2004/04/13 17:32:05  pelle
+Now has save dialog
+Remembers passphrases
+
 Revision 1.3  2004/04/12 15:00:29  pelle
 Now have a slightly better way of handling the waiting for input using the WaitForInput class.
 This will later be put into a command queue for execution.
@@ -48,18 +51,23 @@ public class NewAliasDialog implements Runnable {
         ok = new JButton("Create");
         ok.setEnabled(false);
         cancel = new JButton("Cancel");
+        cancel2 = new JButton("Cancel");
         alias = new JTextField();
 
         passphrase1 = new JPasswordField();
         passphrase2 = new JPasswordField();
-
+        progress = new JProgressBar(0, 100);
+        progress.setIndeterminate(true);
+        progress.setVisible(true);
         dialog = new JDialog(agent.getDialog(), true);
         dialog.setTitle("NeuClear Signing Agent");
-        dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        dialog.getContentPane().add(buildPanel());
-        dialog.pack();
+        dialog.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        dialog.hide();
+        regular = buildPanel();
+        process = buildProcessPanel();
+        //setMainPanel();
 
-        cancel.addActionListener(new ActionListener() {
+        final ActionListener cl = new ActionListener() {
             public void actionPerformed(final ActionEvent actionEvent) {
                 synchronized (alias) {
                     passphrase1.setText("");
@@ -69,7 +77,9 @@ public class NewAliasDialog implements Runnable {
                 }
 
             }
-        });
+        };
+        cancel.addActionListener(cl);
+        cancel2.addActionListener(cl);
 
         final KeyListener validate = new KeyListener() {
             public void keyPressed(KeyEvent e) {
@@ -105,6 +115,20 @@ public class NewAliasDialog implements Runnable {
 
     }
 
+    private void setMainPanel() {
+        dialog.getContentPane().removeAll();
+        dialog.getContentPane().add(regular);
+        dialog.pack();
+        dialog.show();
+    }
+
+    private void setProcessPanel() {
+        dialog.getContentPane().removeAll();
+        dialog.getContentPane().add(process);
+        dialog.pack();
+        dialog.show();
+    }
+
     private boolean validate() {
         if (alias.getText().length() == 0)
             return false;
@@ -119,7 +143,7 @@ public class NewAliasDialog implements Runnable {
         return true;//new String(p1).equals(new String(p2));
     }
 
-    private Component buildPanel() {
+    private JPanel buildPanel() {
         FormLayout layout = new FormLayout("right:pref, 3dlu, 100dlu:grow ",
                 "pref,3dlu,pref, 3dlu, pref, 3dlu, pref, 7dlu, pref");
         PanelBuilder builder = new PanelBuilder(layout);
@@ -134,13 +158,34 @@ public class NewAliasDialog implements Runnable {
         builder.add(passphrase1, cc.xy(3, 5));
         builder.addLabel("(Repeat) Passphrase:", cc.xy(1, 7));
         builder.add(passphrase2, cc.xy(3, 7));
-
+//        builder.add(progress,cc.xyw(1,9,3));
         ButtonBarBuilder bb = new ButtonBarBuilder();
         bb.addGlue();
         bb.addUnrelatedGap();
         bb.addGridded(ok);
         bb.addGridded(cancel);
         builder.add(bb.getPanel(), cc.xyw(1, 9, 3));
+
+        return builder.getPanel();
+
+    }
+
+    private JPanel buildProcessPanel() {
+        FormLayout layout = new FormLayout("right:pref, 3dlu, 100dlu:grow ",
+                "pref,3dlu,pref, 7dlu, pref");
+        PanelBuilder builder = new PanelBuilder(layout);
+        CellConstraints cc = new CellConstraints();
+
+        builder.setDefaultDialogBorder();
+
+        builder.addSeparator("Creating Keys", cc.xyw(1, 1, 3));
+        builder.add(progress, cc.xyw(1, 3, 3));
+        ButtonBarBuilder bb = new ButtonBarBuilder();
+        bb.addGlue();
+        bb.addUnrelatedGap();
+//        bb.addGridded(ok);
+        bb.addGridded(cancel2);
+        builder.add(bb.getPanel(), cc.xyw(1, 5, 3));
 
         return builder.getPanel();
 
@@ -164,51 +209,51 @@ public class NewAliasDialog implements Runnable {
         passphrase1.setEnabled(true);
         alias.setEnabled(true);
         passphrase2.setEnabled(true);
-        dialog.pack();
-        dialog.show();
-
+        setMainPanel();
     }
 
     private void createAlias() {
-        dialog.setEnabled(false);
-        passphrase1.setEnabled(false);
-        alias.setEnabled(false);
-        passphrase2.setEnabled(false);
-        ok.setEnabled(false);
-        cancel.setEnabled(true);
-        new Thread(new Runnable() {
+        setProcessPanel();
+        new Thread(new GenerateKeyTask(), "Generate Key").start();
+    }
 
-            /**
-             * When an object implementing interface <code>Runnable</code> is used
-             * to create a thread, starting the thread causes the object's
-             * <code>run</code> method to be called in that separately executing
-             * thread.
-             * <p/>
-             * The general contract of the method <code>run</code> is that it may
-             * take any action whatsoever.
-             *
-             * @see Thread#run()
-             */
-            public void run() {
-                try {
-                    System.out.println("Generating Key");
-                    agent.getSigner().createKeyPair(alias.getText(), passphrase1.getPassword());
-                    agent.updateList(alias.getText());
-                    dialog.hide();
-                } catch (CryptoException e) {
-                    e.printStackTrace();
-                }
-
+    private class GenerateKeyTask implements Runnable {
+        /**
+         * When an object implementing interface <code>Runnable</code> is used
+         * to create a thread, starting the thread causes the object's
+         * <code>run</code> method to be called in that separately executing
+         * thread.
+         * <p/>
+         * The general contract of the method <code>run</code> is that it may
+         * take any action whatsoever.
+         *
+         * @see Thread#run()
+         */
+        public void run() {
+            try {
+                System.out.println("Generating Key");
+                agent.getSigner().createKeyPair(alias.getText(), passphrase1.getPassword());
+                progress.setVisible(false);
+                agent.updateList(alias.getText());
+                dialog.hide();
+            } catch (CryptoException e) {
+                e.printStackTrace();
             }
-        }).start();
+
+        }
+
     }
 
     private KeyStoreDialog agent;
     private JDialog dialog;
     private JButton ok;
     private JButton cancel;
+    private JButton cancel2;
     private JTextField alias;
     private JPasswordField passphrase1;
     private JPasswordField passphrase2;
+    private JProgressBar progress;
+    private JPanel regular;
+    private JPanel process;
 
 }

@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,8 +30,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: GuiDialogAgent.java,v 1.9 2004/04/07 17:22:10 pelle Exp $
+$Id: GuiDialogAgent.java,v 1.10 2004/04/13 17:32:06 pelle Exp $
 $Log: GuiDialogAgent.java,v $
+Revision 1.10  2004/04/13 17:32:06  pelle
+Now has save dialog
+Remembers passphrases
+
 Revision 1.9  2004/04/07 17:22:10  pelle
 Added support for the new improved interactive signing model. A new Agent is also available with SwingAgent.
 The XMLSig classes have also been updated to support this.
@@ -279,6 +284,10 @@ public final class GuiDialogAgent implements InteractiveAgent {
      */
     public byte[] sign(BrowsableSigner signer, byte data[], SetPublicKeyCallBack callback) throws UserCancellationException {
         return new byte[0];
+    }
+
+    public File getSaveToFileName(String title, String def) throws UserCancellationException {
+        return null;
     }
 
     private final TextField passphrase;

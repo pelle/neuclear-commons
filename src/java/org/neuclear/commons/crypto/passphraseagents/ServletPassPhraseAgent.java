@@ -4,6 +4,7 @@ import org.neuclear.commons.crypto.signers.BrowsableSigner;
 import org.neuclear.commons.crypto.signers.SetPublicKeyCallBack;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 
 /**
  * PassPhraseAgent for use in server environments.
@@ -73,5 +74,9 @@ public class ServletPassPhraseAgent extends ThreadLocal implements InteractiveAg
      */
     public byte[] sign(BrowsableSigner signer, byte data[], SetPublicKeyCallBack callback) throws UserCancellationException {
         return new byte[0];
+    }
+
+    public File getSaveToFileName(String title, String def) throws UserCancellationException {
+        return null;
     }
 }

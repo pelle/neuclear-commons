@@ -3,6 +3,8 @@ package org.neuclear.commons.crypto.passphraseagents;
 import org.neuclear.commons.crypto.signers.BrowsableSigner;
 import org.neuclear.commons.crypto.signers.SetPublicKeyCallBack;
 
+import java.io.File;
+
 /*
 NeuClear Distributed Transaction Clearing Platform
 (C) 2003 Pelle Braendgaard
@@ -21,8 +23,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: InteractiveAgent.java,v 1.5 2004/04/07 17:22:10 pelle Exp $
+$Id: InteractiveAgent.java,v 1.6 2004/04/13 17:32:06 pelle Exp $
 $Log: InteractiveAgent.java,v $
+Revision 1.6  2004/04/13 17:32:06  pelle
+Now has save dialog
+Remembers passphrases
+
 Revision 1.5  2004/04/07 17:22:10  pelle
 Added support for the new improved interactive signing model. A new Agent is also available with SwingAgent.
 The XMLSig classes have also been updated to support this.
@@ -71,5 +77,6 @@ public interface InteractiveAgent extends PassPhraseAgent {
      */
     byte[] sign(final BrowsableSigner signer, byte data[], SetPublicKeyCallBack callback) throws UserCancellationException;
 
+    File getSaveToFileName(String title, String def) throws UserCancellationException;
 
 }

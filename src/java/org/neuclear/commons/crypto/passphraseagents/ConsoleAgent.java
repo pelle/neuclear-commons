@@ -5,6 +5,7 @@ import org.neuclear.commons.crypto.signers.BrowsableSigner;
 import org.neuclear.commons.crypto.signers.SetPublicKeyCallBack;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
@@ -28,8 +29,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: ConsoleAgent.java,v 1.5 2004/04/07 17:22:09 pelle Exp $
+$Id: ConsoleAgent.java,v 1.6 2004/04/13 17:32:06 pelle Exp $
 $Log: ConsoleAgent.java,v $
+Revision 1.6  2004/04/13 17:32:06  pelle
+Now has save dialog
+Remembers passphrases
+
 Revision 1.5  2004/04/07 17:22:09  pelle
 Added support for the new improved interactive signing model. A new Agent is also available with SwingAgent.
 The XMLSig classes have also been updated to support this.
@@ -163,6 +168,10 @@ public final class ConsoleAgent implements InteractiveAgent {
      */
     public byte[] sign(BrowsableSigner signer, byte data[], SetPublicKeyCallBack callback) throws UserCancellationException {
         return new byte[0];
+    }
+
+    public File getSaveToFileName(String title, String def) throws UserCancellationException {
+        return null;
     }
 
 }

@@ -2,12 +2,15 @@ package org.neuclear.commons.crypto.signers;
 
 import org.neuclear.commons.crypto.CryptoException;
 import org.neuclear.commons.crypto.CryptoTools;
-import org.neuclear.commons.crypto.passphraseagents.PassPhraseAgent;
+import org.neuclear.commons.crypto.passphraseagents.InteractiveAgent;
 import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
 
+import java.io.File;
+import java.io.IOException;
 import java.security.KeyStoreException;
 import java.security.PublicKey;
 import java.util.Iterator;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /*
@@ -28,8 +31,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: DefaultSigner.java,v 1.7 2004/04/12 23:50:07 pelle Exp $
+$Id: DefaultSigner.java,v 1.8 2004/04/13 17:32:07 pelle Exp $
 $Log: DefaultSigner.java,v $
+Revision 1.8  2004/04/13 17:32:07  pelle
+Now has save dialog
+Remembers passphrases
+
 Revision 1.7  2004/04/12 23:50:07  pelle
 implemented the queue and improved the DefaultSigner
 
@@ -77,9 +84,18 @@ as SmartCards for end user applications.
  * Time: 3:22:17 PM
  */
 public final class DefaultSigner implements BrowsableSigner {
-    public DefaultSigner(final PassPhraseAgent agent) throws UserCancellationException, InvalidPassphraseException {
-        Preferences prefs = Preferences.userNodeForPackage(DefaultSigner.class);
-        final String filename = prefs.get("KEYSTORE", CryptoTools.DEFAULT_KEYSTORE);
+    public DefaultSigner(final InteractiveAgent agent) throws UserCancellationException, InvalidPassphraseException {
+        prefs = Preferences.userNodeForPackage(DefaultSigner.class);
+        this.agent = agent;
+        filename = prefs.get(KEYSTORE, CryptoTools.DEFAULT_KEYSTORE);
+        File file = new File(filename);
+        if (file.exists() && file.length() == 0)
+            file.delete(); // Delete empty file
+        try {
+            prefs.flush();
+        } catch (BackingStoreException e) {
+            e.printStackTrace();
+        }
         signer = new JCESigner(filename, "jks", "SUN", agent);
 
     }
@@ -109,7 +125,7 @@ public final class DefaultSigner implements BrowsableSigner {
     }
 
     public byte[] sign(byte data[], SetPublicKeyCallBack callback) throws UserCancellationException {
-        return signer.sign(data, callback);
+        return ((InteractiveAgent) agent).sign(this, data, callback);
     }
 
     public byte[] sign(String name, char pass[], byte data[], SetPublicKeyCallBack callback) throws InvalidPassphraseException {
@@ -121,13 +137,30 @@ public final class DefaultSigner implements BrowsableSigner {
     }
 
     public void save() {
-        signer.save();
+        try {
+            filename = agent.getSaveToFileName("Save Keys... ", filename).getCanonicalPath();
+            prefs.put(KEYSTORE, filename);
+            try {
+                prefs.flush();
+            } catch (BackingStoreException e) {
+                e.printStackTrace();
+            }
+            signer.save(filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (UserCancellationException e) {
+            e.printStackTrace();
+        }
     }
 
     public Iterator iterator() throws KeyStoreException {
         return signer.iterator();
     }
 
+    private String filename;
     private final JCESigner signer;
+    private final InteractiveAgent agent;
+    private Preferences prefs;
+    private static final String KEYSTORE = "KEYSTORE";
 
 }
