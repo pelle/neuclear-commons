@@ -26,5 +26,10 @@ public class MockPassphraseServlet extends HttpServlet implements PassPhraseAgen
     public char[] getPassPhrase(String name) {
         return agent.getPassPhrase(name);  //To change body of implemented methods use Options | File Templates.
     }
+
+    public char[] getPassPhrase(String name, boolean incorrect) throws UserCancellationException {
+        return getPassPhrase(name);
+    }
+
     private ServletPassPhraseAgent agent;
 }

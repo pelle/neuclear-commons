@@ -1,6 +1,14 @@
 /*
- * $Id: TimeTools.java,v 1.4 2003/12/19 00:31:16 pelle Exp $
+ * $Id: TimeTools.java,v 1.5 2003/12/19 18:02:53 pelle Exp $
  * $Log: TimeTools.java,v $
+ * Revision 1.5  2003/12/19 18:02:53  pelle
+ * Revamped a lot of exception handling throughout the framework, it has been simplified in most places:
+ * - For most cases the main exception to worry about now is InvalidNamedObjectException.
+ * - Most lowerlevel exception that cant be handled meaningful are now wrapped in the LowLevelException, a
+ *   runtime exception.
+ * - Source and Store patterns each now have their own exceptions that generalizes the various physical
+ *   exceptions that can happen in that area.
+ *
  * Revision 1.4  2003/12/19 00:31:16  pelle
  * Lots of usability changes through out all the passphrase agents and end user tools.
  *
@@ -105,12 +113,8 @@ public final class TimeTools {
         return new Timestamp(date.getTime());
     }
 
-    public static Timestamp parseTimeStamp(final String ts) throws NeuClearException {
-        try {
-            return convertDateToTimestamp(getDateFormatter().parse(ts));
-        } catch (ParseException e) {
-            throw new NeuClearException(e);
-        }
+    public static Timestamp parseTimeStamp(final String ts) throws ParseException {
+         return convertDateToTimestamp(getDateFormatter().parse(ts));
 
     }
 

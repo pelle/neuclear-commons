@@ -1,5 +1,7 @@
 package org.neuclear.commons.crypto.passphraseagents;
 
+import org.neuclear.commons.LowLevelException;
+
 /*
 NeuClear Distributed Transaction Clearing Platform
 (C) 2003 Pelle Braendgaard
@@ -18,8 +20,16 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: AlwaysTheSamePassphraseAgent.java,v 1.2 2003/11/21 04:43:40 pelle Exp $
+$Id: AlwaysTheSamePassphraseAgent.java,v 1.3 2003/12/19 18:02:53 pelle Exp $
 $Log: AlwaysTheSamePassphraseAgent.java,v $
+Revision 1.3  2003/12/19 18:02:53  pelle
+Revamped a lot of exception handling throughout the framework, it has been simplified in most places:
+- For most cases the main exception to worry about now is InvalidNamedObjectException.
+- Most lowerlevel exception that cant be handled meaningful are now wrapped in the LowLevelException, a
+  runtime exception.
+- Source and Store patterns each now have their own exceptions that generalizes the various physical
+  exceptions that can happen in that area.
+
 Revision 1.2  2003/11/21 04:43:40  pelle
 EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
 Otherwise You will Finaliate.
@@ -58,6 +68,11 @@ public final class AlwaysTheSamePassphraseAgent implements PassPhraseAgent {
 
     public final char[] getPassPhrase(final String name) {
         return passphrase.toCharArray();
+    }
+
+    public char[] getPassPhrase(String name, boolean incorrect) throws UserCancellationException {
+        if (incorrect) throw new LowLevelException("passphrase is incorrect for: "+name);
+        return getPassPhrase(name);
     }
 
     private final String passphrase;

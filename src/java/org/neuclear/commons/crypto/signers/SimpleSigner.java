@@ -1,6 +1,14 @@
 /*
- * $Id: SimpleSigner.java,v 1.8 2003/12/19 00:31:15 pelle Exp $
+ * $Id: SimpleSigner.java,v 1.9 2003/12/19 18:02:53 pelle Exp $
  * $Log: SimpleSigner.java,v $
+ * Revision 1.9  2003/12/19 18:02:53  pelle
+ * Revamped a lot of exception handling throughout the framework, it has been simplified in most places:
+ * - For most cases the main exception to worry about now is InvalidNamedObjectException.
+ * - Most lowerlevel exception that cant be handled meaningful are now wrapped in the LowLevelException, a
+ *   runtime exception.
+ * - Source and Store patterns each now have their own exceptions that generalizes the various physical
+ *   exceptions that can happen in that area.
+ *
  * Revision 1.8  2003/12/19 00:31:15  pelle
  * Lots of usability changes through out all the passphrase agents and end user tools.
  *
@@ -119,9 +127,12 @@
 package org.neuclear.commons.crypto.signers;
 
 import org.neuclear.commons.NeuClearException;
+import org.neuclear.commons.LowLevelException;
 import org.neuclear.commons.crypto.CryptoException;
 import org.neuclear.commons.crypto.CryptoTools;
 import org.neuclear.commons.crypto.passphraseagents.PassPhraseAgent;
+import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
+import org.neuclear.commons.crypto.passphraseagents.InteractiveAgent;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -141,34 +152,31 @@ import java.util.Map;
  */
 public final class SimpleSigner implements Signer {
 
-    public SimpleSigner(final String file, final PassPhraseAgent agent) throws NeuClearException, GeneralSecurityException {
+    public SimpleSigner(final String file, final PassPhraseAgent agent)  {
         this.agent = agent;
         try {
             signerFile = new File(file);
             if (signerFile.exists()) {
-                System.out.println("NEUDIST: Loading KeyStore");
+                System.out.println("NeuClear: Loading KeyStore");
                 final FileInputStream in = new FileInputStream(signerFile);
                 final ObjectInputStream s = new ObjectInputStream(in);
                 ks = (HashMap) s.readObject();
             } else
                 ks = new HashMap();
-
-            kf = KeyFactory.getInstance("RSA", "BC");
-            try {
-                kpg = KeyPairGenerator.getInstance("RSA");
-                kpg.initialize(1024, SecureRandom.getInstance("SHA1PRNG"));
-            } catch (NoSuchAlgorithmException e) {
-                throw new CryptoException(e);
-            }
+            kf = KeyFactory.getInstance("RSA");
+            kpg = KeyPairGenerator.getInstance("RSA");
+            kpg.initialize(1024, SecureRandom.getInstance("SHA1PRNG"));
 
         } catch (IOException e) {
-            throw new NeuClearException(e);
+            throw new LowLevelException(e);
         } catch (ClassNotFoundException e) {
-            throw new NeuClearException(e);
+            throw new LowLevelException(e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new LowLevelException(e);
         }
     }
 
-    private PrivateKey getKey(final String name, final char[] passphrase) throws CryptoException, NonExistingSignerException {
+    private PrivateKey getKey(final String name, final char[] passphrase) throws InvalidPassphraseException, NonExistingSignerException {
         System.out.println("NEUDIST: UnSealing key " + name + " ...");
         final byte[] encrypted = (byte[]) ks.get(getDigestedName(name));
         if (encrypted == null)
@@ -195,7 +203,7 @@ public final class SimpleSigner implements Signer {
         } catch (GeneralSecurityException e) {
             throw new InvalidPassphraseException(e.getLocalizedMessage());
         } catch (IOException e) {
-            throw new CryptoException(e);
+            throw new LowLevelException(e);
         }
     }
 
@@ -207,7 +215,7 @@ public final class SimpleSigner implements Signer {
      * @param key  The PrivateKey itself.
      */
 
-    public final void addKey(final String name, final PrivateKey key) throws GeneralSecurityException, IOException,CryptoException {
+    public final void addKey(final String name, final PrivateKey key) throws UserCancellationException {
         addKey(name, agent.getPassPhrase(name), key);
     }
 
@@ -219,23 +227,29 @@ public final class SimpleSigner implements Signer {
      * @param key        The PrivateKey itself.
      */
 
-    public final void addKey(final String name, final char[] passphrase, final PrivateKey key) throws GeneralSecurityException, IOException {
-        System.out.println("NEUDIST: Sealing key: " + name + " in format " + key.getFormat());
-        final ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-        DataOutputStream dOut = new DataOutputStream(bOut);
-        final Cipher c = CryptoTools.makePBECipher(Cipher.ENCRYPT_MODE, passphrase);
-        final CipherOutputStream cOut = new CipherOutputStream(dOut, c);
-        dOut = new DataOutputStream(cOut);
-        dOut.writeInt(11870);//This is just a quick check to see if the passphrase worked
-        final byte[] keyBytes = key.getEncoded(); //I'm assuming this is PKCS8, If not tough dooda
-        dOut.writeInt(keyBytes.length);
-        dOut.write(keyBytes);
-        dOut.close();
-        final byte[] encrypted = bOut.toByteArray();
-        ks.put(getDigestedName(name), encrypted);
+    public final void addKey(final String name, final char[] passphrase, final PrivateKey key)  {
+        System.out.println("NeuClear: Sealing key: " + name + " in format " + key.getFormat());
+        try {
+            final ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+            DataOutputStream dOut = new DataOutputStream(bOut);
+            final Cipher c = CryptoTools.makePBECipher(Cipher.ENCRYPT_MODE, passphrase);
+            final CipherOutputStream cOut = new CipherOutputStream(dOut, c);
+            dOut = new DataOutputStream(cOut);
+            dOut.writeInt(11870);//This is just a quick check to see if the passphrase worked
+            final byte[] keyBytes = key.getEncoded(); //I'm assuming this is PKCS8, If not tough dooda
+            dOut.writeInt(keyBytes.length);
+            dOut.write(keyBytes);
+            dOut.close();
+            final byte[] encrypted = bOut.toByteArray();
+            ks.put(getDigestedName(name), encrypted);
+        } catch (GeneralSecurityException e) {
+            throw new LowLevelException(e);
+        } catch (IOException e) {
+            throw new LowLevelException(e);
+        }
     }
 
-    public final boolean canSignFor(final String name) throws CryptoException {
+    public final boolean canSignFor(final String name)  {
         return ks.containsKey(getDigestedName(name));
     }
 
@@ -244,9 +258,8 @@ public final class SimpleSigner implements Signer {
      * 
      * @param name 
      * @return KEY_NONE,KEY_RSA,KEY_DSA
-     * @throws CryptoException 
      */
-    public final int getKeyType(final String name) throws CryptoException {
+    public final int getKeyType(final String name) {
         return (canSignFor(name)) ? KEY_RSA : KEY_NONE; // We always use RSA here
     }
 
@@ -254,7 +267,7 @@ public final class SimpleSigner implements Signer {
         return new String(CryptoTools.digest(name.getBytes()));
     }
 
-    public final void save() throws CryptoException {
+    public final void save()  {
         if (signerFile.getParent() != null)
             signerFile.getParentFile().mkdirs();
 
@@ -264,7 +277,7 @@ public final class SimpleSigner implements Signer {
             s.writeObject(ks);
             s.flush();
         } catch (IOException e) {
-            throw new CryptoException(e);
+            throw new LowLevelException(e);
         }
 
     }
@@ -275,24 +288,22 @@ public final class SimpleSigner implements Signer {
      * @param name Alias of private key to be used within KeyStore
      * @param data Data to be signed
      * @return The signature
-     * @throws InvalidPassphraseException if the passphrase doesn't match
+     * @throws UserCancellationException
      */
-
-    public final byte[] sign(final String name, final byte[] data) throws CryptoException {
-
-        return CryptoTools.sign(getKey(name, agent.getPassPhrase(name)), data);
+    public final byte[] sign(final String name, final byte[] data) throws UserCancellationException {
+        return sign(name,data,false);
     }
-    public final PublicKey generateKey(final String alias) throws CryptoException {
+    private  final byte[] sign(final String name, final byte[] data,boolean incorrect) throws UserCancellationException {
         try {
-            final KeyPair kp = kpg.generateKeyPair();
-            addKey(alias, agent.getPassPhrase(alias), kp.getPrivate());
-            return kp.getPublic();
-        } catch (GeneralSecurityException e) {
-            throw new CryptoException(e);
-        } catch (IOException e) {
-            throw new CryptoException(e);
+            return CryptoTools.sign(getKey(name, agent.getPassPhrase(name,incorrect)), data);
+        } catch (CryptoException e) {
+            return sign(name,data,true);
         }
-
+    }
+    public final PublicKey generateKey(final String alias) throws UserCancellationException {
+        final KeyPair kp = kpg.generateKeyPair();
+        addKey(alias, agent.getPassPhrase(alias), kp.getPrivate());
+        return kp.getPublic();
     }
 
     private KeyFactory kf;

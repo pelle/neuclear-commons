@@ -1,6 +1,14 @@
 /*
- * $Id: JCESigner.java,v 1.13 2003/12/19 00:31:15 pelle Exp $
+ * $Id: JCESigner.java,v 1.14 2003/12/19 18:02:53 pelle Exp $
  * $Log: JCESigner.java,v $
+ * Revision 1.14  2003/12/19 18:02:53  pelle
+ * Revamped a lot of exception handling throughout the framework, it has been simplified in most places:
+ * - For most cases the main exception to worry about now is InvalidNamedObjectException.
+ * - Most lowerlevel exception that cant be handled meaningful are now wrapped in the LowLevelException, a
+ *   runtime exception.
+ * - Source and Store patterns each now have their own exceptions that generalizes the various physical
+ *   exceptions that can happen in that area.
+ *
  * Revision 1.13  2003/12/19 00:31:15  pelle
  * Lots of usability changes through out all the passphrase agents and end user tools.
  *
@@ -310,19 +318,10 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
 
     }
 
-    /**
-     * Signs the data with the privatekey of the given name
-     * 
-     * @param name Alias of private key to be used within KeyStore
-     * @param data Data to be signed
-     * @return The signature
-     * @throws org.neuclear.commons.crypto.signers.InvalidPassphraseException
-     *          if the passphrase doesn't match
-     */
-    public final byte[] sign(final String name, final byte[] data) throws CryptoException {
+    public final byte[] sign(final String name, final byte[] data) throws NonExistingSignerException, UserCancellationException {
         return sign(name,data,false);
     }
-    public final byte[] sign(final String name, final byte[] data,boolean incorrect) throws UserCancellationException, NonExistingSignerException,CryptoException {
+    public final byte[] sign(final String name, final byte[] data,boolean incorrect) throws UserCancellationException, NonExistingSignerException {
         try {
             final char[] pass = getPassPhrase(name,incorrect);
             return CryptoTools.sign(getKey(name, pass), data);
@@ -334,6 +333,8 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
         } catch (KeyStoreException e) {
             // Could try to reload it here but I wont for now
             throw new LowLevelException(e);
+        } catch (CryptoException e) {
+            throw new LowLevelException(e);
         }
     }
 
@@ -343,22 +344,15 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
         return agent.getPassPhrase(name);
     }
 
-    public final boolean canSignFor(final String name) throws CryptoException {
+    public final boolean canSignFor(final String name)  {
         try {
             return ks.containsAlias(name);
         } catch (KeyStoreException e) {
-            throw new CryptoException(e);
+            throw new LowLevelException(e);
         }
     }
 
-    /**
-     * Checks the key type of the given alias
-     * 
-     * @param name 
-     * @return KEY_NONE,KEY_RSA,KEY_DSA
-     * @throws CryptoException 
-     */
-    public final int getKeyType(final String name) throws CryptoException {
+    public final int getKeyType(final String name)  {
         try {
             if (ks.isKeyEntry(name)) {
                 final PublicKey pk = getPublicKey(name);
@@ -369,46 +363,50 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
                 return KEY_OTHER;
             }
         } catch (KeyStoreException e) {
-            throw new CryptoException(e);
+            throw new LowLevelException(e);
         }
         return KEY_NONE;  //To change body of implemented methods use Options | File Templates.
     }
 
 
-    public final PublicKey generateKey(final String alias) throws CryptoException {
+    public final PublicKey generateKey(final String alias) throws UserCancellationException {
         try {
             final KeyPair kp = kpg.generateKeyPair();
             ks.setKeyEntry(alias, kp.getPrivate(), agent.getPassPhrase(alias), new Certificate[]{CryptoTools.createCertificate(alias,kp)});
             return kp.getPublic();
         } catch (KeyStoreException e) {
-            throw new CryptoException(e);
+            throw new LowLevelException(e);
         } catch (SignatureException e) {
-            throw new CryptoException(e);
+            throw new LowLevelException(e);
         } catch (InvalidKeyException e) {
-            throw new CryptoException(e);
+            throw new LowLevelException(e);
         }
     }
 
-    public final PublicKey getPublicKey(final String name) throws CryptoException {
+    public final PublicKey getPublicKey(final String name)  {
         try {
             return ks.getCertificate(name).getPublicKey();
         } catch (KeyStoreException e) {
-            throw new CryptoException(e);
+            throw new LowLevelException(e);
         }
     }
 
-    public void save() throws CryptoException {
-        save(filename);
+    public void save() {
+        try {
+            save(filename);
+        } catch (FileNotFoundException e) {
+            throw new LowLevelException(e);
+        }
     }
-    public synchronized final void save(String filename) throws CryptoException{
+    public synchronized final void save(String filename) throws FileNotFoundException{
         if (Utility.isEmpty(filename))
-            throw new CryptoException("We dont have a filename");
+            throw new FileNotFoundException("no keystore filename");
         try {
             File ksfile=new File(filename);
             ksfile.getParentFile().mkdirs();
             ks.store(new FileOutputStream(ksfile),agent.getPassPhrase(filename));
         } catch (Exception e) {
-            throw new CryptoException(e);
+            throw new LowLevelException(e);
         }
     }
     private final KeyStore ks;

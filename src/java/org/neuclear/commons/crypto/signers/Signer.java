@@ -1,6 +1,14 @@
 /*
- * $Id: Signer.java,v 1.4 2003/12/18 17:40:07 pelle Exp $
+ * $Id: Signer.java,v 1.5 2003/12/19 18:02:53 pelle Exp $
  * $Log: Signer.java,v $
+ * Revision 1.5  2003/12/19 18:02:53  pelle
+ * Revamped a lot of exception handling throughout the framework, it has been simplified in most places:
+ * - For most cases the main exception to worry about now is InvalidNamedObjectException.
+ * - Most lowerlevel exception that cant be handled meaningful are now wrapped in the LowLevelException, a
+ *   runtime exception.
+ * - Source and Store patterns each now have their own exceptions that generalizes the various physical
+ *   exceptions that can happen in that area.
+ *
  * Revision 1.4  2003/12/18 17:40:07  pelle
  * You can now create keys that get stored with a X509 certificate in the keystore. These can be saved as well.
  * IdentityCreator has been modified to allow creation of keys.
@@ -89,6 +97,7 @@
 package org.neuclear.commons.crypto.signers;
 
 import org.neuclear.commons.crypto.CryptoException;
+import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
 
 import java.security.PublicKey;
 import java.security.cert.Certificate;
@@ -113,11 +122,9 @@ public interface Signer {
      * @param name Alias of private key to be used within KeyStore
      * @param data Data to be signed
      * @return The signature
-     * @throws org.neuclear.commons.crypto.CryptoException
-     *          
      */
 
-    public byte[] sign(String name, byte data[]) throws CryptoException;
+    public byte[] sign(String name, byte data[])throws UserCancellationException, NonExistingSignerException ;
 
 //    public void addKey(String name, char passphrase[], PrivateKey key) throws GeneralSecurityException, IOException ;
 
@@ -126,9 +133,8 @@ public interface Signer {
      * 
      * @param name 
      * @return true if signer is contained
-     * @throws CryptoException 
      */
-    public boolean canSignFor(String name) throws CryptoException;
+    public boolean canSignFor(String name);
 
 
     /**
@@ -136,9 +142,8 @@ public interface Signer {
      * 
      * @param name 
      * @return KEY_NONE,KEY_RSA,KEY_DSA
-     * @throws CryptoException 
      */
-    public int getKeyType(String name) throws CryptoException;
+    public int getKeyType(String name) ;
 
     /**
      * Creates a new KeyPair, stores the PrivateKey using the given alias
@@ -146,15 +151,15 @@ public interface Signer {
      *
      * @param alias
      * @return Generated PublicKey
-     * @throws CryptoException
+     * @throws UserCancellationException
      */
-    public PublicKey generateKey(String alias) throws CryptoException;
+    public PublicKey generateKey(String alias) throws UserCancellationException;
 
     final public static int KEY_NONE = 0;
     final public static int KEY_RSA = 1;
     final public static int KEY_DSA = 2;
     final public static int KEY_OTHER = -1;
 
-    void save() throws CryptoException;
+    void save() throws UserCancellationException;
 
 }

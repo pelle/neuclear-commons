@@ -18,8 +18,16 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: InteractiveAgent.java,v 1.2 2003/12/19 00:31:15 pelle Exp $
+$Id: InteractiveAgent.java,v 1.3 2003/12/19 18:02:53 pelle Exp $
 $Log: InteractiveAgent.java,v $
+Revision 1.3  2003/12/19 18:02:53  pelle
+Revamped a lot of exception handling throughout the framework, it has been simplified in most places:
+- For most cases the main exception to worry about now is InvalidNamedObjectException.
+- Most lowerlevel exception that cant be handled meaningful are now wrapped in the LowLevelException, a
+  runtime exception.
+- Source and Store patterns each now have their own exceptions that generalizes the various physical
+  exceptions that can happen in that area.
+
 Revision 1.2  2003/12/19 00:31:15  pelle
 Lots of usability changes through out all the passphrase agents and end user tools.
 
@@ -41,6 +49,5 @@ The IdentityCreator now fully works with the new Signer architecture.
  * Time: 5:13:49 PM
  */
 public interface InteractiveAgent extends PassPhraseAgent {
-    char[] getPassPhrase(String name,boolean incorrect) throws UserCancellationException;
 
 }

@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 import org.neuclear.commons.NeuClearException;
 import org.neuclear.commons.crypto.CryptoException;
 import org.neuclear.commons.crypto.CryptoTools;
+import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
 
 import java.security.GeneralSecurityException;
 import java.security.PublicKey;
@@ -26,8 +27,16 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: TestCaseSignerTest.java,v 1.5 2003/12/18 17:40:08 pelle Exp $
+$Id: TestCaseSignerTest.java,v 1.6 2003/12/19 18:02:53 pelle Exp $
 $Log: TestCaseSignerTest.java,v $
+Revision 1.6  2003/12/19 18:02:53  pelle
+Revamped a lot of exception handling throughout the framework, it has been simplified in most places:
+- For most cases the main exception to worry about now is InvalidNamedObjectException.
+- Most lowerlevel exception that cant be handled meaningful are now wrapped in the LowLevelException, a
+  runtime exception.
+- Source and Store patterns each now have their own exceptions that generalizes the various physical
+  exceptions that can happen in that area.
+
 Revision 1.5  2003/12/18 17:40:08  pelle
 You can now create keys that get stored with a X509 certificate in the keystore. These can be saved as well.
 IdentityCreator has been modified to allow creation of keys.
@@ -79,14 +88,14 @@ public final class TestCaseSignerTest extends TestCase {
         assertTrue(signer.canSignFor("neu://alice@test"));
     }
 
-    public final void testSignAndVerify() throws CryptoException {
+    public final void testSignAndVerify() throws CryptoException, UserCancellationException {
         testKey("neu://test");
         testKey("neu://test/bux");
         testKey("neu://bob@test");
         testKey("neu://alice@test");
     }
 
-    public final void testGenerateKey() throws CryptoException {
+    public final void testGenerateKey() throws CryptoException, UserCancellationException {
         final PublicKey pub = signer.generateKey(ALIASEVE);
         final byte[] data = "this is a test".getBytes();
         final byte[] sig = signer.sign(ALIASEVE, data);
@@ -94,7 +103,7 @@ public final class TestCaseSignerTest extends TestCase {
         assertTrue(CryptoTools.verify(pub, data, sig));
         assertTrue(signer.canSignFor(ALIASEVE));
     }
-    private void testKey(final String name) throws CryptoException {
+    private void testKey(final String name) throws CryptoException, UserCancellationException {
         final byte[] sig = signer.sign(name, TESTDATA.getBytes());
         assertNotNull(sig);
         assertTrue(CryptoTools.verify(signer.getPublicKey(name), TESTDATA.getBytes(), sig));

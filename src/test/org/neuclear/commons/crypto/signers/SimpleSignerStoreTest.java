@@ -1,5 +1,13 @@
-/* $Id: SimpleSignerStoreTest.java,v 1.6 2003/12/18 17:40:08 pelle Exp $
+/* $Id: SimpleSignerStoreTest.java,v 1.7 2003/12/19 18:02:53 pelle Exp $
  * $Log: SimpleSignerStoreTest.java,v $
+ * Revision 1.7  2003/12/19 18:02:53  pelle
+ * Revamped a lot of exception handling throughout the framework, it has been simplified in most places:
+ * - For most cases the main exception to worry about now is InvalidNamedObjectException.
+ * - Most lowerlevel exception that cant be handled meaningful are now wrapped in the LowLevelException, a
+ *   runtime exception.
+ * - Source and Store patterns each now have their own exceptions that generalizes the various physical
+ *   exceptions that can happen in that area.
+ *
  * Revision 1.6  2003/12/18 17:40:08  pelle
  * You can now create keys that get stored with a X509 certificate in the keystore. These can be saved as well.
  * IdentityCreator has been modified to allow creation of keys.
@@ -114,6 +122,7 @@ import org.neuclear.commons.configuration.ConfigurationException;
 import org.neuclear.commons.crypto.CryptoException;
 import org.neuclear.commons.crypto.CryptoTools;
 import org.neuclear.commons.crypto.passphraseagents.AlwaysTheSamePassphraseAgent;
+import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
 
 import java.io.IOException;
 import java.security.*;
@@ -121,7 +130,7 @@ import java.security.*;
 
 /**
  * @author pelleb
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public final class SimpleSignerStoreTest extends TestCase {
     public SimpleSignerStoreTest(final String name) throws GeneralSecurityException, NeuClearException, ConfigurationException {
@@ -153,38 +162,20 @@ public final class SimpleSignerStoreTest extends TestCase {
     }
 
 
-    public final void testAddKey() throws NeuClearException, GeneralSecurityException, IOException {
-        boolean success = false;
-        try {
-            signer.addKey("root", root.getPrivate());
-            success = true;
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        assertTrue("Managed to add a key", success);
+    public final void testAddKey() throws NeuClearException{
+        signer.addKey("root", root.getPrivate());
+        assertTrue("Managed to add a key", signer.canSignFor("root"));
     }
 
     public final void testSignData() throws NeuClearException, GeneralSecurityException, IOException, CryptoException {
-        boolean success = false;
         byte data[] = null;
-        try {
-            signer.addKey("bob", bob.getPrivate());
-            data = signer.sign("bob", "test".getBytes());
-            assertTrue(CryptoTools.verify(bob.getPublic(), "test".getBytes(), data));
-            success = true;
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        assertTrue("Managed to add and sign some data", success);
+        signer.addKey("bob", bob.getPrivate());
+        data = signer.sign("bob", "test".getBytes());
+        assertTrue(CryptoTools.verify(bob.getPublic(), "test".getBytes(), data));
         assertNotNull("Key wasn't null", data);
-        //assertEquals("Gotten Key was the same as Stored Key", bob.getPrivate(), key);
     }
 
-    public final void testGenerateKey() throws CryptoException {
+    public final void testGenerateKey() throws CryptoException, UserCancellationException {
         final PublicKey pub = signer.generateKey("tupac");
         final byte[] data = "this is a test".getBytes();
         final byte[] sig = signer.sign("tupac", data);

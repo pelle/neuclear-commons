@@ -1,6 +1,14 @@
 /*
- * $Id: Utility.java,v 1.4 2003/12/19 00:31:16 pelle Exp $
+ * $Id: Utility.java,v 1.5 2003/12/19 18:02:53 pelle Exp $
  * $Log: Utility.java,v $
+ * Revision 1.5  2003/12/19 18:02:53  pelle
+ * Revamped a lot of exception handling throughout the framework, it has been simplified in most places:
+ * - For most cases the main exception to worry about now is InvalidNamedObjectException.
+ * - Most lowerlevel exception that cant be handled meaningful are now wrapped in the LowLevelException, a
+ *   runtime exception.
+ * - Source and Store patterns each now have their own exceptions that generalizes the various physical
+ *   exceptions that can happen in that area.
+ *
  * Revision 1.4  2003/12/19 00:31:16  pelle
  * Lots of usability changes through out all the passphrase agents and end user tools.
  *
@@ -134,10 +142,7 @@ package org.neuclear.commons;
 
 import org.neuclear.commons.NeuClearException;
 
-import java.io.PrintStream;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -210,21 +215,26 @@ public final class Utility {
      * Asks the User Y/N on the Console
      * @return
      */
-    public static boolean getAffirmative(final boolean def) throws IOException {
+    public static boolean getAffirmative(final boolean def)  {
         final String prompt = def?"(yes)/no":"yes/(no)";
         String line=prompt(prompt).toLowerCase();
+        System.out.println();
         if (isEmpty(line))
             return def;
         return (line.equals("y")||line.equals("yes"));
     }
 
-    public static String prompt(String prompt) throws IOException {
+    public static String prompt(String prompt)  {
         System.out.print(prompt);
         return readLine();
     }
-    public static String readLine() throws IOException {
+    public static String readLine()  {
         BufferedReader reader=new BufferedReader(new InputStreamReader(System.in));
-        return reader.readLine();
+        try {
+            return reader.readLine();
+        } catch (IOException e) {
+            throw new LowLevelException(e);
+        }
     }
 
     public static String getExecutable(Class reference){
@@ -232,45 +242,20 @@ public final class Utility {
         Matcher m=p.matcher(reference.getName());
         String classfile=m.replaceAll("/")+".class";
         String url=reference.getClassLoader().getResource(classfile).toExternalForm();
-        if (url.startsWith("jar:"))    {
-            Pattern r2=Pattern.compile(":([^:]*\\.jar)!");
-            Matcher m2=r2.matcher(url);
-            if(m2.matches()){
-                String path=m2.group(1);
-                String cd=System.getProperty("user.dir");
-                if (path.startsWith(cd))
-                    return "$ java -jar "+path.substring(cd.length());
-                return "$ java -jar "+path;
-            }
+        Pattern r2=Pattern.compile("^jar:file:(.*)!/.*$");
+        Matcher m2=r2.matcher(url);
+        if(m2.matches()){
+            String path=m2.group(1);
+            String cd=System.getProperty("user.dir");
+            if (path.startsWith(cd))
+                return SYSTEM_PROMPT+"java -jar "+path.substring(cd.length()+1);
+            return SYSTEM_PROMPT+"java -jar "+path;
         }
-        return "$ java "+reference.getName();
+        return SYSTEM_PROMPT+"java "+reference.getName();
     }
 
-/*
-    public static String normalizeNeuURL(String url) throws MalformedURLException {
-        boolean clearLastChar=url.endsWith("/");
-        if (url.startsWith("/")) {
-            if (clearLastChar)
-                return "neu:/"+url.substring(0,url.length()-2);
-            return "neu:/"+url;
-        }
-        if (url.startsWith("neu://")) {
-            if (clearLastChar)
-                return url.substring(0,url.length()-2);
-            return url;
-        }
-        throw new MalformedURLException("NEU URL: "+url+" was malformed");
-
+    private static String getSystemConsolePrompt(){
+        return (File.separatorChar=='/')?(System.getProperty("user.name")+"$ "):("C:\\"+System.getProperty("user.dir")+">");
     }
-*/
-
-    /*   public static String deURLize(String url) {
-           int i=url.indexOf("://");
-           if (i>0)
-               return url.substring(i+2);
-           if (url.length()>0&&url.substring(0,1).equals("/"))
-               return url;
-           return "/"+url;
-       }
-   */
+    final static public String SYSTEM_PROMPT=getSystemConsolePrompt();
 }
