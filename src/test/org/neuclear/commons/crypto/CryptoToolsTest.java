@@ -1,6 +1,10 @@
 /*
-  $Id: CryptoToolsTest.java,v 1.5 2004/08/26 01:54:10 pelle Exp $
+  $Id: CryptoToolsTest.java,v 1.6 2004/09/07 21:16:48 pelle Exp $
   $Log: CryptoToolsTest.java,v $
+  Revision 1.6  2004/09/07 21:16:48  pelle
+  Gor rid of some of the benchmark code in the unit tests. There really is no need for a half an hour benchmark to run everytime I run the tests.
+  Also got rid of some of the annoying messages in AlwaysTheSamePassphraseAgent
+
   Revision 1.5  2004/08/26 01:54:10  pelle
   Updated the CryptoToolsTest to better see performance
 
@@ -179,6 +183,7 @@ public final class CryptoToolsTest extends TestCase {
         assertNotNull(sig);
         assertTrue(CryptoTools.verify(kp.getPublic(), data, sig));
     }
+/*
 
     public final void testRSAKeyClash() throws NoSuchAlgorithmException {
         System.out.println("RSA1024");
@@ -272,5 +277,6 @@ public final class CryptoToolsTest extends TestCase {
             set.add(key);
         }
     }
+*/
 
 }

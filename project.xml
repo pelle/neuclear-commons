@@ -3,7 +3,7 @@
 
     <name>NeuClear Commons</name>
     <id>neuclear-commons</id>
-    <currentVersion>1.0-beta15</currentVersion>
+    <currentVersion>1.0-beta16</currentVersion>
     <inceptionYear>2003</inceptionYear>
     <package>org.neuclear.commons</package>
     <logo>/images/logo.gif</logo>
@@ -216,6 +216,7 @@
             </includes>
             <excludes>
                 <exclude>**/Abstract*Test.java</exclude>
+                <exclude>**/SQLSignerTest.java</exclude>
             </excludes>
         </unitTest>
 

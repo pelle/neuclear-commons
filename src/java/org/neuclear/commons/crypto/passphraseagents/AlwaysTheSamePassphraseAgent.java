@@ -20,8 +20,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: AlwaysTheSamePassphraseAgent.java,v 1.4 2004/04/12 23:50:07 pelle Exp $
+$Id: AlwaysTheSamePassphraseAgent.java,v 1.5 2004/09/07 21:16:48 pelle Exp $
 $Log: AlwaysTheSamePassphraseAgent.java,v $
+Revision 1.5  2004/09/07 21:16:48  pelle
+Gor rid of some of the benchmark code in the unit tests. There really is no need for a half an hour benchmark to run everytime I run the tests.
+Also got rid of some of the annoying messages in AlwaysTheSamePassphraseAgent
+
 Revision 1.4  2004/04/12 23:50:07  pelle
 implemented the queue and improved the DefaultSigner
 
@@ -66,12 +70,12 @@ public final class AlwaysTheSamePassphraseAgent implements PassPhraseAgent {
 
     public AlwaysTheSamePassphraseAgent(final String passphrase) {
         this.passphrase = passphrase;
-        System.out.println("AlwaysTheSamePassphraseAgent started.\nDO NOT USE FOR PRODUCTION SERVERS");
+//        System.out.println("AlwaysTheSamePassphraseAgent started.\nDO NOT USE FOR PRODUCTION SERVERS");
     }
 
     public AlwaysTheSamePassphraseAgent(final char[] passphrase) {
         this.passphrase = new String(passphrase);
-        System.out.println("AlwaysTheSamePassphraseAgent started.\nDO NOT USE FOR PRODUCTION SERVERS");
+//        System.out.println("AlwaysTheSamePassphraseAgent started.\nDO NOT USE FOR PRODUCTION SERVERS");
     }
 
     public final char[] getPassPhrase(final String name) {

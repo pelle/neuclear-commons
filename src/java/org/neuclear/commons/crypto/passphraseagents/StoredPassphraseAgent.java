@@ -20,8 +20,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: StoredPassphraseAgent.java,v 1.4 2003/12/19 18:02:53 pelle Exp $
+$Id: StoredPassphraseAgent.java,v 1.5 2004/09/07 21:16:48 pelle Exp $
 $Log: StoredPassphraseAgent.java,v $
+Revision 1.5  2004/09/07 21:16:48  pelle
+Gor rid of some of the benchmark code in the unit tests. There really is no need for a half an hour benchmark to run everytime I run the tests.
+Also got rid of some of the annoying messages in AlwaysTheSamePassphraseAgent
+
 Revision 1.4  2003/12/19 18:02:53  pelle
 Revamped a lot of exception handling throughout the framework, it has been simplified in most places:
 - For most cases the main exception to worry about now is InvalidNamedObjectException.
@@ -64,7 +68,7 @@ public final class StoredPassphraseAgent implements PassPhraseAgent {
     public StoredPassphraseAgent(final String name, final String passphrase) {
         this.name = name;
         this.passphrase = passphrase;
-        System.out.println("StoredPassphraseAgent started.\nDO NOT USE FOR PRODUCTION SERVERS");
+//        System.out.println("StoredPassphraseAgent started.\nDO NOT USE FOR PRODUCTION SERVERS");
     }
 
     public final char[] getPassPhrase(final String name) {
