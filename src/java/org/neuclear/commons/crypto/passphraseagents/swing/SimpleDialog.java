@@ -6,6 +6,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.plaf.Options;
 import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
+import org.neuclear.commons.swing.WaitForInput;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,8 +17,18 @@ import java.awt.event.KeyListener;
 import java.net.URL;
 
 /*
-$Id: SimpleDialog.java,v 1.7 2004/04/22 23:59:51 pelle Exp $
+$Id: SimpleDialog.java,v 1.8 2004/05/18 19:19:03 pelle Exp $
 $Log: SimpleDialog.java,v $
+Revision 1.8  2004/05/18 19:19:03  pelle
+Added Swing package to commons.
+NeuClearDialog is a standard Abstract Dialog Class for modal dialogs.
+ProcessDialog is a standard Abstract Dialog Class for modal dialogs with a long running processing task.
+Fixed serialization issues in Signer. It now loads and saves the IdentityListModel correctly.
+AddIdentityDialog is a subclass of the above mentioned ProcessDialog.
+Missing are:
+- better error messages
+- Populate and use categories combo
+
 Revision 1.7  2004/04/22 23:59:51  pelle
 Added various statistics to Ledger as well as AssetController
 Improved look and feel in the web app.

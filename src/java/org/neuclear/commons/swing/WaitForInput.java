@@ -1,10 +1,20 @@
-package org.neuclear.commons.crypto.passphraseagents.swing;
+package org.neuclear.commons.swing;
 
 import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
 
 /*
-$Id: WaitForInput.java,v 1.6 2004/05/14 23:47:01 pelle Exp $
+$Id: WaitForInput.java,v 1.1 2004/05/18 19:19:04 pelle Exp $
 $Log: WaitForInput.java,v $
+Revision 1.1  2004/05/18 19:19:04  pelle
+Added Swing package to commons.
+NeuClearDialog is a standard Abstract Dialog Class for modal dialogs.
+ProcessDialog is a standard Abstract Dialog Class for modal dialogs with a long running processing task.
+Fixed serialization issues in Signer. It now loads and saves the IdentityListModel correctly.
+AddIdentityDialog is a subclass of the above mentioned ProcessDialog.
+Missing are:
+- better error messages
+- Populate and use categories combo
+
 Revision 1.6  2004/05/14 23:47:01  pelle
 Moved PersonalSigner and OpenSignerDialog to neuclear-commons where they belong.
 The whole mechanism of opening keystores is pretty smooth right now.

@@ -33,7 +33,7 @@ import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
 import org.neuclear.commons.crypto.passphraseagents.swing.JKSFilter;
 import org.neuclear.commons.crypto.passphraseagents.swing.MessageLabel;
 import org.neuclear.commons.crypto.passphraseagents.swing.NewPassphraseDialog;
-import org.neuclear.commons.crypto.passphraseagents.swing.WaitForInput;
+import org.neuclear.commons.swing.WaitForInput;
 
 import javax.swing.*;
 import java.awt.*;

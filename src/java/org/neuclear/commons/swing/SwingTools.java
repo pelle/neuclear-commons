@@ -1,4 +1,4 @@
-package org.neuclear.commons.crypto.passphraseagents.swing;
+package org.neuclear.commons.swing;
 
 import com.jgoodies.plaf.Options;
 import com.l2fprod.common.util.OS;

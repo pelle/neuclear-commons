@@ -7,6 +7,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.plaf.Options;
 import com.l2fprod.common.util.OS;
 import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
+import org.neuclear.commons.swing.WaitForInput;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,8 +18,18 @@ import java.awt.event.KeyListener;
 import java.net.URL;
 
 /*
-$Id: NewPassphraseDialog.java,v 1.6 2004/05/17 23:56:37 pelle Exp $
+$Id: NewPassphraseDialog.java,v 1.7 2004/05/18 19:19:03 pelle Exp $
 $Log: NewPassphraseDialog.java,v $
+Revision 1.7  2004/05/18 19:19:03  pelle
+Added Swing package to commons.
+NeuClearDialog is a standard Abstract Dialog Class for modal dialogs.
+ProcessDialog is a standard Abstract Dialog Class for modal dialogs with a long running processing task.
+Fixed serialization issues in Signer. It now loads and saves the IdentityListModel correctly.
+AddIdentityDialog is a subclass of the above mentioned ProcessDialog.
+Missing are:
+- better error messages
+- Populate and use categories combo
+
 Revision 1.6  2004/05/17 23:56:37  pelle
 GUI defaults to XP on Windows XP
 KeyStoreDialog checks if it receives an AuthenticationRequest and changes "Sign" button to "Login"

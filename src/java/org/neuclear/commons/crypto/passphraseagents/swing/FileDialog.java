@@ -5,6 +5,7 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.plaf.Options;
+import org.neuclear.commons.swing.WaitForInput;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,8 +16,18 @@ import java.awt.event.KeyListener;
 import java.net.URL;
 
 /*
-$Id: FileDialog.java,v 1.2 2004/04/21 23:10:13 pelle Exp $
+$Id: FileDialog.java,v 1.3 2004/05/18 19:18:56 pelle Exp $
 $Log: FileDialog.java,v $
+Revision 1.3  2004/05/18 19:18:56  pelle
+Added Swing package to commons.
+NeuClearDialog is a standard Abstract Dialog Class for modal dialogs.
+ProcessDialog is a standard Abstract Dialog Class for modal dialogs with a long running processing task.
+Fixed serialization issues in Signer. It now loads and saves the IdentityListModel correctly.
+AddIdentityDialog is a subclass of the above mentioned ProcessDialog.
+Missing are:
+- better error messages
+- Populate and use categories combo
+
 Revision 1.2  2004/04/21 23:10:13  pelle
 Fixed mac look and feel
 

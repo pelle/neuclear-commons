@@ -47,9 +47,50 @@ public class AgentMessages {
         return bundle;
     }
 
+    public static String getTitle(String id) {
+        return getComponentText(id, "title");
+    }
+
+    public static String getDescription(String id) {
+        return getComponentText(id, "desc");
+    }
+
+    public static String getProcessTitle(String id) {
+        return getTitle(id + ".process");
+    }
+
+    public static String getProcessDescription(String id) {
+        return getDescription(id + ".process");
+    }
+
+    public static String getOK(String id) {
+        final String text = getComponentText(id, "ok.title");
+        if (text != null)
+            return text;
+        else
+            return getText("ok");
+    }
+
+    public static String getOKToolTip(String id) {
+        final String text = getComponentText(id, "ok.desc");
+        if (text != null)
+            return text;
+        else
+            return getOK("ok");
+    }
+
+    public static String getComponentText(String id, String part) {
+        return getText(id + "." + part);
+    }
+
+    public static String getText(String id) {
+        return getMessages().getString(id);
+    }
+
     public static synchronized void updateBundle() {
         bundle = createBundle();
     }
+
 
     private static ResourceBundle createBundle() {
 //        try {

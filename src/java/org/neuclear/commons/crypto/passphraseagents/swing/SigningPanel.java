@@ -7,6 +7,8 @@ import com.jgoodies.forms.layout.FormLayout;
 import org.neuclear.commons.crypto.passphraseagents.AgentMessages;
 import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
 import org.neuclear.commons.crypto.signers.*;
+import org.neuclear.commons.swing.SwingTools;
+import org.neuclear.commons.swing.WaitForInput;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -23,8 +25,18 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /*
-$Id: SigningPanel.java,v 1.1 2004/05/06 21:40:30 pelle Exp $
+$Id: SigningPanel.java,v 1.2 2004/05/18 19:19:03 pelle Exp $
 $Log: SigningPanel.java,v $
+Revision 1.2  2004/05/18 19:19:03  pelle
+Added Swing package to commons.
+NeuClearDialog is a standard Abstract Dialog Class for modal dialogs.
+ProcessDialog is a standard Abstract Dialog Class for modal dialogs with a long running processing task.
+Fixed serialization issues in Signer. It now loads and saves the IdentityListModel correctly.
+AddIdentityDialog is a subclass of the above mentioned ProcessDialog.
+Missing are:
+- better error messages
+- Populate and use categories combo
+
 Revision 1.1  2004/05/06 21:40:30  pelle
 More swing refactorings
 
