@@ -1,6 +1,15 @@
 /*
- * $Id: JCESigner.java,v 1.9 2003/12/10 23:55:45 pelle Exp $
+ * $Id: JCESigner.java,v 1.10 2003/12/14 20:52:54 pelle Exp $
  * $Log: JCESigner.java,v $
+ * Revision 1.10  2003/12/14 20:52:54  pelle
+ * Added ServletPassPhraseAgent which uses ThreadLocal to transfer the passphrase to the signer.
+ * Added ServletSignerFactory, which builds Signers for use within servlets based on parameters in the Servlets
+ * Init parameters in web.xml
+ * Updated SQLContext to use ThreadLocal
+ * Added jakarta cactus unit tests to neuclear-commons to test the 2 new features above.
+ * Added use of the new features in neuclear-commons to the servilets within neuclear-id and added
+ * configuration parameters in web.xml
+ *
  * Revision 1.9  2003/12/10 23:55:45  pelle
  * Did some cleaning up in the builders
  * Fixed some stuff in IdentityCreator
@@ -134,22 +143,71 @@ import java.security.interfaces.RSAPublicKey;
  */
 public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, PublicKeySource {
 
+    /**
+     * Constructs a JCESigner with the agent providing the keystore passphrase.
+     * @param filename
+     * @param type
+     * @param provider
+     * @param agent
+     * @throws NeuClearException
+     * @throws GeneralSecurityException
+     * @throws FileNotFoundException
+     */
     public JCESigner(final String filename, final String type, final String provider, final PassPhraseAgent agent) throws NeuClearException, GeneralSecurityException, FileNotFoundException {
         this(filename, new FileInputStream(new File(filename)), type, provider, agent);
     }
+    /**
+     * Constructs a JCESigner providing a initial passphrase in the parameters.
+     * @param filename
+     * @param type
+     * @param provider
+     * @param agent
+     * @param initialpassphrase
+     * @throws NeuClearException
+     * @throws GeneralSecurityException
+     * @throws FileNotFoundException
+     */
+    public JCESigner(final String filename, final String type, final String provider, final PassPhraseAgent agent,final char[] initialpassphrase) throws NeuClearException, GeneralSecurityException, FileNotFoundException {
+        this(filename, new FileInputStream(new File(filename)), type, provider, agent,initialpassphrase);
+    }
 
+    /**
+     * Constructs a JCESigner using the agent to provide the initial passphrase
+     * @param name
+     * @param in
+     * @param type
+     * @param provider
+     * @param agent
+     * @throws NeuClearException
+     */
     protected JCESigner(final String name, final InputStream in, final String type, final String provider, final PassPhraseAgent agent) throws NeuClearException {
         this(loadKeyStore(provider, type, in, agent, name), agent);
     }
+    /**
+     * Constructs a JCESigner using the provided Initial passphrase to load the keystore
+     * @param name
+     * @param in
+     * @param type
+     * @param provider
+     * @param agent
+     * @param initpassphrase
+     * @throws NeuClearException
+     */
+    protected JCESigner(final String name, final InputStream in, final String type, final String provider, final PassPhraseAgent agent, final char[] initpassphrase) throws NeuClearException {
+        this(loadKeyStore(provider, type, in, initpassphrase), agent);
+    }
 
     private static KeyStore loadKeyStore(final String provider, final String type, final InputStream in, final PassPhraseAgent agent, final String name) throws NeuClearException {
+        return loadKeyStore(provider,type,in,agent.getPassPhrase("Keystore password for: "+name));
+    }
+    private static KeyStore loadKeyStore(final String provider, final String type, final InputStream in, final char[] passphrase) throws NeuClearException {
         try {
             KeyStore ki = null;
             if (provider == null)
                 ki = KeyStore.getInstance(type);
             else
                 ki = KeyStore.getInstance(type, provider);
-            ki.load(in, agent.getPassPhrase("KeyStore Passphrase for" + name));
+            ki.load(in, passphrase);
 //            System.out.println("Successfully loaded JCESigner: " + name + " type: " + ki.getType() + " size: " + ki.size());
             return ki;
         } catch (KeyStoreException e) {

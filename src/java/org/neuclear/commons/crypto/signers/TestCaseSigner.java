@@ -26,8 +26,17 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: TestCaseSigner.java,v 1.7 2003/11/22 00:22:52 pelle Exp $
+$Id: TestCaseSigner.java,v 1.8 2003/12/14 20:52:54 pelle Exp $
 $Log: TestCaseSigner.java,v $
+Revision 1.8  2003/12/14 20:52:54  pelle
+Added ServletPassPhraseAgent which uses ThreadLocal to transfer the passphrase to the signer.
+Added ServletSignerFactory, which builds Signers for use within servlets based on parameters in the Servlets
+Init parameters in web.xml
+Updated SQLContext to use ThreadLocal
+Added jakarta cactus unit tests to neuclear-commons to test the 2 new features above.
+Added use of the new features in neuclear-commons to the servilets within neuclear-id and added
+configuration parameters in web.xml
+
 Revision 1.7  2003/11/22 00:22:52  pelle
 All unit tests in commons, id and xmlsec now work.
 AssetController now successfully processes payments in the unit test.
@@ -103,7 +112,8 @@ public final class TestCaseSigner extends JCESigner {
         super(name,
                 in,
                 "jks", "SUN",
-                agent
+                agent,
+                "neuclear".toCharArray()
         );
     }
 

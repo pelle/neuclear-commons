@@ -24,8 +24,17 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: SQLContext.java,v 1.1 2003/12/01 15:44:53 pelle Exp $
+$Id: SQLContext.java,v 1.2 2003/12/14 20:52:54 pelle Exp $
 $Log: SQLContext.java,v $
+Revision 1.2  2003/12/14 20:52:54  pelle
+Added ServletPassPhraseAgent which uses ThreadLocal to transfer the passphrase to the signer.
+Added ServletSignerFactory, which builds Signers for use within servlets based on parameters in the Servlets
+Init parameters in web.xml
+Updated SQLContext to use ThreadLocal
+Added jakarta cactus unit tests to neuclear-commons to test the 2 new features above.
+Added use of the new features in neuclear-commons to the servilets within neuclear-id and added
+configuration parameters in web.xml
+
 Revision 1.1  2003/12/01 15:44:53  pelle
 Added XAConnectionSources and Transaction capability through jotm.
 
@@ -36,10 +45,9 @@ Added XAConnectionSources and Transaction capability through jotm.
  * receive the same connection source. A new Connection is created if none exist.
  * The threads connection can be specifically closed with close()
  */
-public class SQLContext implements ConnectionSource{
+public class SQLContext extends ThreadLocal implements ConnectionSource{
     public SQLContext(ConnectionSource source) {
         this.source = source;
-        this.map=new HashMap();
     }
 
     /**
@@ -49,24 +57,26 @@ public class SQLContext implements ConnectionSource{
      * @throws IOException
      */
     public Connection getConnection() throws SQLException, IOException {
-        Connection con= (Connection)map.get(Thread.currentThread());
-        if (con==null||con.isClosed()){
-            con=source.getConnection();
-            map.put(Thread.currentThread(),con);
-        }
-        return con;
+        return (Connection)get();
     }
     /**
      * if the thread has an open connection it closes it.
      * @throws SQLException
      */
-    public void close() throws SQLException {
-        Connection con= (Connection)map.get(Thread.currentThread());
-        if (con!=null||!con.isClosed())
-            map.remove(Thread.currentThread());
-        con.close();
+    public void close() throws SQLException, IOException {
+        getConnection().close();
+        set(null);
     }
     private final ConnectionSource source;
-    private final Map map;
+
+    protected Object initialValue() {
+        try {
+            return source.getConnection();    //To change body of overriden methods use Options | File Templates.
+        } catch (SQLException e) {
+            throw new org.neuclear.commons.LowLevelException(e);
+        } catch (IOException e) {
+            throw new org.neuclear.commons.LowLevelException(e);
+        }
+    }
 
 }
