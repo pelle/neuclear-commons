@@ -1,6 +1,10 @@
 /*
- * $Id: JCESigner.java,v 1.3 2003/11/13 23:26:17 pelle Exp $
+ * $Id: JCESigner.java,v 1.4 2003/11/18 00:01:02 pelle Exp $
  * $Log: JCESigner.java,v $
+ * Revision 1.4  2003/11/18 00:01:02  pelle
+ * The sample signing web application for logging in and out is now working.
+ * There had been an issue in the canonicalizer when dealing with the embedded object of the SignatureRequest object.
+ *
  * Revision 1.3  2003/11/13 23:26:17  pelle
  * The signing service and web authentication application is now almost working.
  *
@@ -108,6 +112,8 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
             else
                 ks = KeyStore.getInstance(type, provider);
             ks.load(in, agent.getPassPhrase("KeyStore Passphrase for" + name));
+
+            cache = new KeyCache(ks);
             System.out.println("Successfully loaded JCESigner: " + name + " type: " + ks.getType() + " size: " + ks.size());
         } catch (IOException e) {
             throw new NeuClearException(e);
@@ -117,7 +123,7 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
 
     private PrivateKey getKey(String name, char passphrase[]) throws InvalidPassphraseException, NonExistingSignerException, IOException {
         try {
-            PrivateKey key = (PrivateKey) ks.getKey(name, passphrase);
+            PrivateKey key = (PrivateKey) cache.getKey(name, passphrase);
             if (key == null)
                 throw new NonExistingSignerException("No keys for: " + name);
             return key;
@@ -187,6 +193,7 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
     }
 
     private final KeyStore ks;
+    private final KeyCache cache;
     private final PassPhraseAgent agent;
 
 }

@@ -25,8 +25,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: TestCaseSigner.java,v 1.2 2003/11/13 23:26:17 pelle Exp $
+$Id: TestCaseSigner.java,v 1.3 2003/11/18 00:01:02 pelle Exp $
 $Log: TestCaseSigner.java,v $
+Revision 1.3  2003/11/18 00:01:02  pelle
+The sample signing web application for logging in and out is now working.
+There had been an issue in the canonicalizer when dealing with the embedded object of the SignatureRequest object.
+
 Revision 1.2  2003/11/13 23:26:17  pelle
 The signing service and web authentication application is now almost working.
 
@@ -79,7 +83,7 @@ public class TestCaseSigner extends JCESigner {
     private static InputStream getKeyStore() {
         URL url = TestCaseSigner.class.getClassLoader().getResource(KEYSTORE);
         System.out.println("loading keystore from: " + url.toString());
-        return TestCaseSigner.class.getResourceAsStream(KEYSTORE);
+        return TestCaseSigner.class.getClassLoader().getResourceAsStream(KEYSTORE);
 
 
     }

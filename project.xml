@@ -124,10 +124,10 @@
     <resources>
         <resource>
             <directory>
-                src/testdata/keys
+                src/java
             </directory>
             <includes>*.jks</includes>
-            <targetPath>org/neuclear/commons/crypto/signers</targetPath>
+<!--            <targetPath>org/neuclear/commons/crypto/signers</targetPath>-->
         </resource>
     </resources>
   </build>
