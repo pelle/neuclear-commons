@@ -24,8 +24,13 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: SQLContext.java,v 1.3 2004/01/02 23:19:03 pelle Exp $
+$Id: SQLContext.java,v 1.4 2004/01/03 20:36:33 pelle Exp $
 $Log: SQLContext.java,v $
+Revision 1.4  2004/01/03 20:36:33  pelle
+Renamed HeldTransfer to Exchange
+Dropped valuetime from the request objects.
+Doesnt yet compile. New commit to follow soon.
+
 Revision 1.3  2004/01/02 23:19:03  pelle
 Added StatementFactory pattern and refactored the ledger to use it.
 
@@ -65,7 +70,7 @@ public class SQLContext extends ThreadLocal implements ConnectionSource{
      * if the thread has an open connection it closes it.
      * @throws SQLException
      */
-    public void close() throws SQLException, IOException {
+    public void close() throws SQLException {
         getConnection().close();
         set(null);
     }

@@ -1,6 +1,11 @@
 /*
- * $Id: TimeTools.java,v 1.7 2003/12/31 00:39:29 pelle Exp $
+ * $Id: TimeTools.java,v 1.8 2004/01/03 20:36:33 pelle Exp $
  * $Log: TimeTools.java,v $
+ * Revision 1.8  2004/01/03 20:36:33  pelle
+ * Renamed HeldTransfer to Exchange
+ * Dropped valuetime from the request objects.
+ * Doesnt yet compile. New commit to follow soon.
+ *
  * Revision 1.7  2003/12/31 00:39:29  pelle
  * Added Drivers for handling different Database dialects in the entity model.
  * Added Statement pattern to ledger, simplifying the statement writing process.
@@ -73,6 +78,7 @@
 package org.neuclear.commons.time;
 
 import org.neuclear.commons.NeuClearException;
+import org.neuclear.commons.Utility;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -125,6 +131,8 @@ public final class TimeTools {
     }
 
     public static Timestamp parseTimeStamp(final String ts) throws ParseException {
+        if (Utility.isEmpty(ts))
+            return null;
          return convertDateToTimestamp(getDateFormatter().parse(ts));
 
     }
