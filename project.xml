@@ -82,7 +82,7 @@
         </dependency>
         <dependency>
             <id>picocontainer</id>
-            <version>1.0-beta-3</version>
+            <version>1.0</version>
             <properties>
                 <war.bundle>true</war.bundle>
             </properties>
