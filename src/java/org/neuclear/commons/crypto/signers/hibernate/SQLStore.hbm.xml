@@ -11,12 +11,12 @@
             <generator class="assigned"/>
         </id>
 
-        <property name="privatekey">
-            <column name="privatekey" sql-type="blob" not-null="true"/>
+        <property name="PrivateKey">
+            <column name="privatekey" sql-type="blob"/>
         </property>
 
-        <property name="publickey">
-            <column name="publickey" sql-type="blob" not-null="true"/>
+        <property name="PublicKey">
+            <column name="publickey" sql-type="blob"/>
         </property>
 
     </class>

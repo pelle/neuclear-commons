@@ -1,14 +1,7 @@
-package org.neuclear.commons.crypto.signers;
-
 /*
  *  The NeuClear Project and it's libraries are
  *  (c) 2002-2004 Antilles Software Ventures SA
  *  For more information see: http://neuclear.org
- *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Lesser General Public
- *  License as published by the Free Software Foundation; either
- *  version 2.1 of the License, or (at your option) any later version.
  *
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -20,23 +13,31 @@ package org.neuclear.commons.crypto.signers;
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 /*
-$Id: SQLSigner.java,v 1.1 2004/04/22 13:09:25 pelle Exp $
+$Id: SQLSigner.java,v 1.2 2004/05/13 23:55:32 pelle Exp $
 $Log: SQLSigner.java,v $
+Revision 1.2  2004/05/13 23:55:32  pelle
+Updated Deneb Shahs SQLSigner
+Also added his unit tests
+
 Revision 1.1  2004/04/22 13:09:25  pelle
 Added Deneb Shah's SQLSigner (deneb shah <deneb007@yahoo.com>)
 Which stores private keys encrypted in a database and uses Hibernate.
-
 */
+package org.neuclear.commons.crypto.signers;
 
+import org.neuclear.commons.LowLevelException;
 import org.neuclear.commons.crypto.CryptoException;
 import org.neuclear.commons.crypto.CryptoTools;
 import org.neuclear.commons.crypto.passphraseagents.AlwaysTheSamePassphraseAgent;
+import org.neuclear.commons.crypto.passphraseagents.InteractiveAgent;
 import org.neuclear.commons.crypto.passphraseagents.PassPhraseAgent;
 import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
 import org.neuclear.commons.crypto.signers.hibernate.SQLStore;
 import org.neuclear.commons.crypto.signers.hibernate.SQLStoreAccess;
 
 import java.security.*;
+import java.security.interfaces.DSAPublicKey;
+import java.security.interfaces.RSAPublicKey;
 import java.util.Iterator;
 
 /**
@@ -85,8 +86,7 @@ public class SQLSigner implements BrowsableSigner {
      */
     public byte[] sign(byte[] data, SetPublicKeyCallBack callback)
             throws UserCancellationException {
-        // TODO Auto-generated method stub
-        return null;
+        return ((InteractiveAgent) agent).sign(this, data, callback);
     }
 
     /* (non-Javadoc)
@@ -105,12 +105,21 @@ public class SQLSigner implements BrowsableSigner {
             throws InvalidPassphraseException {
         try {
             PrivateKey prvKey = getKey(alias, passphrase);
-            return CryptoTools.sign(prvKey, data);
-
-        } catch (Exception e) {
-            // TODO: handle exception
-            return null;
+            byte[] bytes = CryptoTools.sign(prvKey, data);
+            if (callback != null)
+                callback.setPublicKey(getPublicKey(alias));
+            return bytes;
+        } catch (UnrecoverableKeyException e) {
+            throw new InvalidPassphraseException(alias);
+        } catch (NoSuchAlgorithmException e) {
+            throw new LowLevelException(e);
+        } catch (KeyStoreException e) {
+            // Could try to reload it here but I wont for now
+            throw new LowLevelException(e);
+        } catch (CryptoException e) {
+            throw new LowLevelException(e);
         }
+
     }
 
     /**
@@ -188,8 +197,30 @@ public class SQLSigner implements BrowsableSigner {
      */
     public byte[] sign(String name, byte[] data)
             throws UserCancellationException, NonExistingSignerException {
-        // TODO Auto-generated method stub
-        return null;
+        return sign(name, data, false);
+    }
+
+    public final byte[] sign(final String name, final byte[] data, boolean incorrect) throws UserCancellationException, NonExistingSignerException {
+        try {
+            final char[] pass = getPassPhrase(name, incorrect);
+            return CryptoTools.sign(getKey(name, pass), data);
+        } catch (UnrecoverableKeyException e) {
+            System.err.println("Incorrect Passphrase Attemt on: " + name);
+            return sign(name, data, true);
+        } catch (NoSuchAlgorithmException e) {
+            throw new LowLevelException(e);
+        } catch (KeyStoreException e) {
+            // Could try to reload it here but I wont for now
+            throw new LowLevelException(e);
+        } catch (CryptoException e) {
+            throw new LowLevelException(e);
+        }
+    }
+
+    private char[] getPassPhrase(final String name, boolean incorrect) throws UserCancellationException {
+        if (incorrect && (agent instanceof InteractiveAgent))
+            ((InteractiveAgent) agent).getPassPhrase(name, true);
+        return agent.getPassPhrase(name);
     }
 
     /*
@@ -212,8 +243,21 @@ public class SQLSigner implements BrowsableSigner {
      * @see org.neuclear.commons.crypto.signers.Signer#getKeyType(java.lang.String)
      */
     public int getKeyType(String name) {
-        // TODO Auto-generated method stub
-        return 0;
+
+        try {
+            if (canSignFor(name)) {
+                final PublicKey pk = getPublicKey(name);
+                if (pk instanceof RSAPublicKey)
+                    return KEY_RSA;
+                if (pk instanceof DSAPublicKey)
+                    return KEY_DSA;
+                return KEY_OTHER;
+            }
+        } catch (NonExistingSignerException e) {
+            return KEY_NONE;
+        }
+
+        return KEY_NONE;
     }
 
     /* (non-Javadoc)

@@ -1,12 +1,9 @@
 /*
-$Id: SQLStoreAccess.java,v 1.1 2004/04/22 13:09:25 pelle Exp $
-$Log: SQLStoreAccess.java,v $
-Revision 1.1  2004/04/22 13:09:25  pelle
-Added Deneb Shah's SQLSigner (deneb shah <deneb007@yahoo.com>)
-Which stores private keys encrypted in a database and uses Hibernate.
-
-*/
-
+ * Created on Apr 11, 2004
+ *
+ * To change the template for this generated file go to
+ * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ */
 package org.neuclear.commons.crypto.signers.hibernate;
 
 
@@ -68,7 +65,6 @@ public class SQLStoreAccess {
         try {
             Session session = factory.openSession();
             Transaction txn = session.beginTransaction();
-            //SQLStore store = new SQLStore(username, privateKey);
             session.save(store);
             txn.commit();
             session.close();
@@ -125,13 +121,19 @@ public class SQLStoreAccess {
 
     }
 
-
+    /**
+     * if the user's details are stored in the store then a store object will be returned
+     * else null
+     *
+     * @param username
+     * @return
+     */
     public SQLStore verifyAlias(String username) {
         try {
             Session session = factory.openSession();
-            List t1List = session.createQuery("select new SQLStore(t.name,t.privatekey, t.publickey)"
+            List t1List = session.createQuery("select new SQLStore(t.alias,t.PrivateKey, t.PublicKey)"
                     + " from SQLStore t"
-                    + " where t.name=" + username)
+                    + " where t.alias like '" + username + "'")
                     .setMaxResults(100)
                     .list();
 
@@ -149,11 +151,17 @@ public class SQLStoreAccess {
         }
     }
 
+    /**
+     * gets the iterator list of all the usernames
+     *
+     * @return
+     */
     public Iterator getAllUserName() {
         try {
             Session session = factory.openSession();
-            List t1List = session.createQuery("select name"
-                    + " from SQLStore")
+            List t1List = session.createQuery("select t.alias"
+                    + " from SQLStore t")
+                    .setMaxResults(100)
                     .list();
 
             return t1List.iterator();
@@ -165,6 +173,26 @@ public class SQLStoreAccess {
 
     public static void log(String s) {
         System.out.println(s);
+    }
+
+    public static void main(String[] arr) {
+        SQLStoreAccess access = new SQLStoreAccess();
+        //SQLStore store = access.verifyAlias("ccc");
+        //log(" -- > " + store);
+        Iterator iter = access.getAllUserName();
+        log(" --> " + iter);
+        //access.add("eee", getbytes(), getbytes());
+
+    }
+
+    private static byte[] getbytes() {
+        byte[] arr = new byte[10];
+        byte j = Byte.MIN_VALUE;
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = (byte) j;
+            j++;
+        }
+        return arr;
     }
 
 

@@ -4,15 +4,6 @@
  * To change the template for this generated file go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-/*
-$Id: SQLStore.java,v 1.1 2004/04/22 13:09:25 pelle Exp $
-$Log: SQLStore.java,v $
-Revision 1.1  2004/04/22 13:09:25  pelle
-Added Deneb Shah's SQLSigner (deneb shah <deneb007@yahoo.com>)
-Which stores private keys encrypted in a database and uses Hibernate.
-
-*/
-
 package org.neuclear.commons.crypto.signers.hibernate;
 
 /**
@@ -21,7 +12,8 @@ package org.neuclear.commons.crypto.signers.hibernate;
  * At the moment used
  * -- username [50 chars long string]
  * -- private key [blob]
- * -- public key [blob]
+ * -- public key [blob] [since key length can be 1024 and in some databases can have a max length for varchar]
+ * <p/>
  * TODO
  * -- cache for store
  * <p/>
@@ -35,6 +27,9 @@ public class SQLStore {
     private byte[] privateKey; // private key in raw form
     // passphrase not stored so that no one can decrypt the private key
     private byte[] publicKey;
+
+    public SQLStore() {
+    }
 
     public SQLStore(String alias) {
         this.alias = alias;
@@ -88,6 +83,10 @@ public class SQLStore {
      */
     private void setPublicKey(byte[] arrPubKey) {
         publicKey = arrPubKey;
+    }
+
+    public String toString() {
+        return getAlias();
     }
 
 }
