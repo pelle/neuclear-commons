@@ -22,7 +22,7 @@
             </p>
             <p>
                 Main goal of this release is to support the coming
-                <a href="http://neuclear.org/id/">0.9 release
+                <a href="http://old.neuclear.org/id/">0.9 release
                 of NeuClear ID</a>.
                 <a href="http://sourceforge.net/project/showfiles.php?group_id=90470">Download it today and join in the NeuClear revolution</a>.
             </p>
@@ -41,7 +41,7 @@
             </ul>
             <p>
                 Main goal of this release is to support the latest
-                <a href="http://neuclear.org/id/">0.8 release
+                <a href="http://old.neuclear.org/id/">0.8 release
                 of NeuClear ID</a>.
                 <a href="http://sourceforge.net/project/showfiles.php?group_id=90470">Download it today and join in the NeuClear revolution</a>.
             </p>
@@ -51,9 +51,9 @@
             <p>
                 This release is very quick after 0.3, but we deemed it necessary
                 to move a bunch of crypto code from
-                <a href="http://neuclear.org/id/">NeuClear ID</a>
+                <a href="http://old.neuclear.org/id/">NeuClear ID</a>
                 and
-                <a href="http://neuclear.org/xmlsig/">NeuClear XMLSig</a> to here.
+                <a href="http://old.neuclear.org/xmlsig/">NeuClear XMLSig</a> to here.
                 If you are using any of the CVS modules as well as the latest release 0.10 of
                 XMLSig please update to this release.
             </p>
