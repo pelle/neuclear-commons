@@ -1,6 +1,10 @@
 /*
- * $Id: Signer.java,v 1.6 2004/01/19 17:53:14 pelle Exp $
+ * $Id: Signer.java,v 1.7 2004/07/21 23:07:16 pelle Exp $
  * $Log: Signer.java,v $
+ * Revision 1.7  2004/07/21 23:07:16  pelle
+ * Updated the Signer interface with a new generateKey() method, which doesn't take any parameters.
+ * It stores the generated key using the Base32 encoded SHA1 digest as it's alias.
+ *
  * Revision 1.6  2004/01/19 17:53:14  pelle
  * Various clean ups
  *
@@ -119,20 +123,20 @@ import java.security.PublicKey;
 public interface Signer {
     /**
      * Signs the data with the privatekey of the given name
-     * 
+     *
      * @param name Alias of private key to be used within KeyStore
      * @param data Data to be signed
      * @return The signature
      */
 
-    public byte[] sign(String name, byte data[])throws UserCancellationException, NonExistingSignerException ;
+    public byte[] sign(String name, byte data[]) throws UserCancellationException, NonExistingSignerException;
 
 //    public void addKey(String name, char passphrase[], PrivateKey key) throws GeneralSecurityException, IOException ;
 
     /**
      * Returns true if the Signer contains a signer for the given name
-     * 
-     * @param name 
+     *
+     * @param name
      * @return true if signer is contained
      */
     public boolean canSignFor(String name);
@@ -140,11 +144,11 @@ public interface Signer {
 
     /**
      * Checks the key type of the given alias
-     * 
-     * @param name 
+     *
+     * @param name
      * @return KEY_NONE,KEY_RSA,KEY_DSA
      */
-    public int getKeyType(String name) ;
+    public int getKeyType(String name);
 
     /**
      * Creates a new KeyPair, stores the PrivateKey using the given alias
@@ -155,6 +159,15 @@ public interface Signer {
      * @throws UserCancellationException
      */
     public PublicKey generateKey(String alias) throws UserCancellationException;
+
+    /**
+     * Creates a new KeyPair, stores the PrivateKey using the base32 sha1 of the public key as it's alias
+     * and returns the PublicKey.
+     *
+     * @return Generated PublicKey
+     * @throws UserCancellationException
+     */
+    public PublicKey generateKey() throws UserCancellationException;
 
     final public static int KEY_NONE = 0;
     final public static int KEY_RSA = 1;

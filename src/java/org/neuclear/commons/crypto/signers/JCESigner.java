@@ -1,6 +1,10 @@
 /*
- * $Id: JCESigner.java,v 1.27 2004/05/16 00:04:00 pelle Exp $
+ * $Id: JCESigner.java,v 1.28 2004/07/21 23:07:16 pelle Exp $
  * $Log: JCESigner.java,v $
+ * Revision 1.28  2004/07/21 23:07:16  pelle
+ * Updated the Signer interface with a new generateKey() method, which doesn't take any parameters.
+ * It stores the generated key using the Base32 encoded SHA1 digest as it's alias.
+ *
  * Revision 1.27  2004/05/16 00:04:00  pelle
  * Added SigningServer which encapsulates all the web serving functionality.
  * Added IdentityPanel which contains an IdentityTree of Identities.
@@ -423,6 +427,21 @@ public class JCESigner implements BrowsableSigner {
     public final PublicKey generateKey(final String alias) throws UserCancellationException {
         try {
             final KeyPair kp = kpg.generateKeyPair();
+            ks.setKeyEntry(alias, kp.getPrivate(), agent.getPassPhrase(alias), new Certificate[]{CryptoTools.createCertificate(alias, kp)});
+            return kp.getPublic();
+        } catch (KeyStoreException e) {
+            throw new LowLevelException(e);
+        } catch (SignatureException e) {
+            throw new LowLevelException(e);
+        } catch (InvalidKeyException e) {
+            throw new LowLevelException(e);
+        }
+    }
+
+    public PublicKey generateKey() throws UserCancellationException {
+        try {
+            final KeyPair kp = kpg.generateKeyPair();
+            String alias = CryptoTools.encodeBase32(CryptoTools.digest(kp.getPublic().getEncoded()));
             ks.setKeyEntry(alias, kp.getPrivate(), agent.getPassPhrase(alias), new Certificate[]{CryptoTools.createCertificate(alias, kp)});
             return kp.getPublic();
         } catch (KeyStoreException e) {

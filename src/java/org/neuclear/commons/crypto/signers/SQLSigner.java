@@ -13,8 +13,12 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 /*
-$Id: SQLSigner.java,v 1.2 2004/05/13 23:55:32 pelle Exp $
+$Id: SQLSigner.java,v 1.3 2004/07/21 23:07:16 pelle Exp $
 $Log: SQLSigner.java,v $
+Revision 1.3  2004/07/21 23:07:16  pelle
+Updated the Signer interface with a new generateKey() method, which doesn't take any parameters.
+It stores the generated key using the Base32 encoded SHA1 digest as it's alias.
+
 Revision 1.2  2004/05/13 23:55:32  pelle
 Updated Deneb Shahs SQLSigner
 Also added his unit tests
@@ -271,6 +275,31 @@ public class SQLSigner implements BrowsableSigner {
             PublicKey pubKey = kp.getPublic();
 
             byte[] encodedPublicKey = pubKey.getEncoded();
+            byte[] wrappedPrivateKey = CryptoTools.wrapKey(agent.getPassPhrase(alias), pvtKey);
+
+            SQLStore store = new SQLStore(alias, wrappedPrivateKey, encodedPublicKey);
+
+            SQLStoreAccess access = new SQLStoreAccess();
+            access.add(store);
+
+            return pubKey;
+        } catch (CryptoException e) {
+            throw new UserCancellationException("[SQLSigner] [generateKey] -- " + e.getMessage());
+        } catch (NoSuchAlgorithmException e) {
+            throw new UserCancellationException("[SQLSigner] [generateKey] -- " + e.getMessage());
+        }
+    }
+
+    public PublicKey generateKey() throws UserCancellationException {
+        try {
+            //	for now it is RSA, later make it generic
+            KeyPair kp = CryptoTools.createTinyRSAKeyPair();
+            PrivateKey pvtKey = kp.getPrivate();
+            PublicKey pubKey = kp.getPublic();
+
+            byte[] encodedPublicKey = pubKey.getEncoded();
+            String alias = CryptoTools.encodeBase32(CryptoTools.digest(encodedPublicKey));
+
             byte[] wrappedPrivateKey = CryptoTools.wrapKey(agent.getPassPhrase(alias), pvtKey);
 
             SQLStore store = new SQLStore(alias, wrappedPrivateKey, encodedPublicKey);

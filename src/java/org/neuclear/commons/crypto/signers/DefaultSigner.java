@@ -32,8 +32,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: DefaultSigner.java,v 1.14 2004/05/11 15:38:04 pelle Exp $
+$Id: DefaultSigner.java,v 1.15 2004/07/21 23:07:16 pelle Exp $
 $Log: DefaultSigner.java,v $
+Revision 1.15  2004/07/21 23:07:16  pelle
+Updated the Signer interface with a new generateKey() method, which doesn't take any parameters.
+It stores the generated key using the Base32 encoded SHA1 digest as it's alias.
+
 Revision 1.14  2004/05/11 15:38:04  pelle
 Removed a few compilation errors
 
@@ -166,6 +170,10 @@ public final class DefaultSigner implements BrowsableSigner {
 
     public final PublicKey generateKey(final String alias) throws UserCancellationException {
         return signer.generateKey(alias);
+    }
+
+    public PublicKey generateKey() throws UserCancellationException {
+        return signer.generateKey();
     }
 
     public final PublicKey getPublicKey(final String name) throws NonExistingSignerException {

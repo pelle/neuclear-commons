@@ -2,8 +2,6 @@ package org.neuclear.commons.configuration;
 
 import org.neuclear.commons.Utility;
 import org.picocontainer.PicoContainer;
-import org.picocontainer.extras.DefaultLifecyclePicoAdapter;
-import org.picocontainer.lifecycle.LifecyclePicoAdapter;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -32,14 +30,13 @@ public class ServletContextContainer implements ServletContextListener {
         if (conf == null)
             conf = getDefaultConfiguration();
         pico = new ConfigurableContainer(conf);
-        lifecycle = new DefaultLifecyclePicoAdapter(pico);
-        lifecycle.start();
+        pico.start();
 
         ctx.setAttribute("pico", pico);
     }
 
     public final void contextDestroyed(ServletContextEvent servletContextEvent) {
-        lifecycle.stop();
+        pico.stop();
     }
 
     public Configuration getDefaultConfiguration() {
@@ -47,7 +44,6 @@ public class ServletContextContainer implements ServletContextListener {
         return new DefaultConfiguration();
     }
 
-    private LifecyclePicoAdapter lifecycle;
     private PicoContainer pico;
 
 

@@ -84,6 +84,10 @@ public class PersonalSigner implements BrowsableSigner, ComboBoxModel {
         return signer.generateKey(alias);
     }
 
+    public PublicKey generateKey() throws UserCancellationException {
+        return signer.generateKey();
+    }
+
     public final PublicKey getPublicKey(final String name) throws NonExistingSignerException {
         return signer.getPublicKey(name);
     }

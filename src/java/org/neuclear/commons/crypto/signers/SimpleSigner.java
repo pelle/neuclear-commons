@@ -1,6 +1,10 @@
 /*
- * $Id: SimpleSigner.java,v 1.10 2004/01/19 17:53:14 pelle Exp $
+ * $Id: SimpleSigner.java,v 1.11 2004/07/21 23:07:16 pelle Exp $
  * $Log: SimpleSigner.java,v $
+ * Revision 1.11  2004/07/21 23:07:16  pelle
+ * Updated the Signer interface with a new generateKey() method, which doesn't take any parameters.
+ * It stores the generated key using the Base32 encoded SHA1 digest as it's alias.
+ *
  * Revision 1.10  2004/01/19 17:53:14  pelle
  * Various clean ups
  *
@@ -151,7 +155,7 @@ import java.util.Map;
  */
 public final class SimpleSigner implements Signer {
 
-    public SimpleSigner(final String file, final PassPhraseAgent agent)  {
+    public SimpleSigner(final String file, final PassPhraseAgent agent) {
         this.agent = agent;
         try {
             signerFile = new File(file);
@@ -209,7 +213,7 @@ public final class SimpleSigner implements Signer {
     /**
      * Adds the given key to the store. Uses the PassPhrase
      * agent to ask for PassPhrase.
-     * 
+     *
      * @param name The name to store it as
      * @param key  The PrivateKey itself.
      */
@@ -220,13 +224,13 @@ public final class SimpleSigner implements Signer {
 
     /**
      * Adds the given key to the store.
-     * 
+     *
      * @param name       The name to store it as
      * @param passphrase The passphrase to encrypt the key
      * @param key        The PrivateKey itself.
      */
 
-    public final void addKey(final String name, final char[] passphrase, final PrivateKey key)  {
+    public final void addKey(final String name, final char[] passphrase, final PrivateKey key) {
         System.out.println("NeuClear: Sealing key: " + name + " in format " + key.getFormat());
         try {
             final ByteArrayOutputStream bOut = new ByteArrayOutputStream();
@@ -248,14 +252,14 @@ public final class SimpleSigner implements Signer {
         }
     }
 
-    public final boolean canSignFor(final String name)  {
+    public final boolean canSignFor(final String name) {
         return ks.containsKey(getDigestedName(name));
     }
 
     /**
      * Checks the key type of the given alias
-     * 
-     * @param name 
+     *
+     * @param name
      * @return KEY_NONE,KEY_RSA,KEY_DSA
      */
     public final int getKeyType(final String name) {
@@ -266,7 +270,7 @@ public final class SimpleSigner implements Signer {
         return new String(CryptoTools.digest(name.getBytes()));
     }
 
-    public final void save()  {
+    public final void save() {
         if (signerFile.getParent() != null)
             signerFile.getParentFile().mkdirs();
 
@@ -283,24 +287,33 @@ public final class SimpleSigner implements Signer {
 
     /**
      * Signs the data with the privatekey of the given name
-     * 
+     *
      * @param name Alias of private key to be used within KeyStore
      * @param data Data to be signed
      * @return The signature
      * @throws UserCancellationException
      */
     public final byte[] sign(final String name, final byte[] data) throws UserCancellationException {
-        return sign(name,data,false);
+        return sign(name, data, false);
     }
-    private  final byte[] sign(final String name, final byte[] data,boolean incorrect) throws UserCancellationException {
+
+    private final byte[] sign(final String name, final byte[] data, boolean incorrect) throws UserCancellationException {
         try {
-            return CryptoTools.sign(getKey(name, agent.getPassPhrase(name,incorrect)), data);
+            return CryptoTools.sign(getKey(name, agent.getPassPhrase(name, incorrect)), data);
         } catch (CryptoException e) {
-            return sign(name,data,true);
+            return sign(name, data, true);
         }
     }
+
     public final PublicKey generateKey(final String alias) throws UserCancellationException {
         final KeyPair kp = kpg.generateKeyPair();
+        addKey(alias, agent.getPassPhrase(alias), kp.getPrivate());
+        return kp.getPublic();
+    }
+
+    public PublicKey generateKey() throws UserCancellationException {
+        final KeyPair kp = kpg.generateKeyPair();
+        String alias = CryptoTools.encodeBase32(CryptoTools.digest(kp.getPublic().getEncoded()));
         addKey(alias, agent.getPassPhrase(alias), kp.getPrivate());
         return kp.getPublic();
     }
