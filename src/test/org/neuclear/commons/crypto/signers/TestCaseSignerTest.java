@@ -26,8 +26,14 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: TestCaseSignerTest.java,v 1.2 2003/11/19 23:32:51 pelle Exp $
+$Id: TestCaseSignerTest.java,v 1.3 2003/11/21 04:43:42 pelle Exp $
 $Log: TestCaseSignerTest.java,v $
+Revision 1.3  2003/11/21 04:43:42  pelle
+EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
+Otherwise You will Finaliate.
+Anything that can be final has been made final throughout everyting. We've used IDEA's Inspector tool to find all instance of variables that could be final.
+This should hopefully make everything more stable (and secure).
+
 Revision 1.2  2003/11/19 23:32:51  pelle
 Signers now can generatekeys via the generateKey() method.
 Refactored the relationship between SignedNamedObject and NamedObjectBuilder a bit.
@@ -48,30 +54,30 @@ PaymentReceiverTest works, but needs a abit more work in its environment to succ
  * Date: Nov 12, 2003
  * Time: 2:48:23 PM
  */
-public class TestCaseSignerTest extends TestCase {
-    public TestCaseSignerTest(String string) throws GeneralSecurityException, NeuClearException {
+public final class TestCaseSignerTest extends TestCase {
+    public TestCaseSignerTest(final String string) throws GeneralSecurityException, NeuClearException {
         super(string);
         signer = new TestCaseSigner();
     }
 
-    public void testHasKeys() throws CryptoException {
+    public final void testHasKeys() throws CryptoException {
         assertTrue(signer.canSignFor("neu://test"));
         assertTrue(signer.canSignFor("neu://test/bux"));
         assertTrue(signer.canSignFor("neu://bob@test"));
         assertTrue(signer.canSignFor("neu://alice@test"));
     }
 
-    public void testSignAndVerify() throws CryptoException {
+    public final void testSignAndVerify() throws CryptoException {
         testKey("neu://test");
         testKey("neu://test/bux");
         testKey("neu://bob@test");
         testKey("neu://alice@test");
     }
 
-    public void testGenerateKey() throws CryptoException {
-        PublicKey pub = signer.generateKey(ALIASEVE);
-        byte data[] = "this is a test".getBytes();
-        byte sig[] = signer.sign(ALIASEVE, data);
+    public final void testGenerateKey() throws CryptoException {
+        final PublicKey pub = signer.generateKey(ALIASEVE);
+        final byte[] data = "this is a test".getBytes();
+        final byte[] sig = signer.sign(ALIASEVE, data);
         assertNotNull(sig);
         assertTrue(CryptoTools.verify(pub, data, sig));
         assertTrue(signer.canSignFor(ALIASEVE));
@@ -79,15 +85,15 @@ public class TestCaseSignerTest extends TestCase {
 
     }
 
-    private void testKey(String name) throws CryptoException {
-        byte sig[] = signer.sign(name, TESTDATA.getBytes());
+    private void testKey(final String name) throws CryptoException {
+        final byte[] sig = signer.sign(name, TESTDATA.getBytes());
         assertNotNull(sig);
         assertTrue(CryptoTools.verify(signer.getPublicKey(name), TESTDATA.getBytes(), sig));
     }
 
 
-    private TestCaseSigner signer;
-    private String TESTDATA = "Here we go again";
+    private final TestCaseSigner signer;
+    private final String TESTDATA = "Here we go again";
     private static final String ALIASEVE = "neu://eve@test";
 
 }

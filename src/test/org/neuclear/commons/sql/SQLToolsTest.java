@@ -17,12 +17,12 @@ import org.neuclear.commons.sql.SQLTools;
  * Time: 5:59:50 PM
  * To change this template use Options | File Templates.
  */
-public class SQLToolsTest extends TestCase {
-    public SQLToolsTest(String string) {
+public final class SQLToolsTest extends TestCase {
+    public SQLToolsTest(final String string) {
         super(string);
     }
 
-    public void testGetConnection() {
+    public final void testGetConnection() {
 /*
         try {
             Connection con=SQLTools.getConnection();

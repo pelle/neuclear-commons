@@ -25,8 +25,14 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: DefaultSigner.java,v 1.2 2003/11/12 23:47:50 pelle Exp $
+$Id: DefaultSigner.java,v 1.3 2003/11/21 04:43:41 pelle Exp $
 $Log: DefaultSigner.java,v $
+Revision 1.3  2003/11/21 04:43:41  pelle
+EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
+Otherwise You will Finaliate.
+Anything that can be final has been made final throughout everyting. We've used IDEA's Inspector tool to find all instance of variables that could be final.
+This should hopefully make everything more stable (and secure).
+
 Revision 1.2  2003/11/12 23:47:50  pelle
 Much work done in creating good test environment.
 PaymentReceiverTest works, but needs a abit more work in its environment to succeed testing.
@@ -55,8 +61,8 @@ as SmartCards for end user applications.
  * Date: Oct 29, 2003
  * Time: 3:22:17 PM
  */
-public class DefaultSigner extends JCESigner {
-    public DefaultSigner(PassPhraseAgent agent) throws NeuClearException, GeneralSecurityException, FileNotFoundException {
+public final class DefaultSigner extends JCESigner {
+    public DefaultSigner(final PassPhraseAgent agent) throws NeuClearException, GeneralSecurityException, FileNotFoundException {
         super(CryptoTools.DEFAULT_KEYSTORE, "jks", "SUN", agent);
 
     }

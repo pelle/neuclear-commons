@@ -1,6 +1,12 @@
 /*
- * $Id: JCESigner.java,v 1.6 2003/11/19 23:32:50 pelle Exp $
+ * $Id: JCESigner.java,v 1.7 2003/11/21 04:43:41 pelle Exp $
  * $Log: JCESigner.java,v $
+ * Revision 1.7  2003/11/21 04:43:41  pelle
+ * EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
+ * Otherwise You will Finaliate.
+ * Anything that can be final has been made final throughout everyting. We've used IDEA's Inspector tool to find all instance of variables that could be final.
+ * This should hopefully make everything more stable (and secure).
+ *
  * Revision 1.6  2003/11/19 23:32:50  pelle
  * Signers now can generatekeys via the generateKey() method.
  * Refactored the relationship between SignedNamedObject and NamedObjectBuilder a bit.
@@ -115,15 +121,15 @@ import java.security.interfaces.RSAPublicKey;
  */
 public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, PublicKeySource {
 
-    public JCESigner(String filename, String type, String provider, PassPhraseAgent agent) throws NeuClearException, GeneralSecurityException, FileNotFoundException {
+    public JCESigner(final String filename, final String type, final String provider, final PassPhraseAgent agent) throws NeuClearException, GeneralSecurityException, FileNotFoundException {
         this(filename, new FileInputStream(new File(filename)), type, provider, agent);
     }
 
-    protected JCESigner(String name, InputStream in, String type, String provider, PassPhraseAgent agent) throws NeuClearException {
+    protected JCESigner(final String name, final InputStream in, final String type, final String provider, final PassPhraseAgent agent) throws NeuClearException {
         this(loadKeyStore(provider, type, in, agent, name), agent);
     }
 
-    private static KeyStore loadKeyStore(String provider, String type, InputStream in, PassPhraseAgent agent, String name) throws NeuClearException {
+    private static KeyStore loadKeyStore(final String provider, final String type, final InputStream in, final PassPhraseAgent agent, final String name) throws NeuClearException {
         try {
             KeyStore ki = null;
             if (provider == null)
@@ -146,7 +152,7 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
         }
     }
 
-    public JCESigner(KeyStore ks, PassPhraseAgent agent) throws CryptoException {
+    public JCESigner(final KeyStore ks, final PassPhraseAgent agent) throws CryptoException {
         this.agent = agent;
         this.ks = ks;
         cache = new KeyCache(ks);
@@ -159,9 +165,9 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
 
     }
 
-    private PrivateKey getKey(String name, char passphrase[]) throws InvalidPassphraseException, NonExistingSignerException, IOException {
+    private PrivateKey getKey(final String name, final char[] passphrase) throws InvalidPassphraseException, NonExistingSignerException, IOException {
         try {
-            PrivateKey key = (PrivateKey) cache.getKey(name, passphrase);
+            final PrivateKey key = (PrivateKey) cache.getKey(name, passphrase);
             if (key == null)
                 throw new NonExistingSignerException("No keys for: " + name);
             return key;
@@ -182,7 +188,7 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
      * @throws org.neuclear.commons.crypto.signers.InvalidPassphraseException
      *          if the passphrase doesn't match
      */
-    public byte[] sign(String name, byte data[]) throws CryptoException {
+    public final byte[] sign(final String name, final byte[] data) throws CryptoException {
 
         try {
             return CryptoTools.sign(getKey(name, agent.getPassPhrase(name)), data);
@@ -191,7 +197,7 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
         }
     }
 
-    public boolean canSignFor(String name) throws CryptoException {
+    public final boolean canSignFor(final String name) throws CryptoException {
         try {
             return ks.containsAlias(name);
         } catch (KeyStoreException e) {
@@ -206,10 +212,10 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
      * @return KEY_NONE,KEY_RSA,KEY_DSA
      * @throws CryptoException 
      */
-    public int getKeyType(String name) throws CryptoException {
+    public final int getKeyType(final String name) throws CryptoException {
         try {
             if (ks.isKeyEntry(name)) {
-                PublicKey pk = getPublicKey(name);
+                final PublicKey pk = getPublicKey(name);
                 if (pk instanceof RSAPublicKey)
                     return KEY_RSA;
                 if (pk instanceof DSAPublicKey)
@@ -231,9 +237,9 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
      * @throws org.neuclear.commons.crypto.CryptoException
      *          
      */
-    public PublicKey generateKey(String alias) throws CryptoException {
+    public final PublicKey generateKey(final String alias) throws CryptoException {
         try {
-            KeyPair kp = kpg.generateKeyPair();
+            final KeyPair kp = kpg.generateKeyPair();
             ks.setKeyEntry(alias, kp.getPrivate(), agent.getPassPhrase(alias), new Certificate[]{new RawCertificate(kp.getPublic())});
             return kp.getPublic();
         } catch (KeyStoreException e) {
@@ -241,7 +247,7 @@ public class JCESigner implements org.neuclear.commons.crypto.signers.Signer, Pu
         }
     }
 
-    public PublicKey getPublicKey(String name) throws CryptoException {
+    public final PublicKey getPublicKey(final String name) throws CryptoException {
         try {
             return ks.getCertificate(name).getPublicKey();
         } catch (KeyStoreException e) {

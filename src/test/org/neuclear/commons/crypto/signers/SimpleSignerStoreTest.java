@@ -1,5 +1,11 @@
-/* $Id: SimpleSignerStoreTest.java,v 1.3 2003/11/19 23:32:51 pelle Exp $
+/* $Id: SimpleSignerStoreTest.java,v 1.4 2003/11/21 04:43:42 pelle Exp $
  * $Log: SimpleSignerStoreTest.java,v $
+ * Revision 1.4  2003/11/21 04:43:42  pelle
+ * EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
+ * Otherwise You will Finaliate.
+ * Anything that can be final has been made final throughout everyting. We've used IDEA's Inspector tool to find all instance of variables that could be final.
+ * This should hopefully make everything more stable (and secure).
+ *
  * Revision 1.3  2003/11/19 23:32:51  pelle
  * Signers now can generatekeys via the generateKey() method.
  * Refactored the relationship between SignedNamedObject and NamedObjectBuilder a bit.
@@ -103,10 +109,10 @@ import java.security.*;
 
 /**
  * @author pelleb
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
-public class SimpleSignerStoreTest extends TestCase {
-    public SimpleSignerStoreTest(String name) throws GeneralSecurityException, NeuClearException, ConfigurationException {
+public final class SimpleSignerStoreTest extends TestCase {
+    public SimpleSignerStoreTest(final String name) throws GeneralSecurityException, NeuClearException, ConfigurationException {
         super(name);
         signer = getSignerStoreInstance();
         generateKeys();
@@ -135,7 +141,7 @@ public class SimpleSignerStoreTest extends TestCase {
     }
 
 
-    public void testAddKey() throws NeuClearException, GeneralSecurityException, IOException {
+    public final void testAddKey() throws NeuClearException, GeneralSecurityException, IOException {
         boolean success = false;
         try {
             signer.addKey("root", root.getPrivate());
@@ -148,7 +154,7 @@ public class SimpleSignerStoreTest extends TestCase {
         assertTrue("Managed to add a key", success);
     }
 
-    public void testSignData() throws NeuClearException, GeneralSecurityException, IOException, CryptoException {
+    public final void testSignData() throws NeuClearException, GeneralSecurityException, IOException, CryptoException {
         boolean success = false;
         byte data[] = null;
         try {
@@ -166,10 +172,10 @@ public class SimpleSignerStoreTest extends TestCase {
         //assertEquals("Gotten Key was the same as Stored Key", bob.getPrivate(), key);
     }
 
-    public void testGenerateKey() throws CryptoException {
-        PublicKey pub = signer.generateKey("tupac");
-        byte data[] = "this is a test".getBytes();
-        byte sig[] = signer.sign("tupac", data);
+    public final void testGenerateKey() throws CryptoException {
+        final PublicKey pub = signer.generateKey("tupac");
+        final byte[] data = "this is a test".getBytes();
+        final byte[] sig = signer.sign("tupac", data);
         assertNotNull(sig);
         assertTrue(CryptoTools.verify(pub, data, sig));
         assertTrue(signer.canSignFor("tupac"));
@@ -177,7 +183,7 @@ public class SimpleSignerStoreTest extends TestCase {
 
     }
 
-    private SimpleSigner signer;
+    private final SimpleSigner signer;
     private static KeyPairGenerator kg;
     protected static KeyPair root;
     protected static KeyPair bob;

@@ -18,8 +18,14 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: AlwaysTheSamePassphraseAgent.java,v 1.1 2003/11/12 23:47:50 pelle Exp $
+$Id: AlwaysTheSamePassphraseAgent.java,v 1.2 2003/11/21 04:43:40 pelle Exp $
 $Log: AlwaysTheSamePassphraseAgent.java,v $
+Revision 1.2  2003/11/21 04:43:40  pelle
+EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
+Otherwise You will Finaliate.
+Anything that can be final has been made final throughout everyting. We've used IDEA's Inspector tool to find all instance of variables that could be final.
+This should hopefully make everything more stable (and secure).
+
 Revision 1.1  2003/11/12 23:47:50  pelle
 Much work done in creating good test environment.
 PaymentReceiverTest works, but needs a abit more work in its environment to succeed testing.
@@ -43,14 +49,14 @@ The IdentityCreator now fully works with the new Signer architecture.
  * Date: Oct 30, 2003
  * Time: 5:01:14 PM
  */
-public class AlwaysTheSamePassphraseAgent implements PassPhraseAgent {
+public final class AlwaysTheSamePassphraseAgent implements PassPhraseAgent {
 
-    public AlwaysTheSamePassphraseAgent(String passphrase) {
+    public AlwaysTheSamePassphraseAgent(final String passphrase) {
         this.passphrase = passphrase;
         System.out.println("AlwaysTheSamePassphraseAgent started.\nDO NOT USE FOR PRODUCTION SERVERS");
     }
 
-    public char[] getPassPhrase(String name) {
+    public final char[] getPassPhrase(final String name) {
         return passphrase.toCharArray();
     }
 

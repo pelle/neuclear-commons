@@ -23,8 +23,14 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: SigningBenchmark.java,v 1.2 2003/11/12 23:47:50 pelle Exp $
+$Id: SigningBenchmark.java,v 1.3 2003/11/21 04:43:42 pelle Exp $
 $Log: SigningBenchmark.java,v $
+Revision 1.3  2003/11/21 04:43:42  pelle
+EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
+Otherwise You will Finaliate.
+Anything that can be final has been made final throughout everyting. We've used IDEA's Inspector tool to find all instance of variables that could be final.
+This should hopefully make everything more stable (and secure).
+
 Revision 1.2  2003/11/12 23:47:50  pelle
 Much work done in creating good test environment.
 PaymentReceiverTest works, but needs a abit more work in its environment to succeed testing.
@@ -39,8 +45,8 @@ Created SigningBenchmark for running comparative performance benchmarks on vario
  * Tests performances of various cryptographic such as key generation
  * signing and verification.
  */
-public class SigningBenchmark {
-    public SigningBenchmark(String algorithm, int size) throws NoSuchAlgorithmException {
+public final class SigningBenchmark {
+    public SigningBenchmark(final String algorithm, final int size) throws NoSuchAlgorithmException {
         kpg = KeyPairGenerator.getInstance(algorithm);
         kpg.initialize(size);
         results = new long[3];
@@ -50,19 +56,19 @@ public class SigningBenchmark {
     }
 
 
-    public void generateKeys() {
+    public final void generateKeys() {
         kp = kpg.generateKeyPair();
     }
 
-    public void sign() throws CryptoException {
+    public final void sign() throws CryptoException {
         testsig = CryptoTools.sign(kp, testdata);
     }
 
-    public void verify() throws CryptoException {
+    public final void verify() throws CryptoException {
         CryptoTools.verify(kp.getPublic(), testdata, testsig);
     }
 
-    public void benchmark() throws CryptoException {
+    public final void benchmark() throws CryptoException {
 
         Date start = new Date();
         for (int i = 0; i < ITERATIONS; i++)
@@ -84,16 +90,16 @@ public class SigningBenchmark {
         printResults();
     }
 
-    public void printResults() {
+    public final void printResults() {
 
         System.out.println(algorithm + "\t" + size + "\t" + results[0] + "\t" + results[1] + "\t" + results[2]);
     }
 
-    public static void main(String args[]) {
+    public static void main(final String[] args) {
         System.out.println("Performance Analysis of key sizes and algorithms");
 
-        String algorithms[] = new String[]{"RSA", "DSA"};
-        int keysizes[] = new int[]{512, 1024};
+        final String[] algorithms = new String[]{"RSA", "DSA"};
+        final int[] keysizes = new int[]{512, 1024};
         try {
             for (int a = 0; a < algorithms.length; a++)
                 for (int k = 0; k < keysizes.length; k++)
@@ -106,16 +112,16 @@ public class SigningBenchmark {
 
     }
 
-    private static int ITERATIONS = 100;
-    private KeyPairGenerator kpg;
+    private static final int ITERATIONS = 100;
+    private final KeyPairGenerator kpg;
 
     private KeyPair kp;
-    private String algorithm;
-    private int size;
+    private final String algorithm;
+    private final int size;
 
-    private long[] results;
+    private final long[] results;
 
-    private static String TESTSTRING = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+    private static final String TESTSTRING = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
             "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
             "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
             "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
@@ -132,6 +138,6 @@ public class SigningBenchmark {
             "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
             "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private byte[] testsig;
-    private byte[] testdata;
+    private final byte[] testdata;
 
 }

@@ -1,6 +1,12 @@
 /*
-  $Id: CryptoToolsTest.java,v 1.1 2003/11/11 21:17:52 pelle Exp $
+  $Id: CryptoToolsTest.java,v 1.2 2003/11/21 04:43:42 pelle Exp $
   $Log: CryptoToolsTest.java,v $
+  Revision 1.2  2003/11/21 04:43:42  pelle
+  EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
+  Otherwise You will Finaliate.
+  Anything that can be final has been made final throughout everyting. We've used IDEA's Inspector tool to find all instance of variables that could be final.
+  This should hopefully make everything more stable (and secure).
+
   Revision 1.1  2003/11/11 21:17:52  pelle
   Further vital reshuffling.
   org.neudist.crypto.* and org.neudist.utils.* have been moved to respective areas under org.neuclear.commons
@@ -91,22 +97,22 @@ import org.neuclear.commons.NeuClearException;
 /**
  * @author Pelle Braendgaard
  */
-public class CryptoToolsTest extends TestCase {
+public final class CryptoToolsTest extends TestCase {
     public CryptoToolsTest() {
         super("CryptoToolsTest");
         setUp();
     }
 
-    public CryptoToolsTest(String name) {
+    public CryptoToolsTest(final String name) {
         super(name);
     }
 
     /**
      */
-    protected void setUp() {
+    protected final void setUp() {
     }
 
-    protected void tearDown() {
+    protected final void tearDown() {
     }
 
     public static Test suite() {
@@ -115,26 +121,26 @@ public class CryptoToolsTest extends TestCase {
         return new TestSuite(CryptoToolsTest.class);
     }
 
-    public void testPadding() {
-        byte src[] = new byte[20];
+    public final void testPadding() {
+        final byte[] src = new byte[20];
         for (int i = 0; i < src.length; i++)
             src[i] = (byte) ("a".getBytes()[0] + i);
         System.out.println("Source array='" + new String(src));
-        byte padded[] = CryptoTools.pad(src, 14);
+        final byte[] padded = CryptoTools.pad(src, 14);
         System.out.println("Dest array='" + new String(padded));
         assertEquals(padded.length % 14, 0);
     }
 
-    public void testSymmetricKeyEncryption() throws  CryptoException {
-        String contentString = "<xml>Hello</xml>";
-        byte password[] = "Three Brown Geese sledded down the hill".getBytes();
-        byte contents[] = contentString.getBytes();
-        byte encrypted[] = CryptoTools.encrypt(password, contents);
-        String encryptString = new String(encrypted);
-        byte decrypted[] = CryptoTools.decrypt(password, encrypted);
-        byte depadded[] = new byte[contents.length];
+    public final void testSymmetricKeyEncryption() throws  CryptoException {
+        final String contentString = "<xml>Hello</xml>";
+        final byte[] password = "Three Brown Geese sledded down the hill".getBytes();
+        final byte[] contents = contentString.getBytes();
+        final byte[] encrypted = CryptoTools.encrypt(password, contents);
+        final String encryptString = new String(encrypted);
+        final byte[] decrypted = CryptoTools.decrypt(password, encrypted);
+        final byte[] depadded = new byte[contents.length];
         System.arraycopy(decrypted, 0, depadded, 0, depadded.length);
-        String decryptString = new String(depadded);
+        final String decryptString = new String(depadded);
         System.out.println("Original: " + contentString);
         System.out.println("Encrypted: " + encryptString);
         System.out.println("Decrypted: " + decryptString);

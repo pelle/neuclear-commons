@@ -13,8 +13,8 @@ import java.util.HashMap;
  * Date: Aug 6, 2003
  * Time: 3:38:50 PM
  */
-public class SimpleConnectionSource extends ThreadMappedConnectionSource {
-    public SimpleConnectionSource(String driver, String url, String user, String password) throws SQLException{
+public final class SimpleConnectionSource extends ThreadMappedConnectionSource {
+    public SimpleConnectionSource(final String driver, final String url, final String user, final String password) throws SQLException{
         try {
              Class.forName(driver).newInstance();
          } catch (InstantiationException e) {
@@ -29,7 +29,7 @@ public class SimpleConnectionSource extends ThreadMappedConnectionSource {
         this.password=password;
     }
 
-    public Connection createConnection() throws SQLException {
+    public final Connection createConnection() throws SQLException {
         return DriverManager.getConnection(
                          url,
                          user,
@@ -37,9 +37,9 @@ public class SimpleConnectionSource extends ThreadMappedConnectionSource {
                     );
     }
 
-    private String url;
-    private String user;
-    private String password;
+    private final String url;
+    private final String user;
+    private final String password;
     private Connection con;
 
 }

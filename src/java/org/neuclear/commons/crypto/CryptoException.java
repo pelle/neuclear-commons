@@ -7,8 +7,14 @@ import org.neuclear.commons.NeuClearException;
  * User: pelleb
  * Date: Feb 10, 2003
  * Time: 10:53:08 AM
- * $Id: CryptoException.java,v 1.1 2003/11/11 21:17:48 pelle Exp $
+ * $Id: CryptoException.java,v 1.2 2003/11/21 04:43:41 pelle Exp $
  * $Log: CryptoException.java,v $
+ * Revision 1.2  2003/11/21 04:43:41  pelle
+ * EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
+ * Otherwise You will Finaliate.
+ * Anything that can be final has been made final throughout everyting. We've used IDEA's Inspector tool to find all instance of variables that could be final.
+ * This should hopefully make everything more stable (and secure).
+ *
  * Revision 1.1  2003/11/11 21:17:48  pelle
  * Further vital reshuffling.
  * org.neudist.crypto.* and org.neudist.utils.* have been moved to respective areas under org.neuclear.commons
@@ -37,7 +43,7 @@ public class CryptoException extends NeuClearException {
      *         unknown.)
      * @since  1.4
      */
-    public CryptoException(Throwable cause) {
+    public CryptoException(final Throwable cause) {
         super(cause);
     }
 
@@ -49,7 +55,7 @@ public class CryptoException extends NeuClearException {
      * @param   message   the detail message. The detail message is saved for
      *          later retrieval by the {@link #getMessage()} method.
      */
-    public CryptoException(String message) {
+    public CryptoException(final String message) {
         super(message);
     }
 
@@ -67,7 +73,7 @@ public class CryptoException extends NeuClearException {
      *         unknown.)
      * @since  1.4
      */
-    public CryptoException(String message, Throwable cause) {
+    public CryptoException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }

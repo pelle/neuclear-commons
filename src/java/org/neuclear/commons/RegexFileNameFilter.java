@@ -9,8 +9,14 @@ import java.util.regex.Pattern;
  * User: pelleb
  * Date: Feb 21, 2003
  * Time: 11:00:18 AM
- * $Id: RegexFileNameFilter.java,v 1.1 2003/11/11 21:17:51 pelle Exp $
+ * $Id: RegexFileNameFilter.java,v 1.2 2003/11/21 04:43:42 pelle Exp $
  * $Log: RegexFileNameFilter.java,v $
+ * Revision 1.2  2003/11/21 04:43:42  pelle
+ * EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
+ * Otherwise You will Finaliate.
+ * Anything that can be final has been made final throughout everyting. We've used IDEA's Inspector tool to find all instance of variables that could be final.
+ * This should hopefully make everything more stable (and secure).
+ *
  * Revision 1.1  2003/11/11 21:17:51  pelle
  * Further vital reshuffling.
  * org.neudist.crypto.* and org.neudist.utils.* have been moved to respective areas under org.neuclear.commons
@@ -32,8 +38,8 @@ import java.util.regex.Pattern;
  * Added test keys in src/testdata/keys
  * Modified tools to handle these keys
  */
-public class RegexFileNameFilter implements FilenameFilter {
-    public RegexFileNameFilter(String regex) {
+public final class RegexFileNameFilter implements FilenameFilter {
+    public RegexFileNameFilter(final String regex) {
         this.re = Pattern.compile(regex);
     }
 
@@ -45,9 +51,9 @@ public class RegexFileNameFilter implements FilenameFilter {
      * @return <code>true</code> if and only if the name should be
      *         included in the file list; <code>false</code> otherwise.
      */
-    public boolean accept(File dir, String name) {
+    public final boolean accept(final File dir, final String name) {
         return (re.matcher(name).matches());
     }
 
-    private Pattern re;
+    private final Pattern re;
 }

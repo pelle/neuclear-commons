@@ -23,8 +23,14 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: RawCertificate.java,v 1.1 2003/11/19 23:32:51 pelle Exp $
+$Id: RawCertificate.java,v 1.2 2003/11/21 04:43:41 pelle Exp $
 $Log: RawCertificate.java,v $
+Revision 1.2  2003/11/21 04:43:41  pelle
+EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
+Otherwise You will Finaliate.
+Anything that can be final has been made final throughout everyting. We've used IDEA's Inspector tool to find all instance of variables that could be final.
+This should hopefully make everything more stable (and secure).
+
 Revision 1.1  2003/11/19 23:32:51  pelle
 Signers now can generatekeys via the generateKey() method.
 Refactored the relationship between SignedNamedObject and NamedObjectBuilder a bit.
@@ -41,13 +47,13 @@ Updated all major interfaces that used the old model to use the new model.
  * Date: Nov 19, 2003
  * Time: 1:37:31 PM
  */
-public class RawCertificate extends Certificate {
-    public RawCertificate(PublicKey pub) {
+public final class RawCertificate extends Certificate {
+    public RawCertificate(final PublicKey pub) {
         super("RAW");
         this.pub = pub;
     }
 
-    public byte[] getEncoded() throws CertificateEncodingException {
+    public final byte[] getEncoded() throws CertificateEncodingException {
         return pub.getEncoded();
     }
 
@@ -61,7 +67,7 @@ public class RawCertificate extends Certificate {
      * @throws NoSuchProviderException  
      * @throws SignatureException       
      */
-    public void verify(PublicKey publicKey) throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException {
+    public final void verify(final PublicKey publicKey) throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException {
         ;
     }
 
@@ -76,11 +82,11 @@ public class RawCertificate extends Certificate {
      * @throws NoSuchProviderException  
      * @throws SignatureException       
      */
-    public void verify(PublicKey publicKey, String string) throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException {
+    public final void verify(final PublicKey publicKey, final String string) throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, NoSuchProviderException, SignatureException {
         ;
     }
 
-    public String toString() {
+    public final String toString() {
         try {
             return CryptoTools.formatAsURLSafe(CryptoTools.digest(getEncoded()));
         } catch (Exception e) {
@@ -88,7 +94,7 @@ public class RawCertificate extends Certificate {
         }
     }
 
-    public PublicKey getPublicKey() {
+    public final PublicKey getPublicKey() {
         return pub;
     }
 

@@ -1,5 +1,11 @@
-/* $Id: Base64.java,v 1.1 2003/11/11 21:17:48 pelle Exp $
+/* $Id: Base64.java,v 1.2 2003/11/21 04:43:41 pelle Exp $
  * $Log: Base64.java,v $
+ * Revision 1.2  2003/11/21 04:43:41  pelle
+ * EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
+ * Otherwise You will Finaliate.
+ * Anything that can be final has been made final throughout everyting. We've used IDEA's Inspector tool to find all instance of variables that could be final.
+ * This should hopefully make everything more stable (and secure).
+ *
  * Revision 1.1  2003/11/11 21:17:48  pelle
  * Further vital reshuffling.
  * org.neudist.crypto.* and org.neudist.utils.* have been moved to respective areas under org.neuclear.commons
@@ -59,7 +65,7 @@ import java.math.BigInteger;
  * @author Christian Geuer-Pollmann
  * @see <A HREF="ftp://ftp.isi.edu/in-notes/rfc2045.txt">RFC 2045</A>
  */
-public class Base64 {
+public final class Base64 {
 
     /** Field LINE_SEPARATOR */
     public static final String LINE_SEPARATOR = "\n";
@@ -68,7 +74,7 @@ public class Base64 {
     public static final int BASE64DEFAULTLENGTH = 76;
 
     /** Field _base64length */
-    static int _base64length = Base64.BASE64DEFAULTLENGTH;
+    static final int _base64length = Base64.BASE64DEFAULTLENGTH;
 
     private Base64() {
         // we don't allow instantiation
@@ -94,7 +100,7 @@ public class Base64 {
      * @param big <code>BigInteger<code> to be converted
      * @return a byte array with <code>bitlen</code> bits of <code>big</code>
      */
-    public static byte[] getBytes(BigInteger big) {
+    public static byte[] getBytes(final BigInteger big) {
 
         int bitlen= big.bitLength();
         //round bitlen
@@ -104,7 +110,7 @@ public class Base64 {
             throw new IllegalArgumentException("Base64.IllegalBitlength");
         }
 
-        byte[] bigBytes = big.toByteArray();
+        final byte[] bigBytes = big.toByteArray();
 
         if (((big.bitLength() % 8) != 0)
                 && (((big.bitLength() / 8) + 1) == (bitlen / 8))) {
@@ -121,8 +127,8 @@ public class Base64 {
                 bigLen--;    // valid length of the string
             }
 
-            int startDst = bitlen / 8 - bigLen;    //pad with leading nulls
-            byte[] resizedBytes = new byte[bitlen / 8];
+            final int startDst = bitlen / 8 - bigLen;    //pad with leading nulls
+            final byte[] resizedBytes = new byte[bitlen / 8];
 
             System.arraycopy(bigBytes, startSrc, resizedBytes, startDst, bigLen);
 
@@ -136,14 +142,14 @@ public class Base64 {
      * @param big
      * @return String with Base64 encoding
      */
-    public static String encode(BigInteger big) {
+    public static String encode(final BigInteger big) {
 //        System.out.println("JDK toByteArray(): "+encode(big.toByteArray()));
 //        System.out.println("getBytes(): "+encode(getBytes(big)));
         return encode(big.toByteArray());
     }
 
 
-    public static String encodeClean(byte[] bytes) {
+    public static String encodeClean(final byte[] bytes) {
         return LINE_SEPARATOR+ encode(bytes)+LINE_SEPARATOR;
     }
 
@@ -156,7 +162,7 @@ public class Base64 {
      *
      * @return
      */
-    public static byte[] decode(byte[] base64) throws CryptoException {
+    public static byte[] decode(final byte[] base64) throws CryptoException {
         return org.bouncycastle.util.encoders.Base64.decode(base64);
     }
 
@@ -166,7 +172,7 @@ public class Base64 {
      * @param base64 <code>String</code> encoded string (single line only !!)
      * @return Decoded data in a byte array
      */
-    public static byte[] decode(String base64) throws CryptoException {
+    public static byte[] decode(final String base64) throws CryptoException {
         return org.bouncycastle.util.encoders.Base64.decode(base64);
 
     }
@@ -179,15 +185,15 @@ public class Base64 {
      * @param wrap <code>int<code> length of wrapped lines; No wrapping if less than 4.
      * @return a <code>String</code> with encoded data
      */
-    public static String encode(byte[] raw, int wrap) {
-        byte[] b64=org.bouncycastle.util.encoders.Base64.encode(raw);
+    public static String encode(final byte[] raw, final int wrap) {
+        final byte[] b64=org.bouncycastle.util.encoders.Base64.encode(raw);
 
         //calculate length of encoded string
-        int encLen = b64.length;
+        final int encLen = b64.length;
 
-        int lines = (encLen / wrap);
+        final int lines = (encLen / wrap);
 
-        byte[] encoded = new byte[encLen+lines];
+        final byte[] encoded = new byte[encLen+lines];
         int sx=0,dx=0;
         for (sx = 0; sx < (lines*wrap); sx+=wrap,dx+=(wrap+1)) {
             System.arraycopy(b64,sx,encoded, dx,wrap);
@@ -205,7 +211,7 @@ public class Base64 {
      * @param raw <code>byte[]<code> to be base64 encoded
      * @return the <code>String<code> with encoded data
      */
-    public static String encode(byte[] raw) {
+    public static String encode(final byte[] raw) {
         return new String(org.bouncycastle.util.encoders.Base64.encode(raw));
 //        return encode(raw, Base64.getBase64WrapLength());
     }

@@ -1,5 +1,11 @@
-/* $Id: ServletTools.java,v 1.1 2003/11/11 21:17:48 pelle Exp $
+/* $Id: ServletTools.java,v 1.2 2003/11/21 04:43:41 pelle Exp $
  * $Log: ServletTools.java,v $
+ * Revision 1.2  2003/11/21 04:43:41  pelle
+ * EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
+ * Otherwise You will Finaliate.
+ * Anything that can be final has been made final throughout everyting. We've used IDEA's Inspector tool to find all instance of variables that could be final.
+ * This should hopefully make everything more stable (and secure).
+ *
  * Revision 1.1  2003/11/11 21:17:48  pelle
  * Further vital reshuffling.
  * org.neudist.crypto.* and org.neudist.utils.* have been moved to respective areas under org.neuclear.commons
@@ -33,17 +39,17 @@ import java.io.PrintWriter;
 
 /**
  * @author pelleb
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  **/
-public class ServletTools {
+public final class ServletTools {
 
-    public static String getAbsoluteURL(HttpServletRequest request, String item) {
+    public static String getAbsoluteURL(final HttpServletRequest request, final String item) {
         return request.getScheme() + "://" + request.getServerName() +
                 ((request.getServerPort() == 80) ? "" : ":" + Integer.toString(request.getServerPort()))
                 + request.getContextPath() + item;
     }
 
-    public static void printHeader(PrintWriter out, HttpServletRequest request, String title) {
+    public static void printHeader(final PrintWriter out, final HttpServletRequest request, final String title) {
         out.println("<html><head><title>NeuDist Local Signing Service</title>");
         //out.println("<LINK rel=\"STYLESHEET\" type=\"text/css\" href=\"style/neuclear.css\">");
         out.println("<style type=\"text/css\">");

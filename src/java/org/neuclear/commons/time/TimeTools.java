@@ -1,6 +1,12 @@
 /*
- * $Id: TimeTools.java,v 1.2 2003/11/11 21:17:49 pelle Exp $
+ * $Id: TimeTools.java,v 1.3 2003/11/21 04:43:42 pelle Exp $
  * $Log: TimeTools.java,v $
+ * Revision 1.3  2003/11/21 04:43:42  pelle
+ * EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
+ * Otherwise You will Finaliate.
+ * Anything that can be final has been made final throughout everyting. We've used IDEA's Inspector tool to find all instance of variables that could be final.
+ * This should hopefully make everything more stable (and secure).
+ *
  * Revision 1.2  2003/11/11 21:17:49  pelle
  * Further vital reshuffling.
  * org.neudist.crypto.* and org.neudist.utils.* have been moved to respective areas under org.neuclear.commons
@@ -59,12 +65,12 @@ import java.util.TimeZone;
  * @version 1.0
  */
 
-public class TimeTools {
+public final class TimeTools {
 
 
-    public static Date addDaysToDate(Date d, int iDays) {
+    public static Date addDaysToDate(final Date d, final int iDays) {
         //create Calendar
-        Calendar cal = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance();
         cal.setTime(d);
 
         //add days
@@ -74,9 +80,9 @@ public class TimeTools {
         return cal.getTime();
     }
 
-    public static Date addMonthsToDate(Date d, int iMonths) {
+    public static Date addMonthsToDate(final Date d, final int iMonths) {
         //create Calendar
-        Calendar cal = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance();
         cal.setTime(d);
 
         //add months
@@ -90,13 +96,13 @@ public class TimeTools {
         return formatTimeStamp(new Date());
     }
 
-    public static Timestamp convertDateToTimestamp(Date date) {
+    public static Timestamp convertDateToTimestamp(final Date date) {
         if (date instanceof Timestamp)
             return (Timestamp) date;
         return new Timestamp(date.getTime());
     }
 
-    public static Timestamp parseTimeStamp(String ts) throws NeuClearException {
+    public static Timestamp parseTimeStamp(final String ts) throws NeuClearException {
         try {
             return convertDateToTimestamp(getDateFormatter().parse(ts));
         } catch (ParseException e) {
@@ -105,7 +111,7 @@ public class TimeTools {
 
     }
 
-    public static String formatTimeStamp(Date time) {
+    public static String formatTimeStamp(final Date time) {
         return getDateFormatter().format(time);
     }
 

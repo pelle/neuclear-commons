@@ -17,14 +17,20 @@ import java.awt.event.ActionEvent;
  * User: pelleb
  * Date: Nov 19, 2003
  * Time: 8:57:03 AM
- * $Id: KeyGeneratorApplet.java,v 1.1 2003/11/19 14:37:37 pelle Exp $
+ * $Id: KeyGeneratorApplet.java,v 1.2 2003/11/21 04:43:40 pelle Exp $
  * $Log: KeyGeneratorApplet.java,v $
+ * Revision 1.2  2003/11/21 04:43:40  pelle
+ * EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
+ * Otherwise You will Finaliate.
+ * Anything that can be final has been made final throughout everyting. We've used IDEA's Inspector tool to find all instance of variables that could be final.
+ * This should hopefully make everything more stable (and secure).
+ *
  * Revision 1.1  2003/11/19 14:37:37  pelle
  * CommandLineAgent now masks the passphrase input using the JLine library which is now a dependency.
  * And the beginnings of a KeyGeneratorApplet
  *
  */
-public class KeyGeneratorApplet extends Applet {
+public final class KeyGeneratorApplet extends Applet {
     /**
      * Called by the browser or applet viewer to inform
      * this applet that it should start its execution. It is called after
@@ -45,7 +51,7 @@ public class KeyGeneratorApplet extends Applet {
      * @see     Applet#init()
      * @see     Applet#stop()
      */
-    public void start() {
+    public final void start() {
         // TODO seed Random NumberGenerator
         statusLabel.setText("Click OK to Start Key Generation");
 
@@ -69,7 +75,7 @@ public class KeyGeneratorApplet extends Applet {
      * @see     Applet#start()
      * @see     Applet#stop()
      */
-    public void init() {
+    public final void init() {
         try {
             random=SecureRandom.getInstance("SHA1PRNG");
             kpg=KeyPairGenerator.getInstance("RSA");
@@ -78,16 +84,16 @@ public class KeyGeneratorApplet extends Applet {
 
         }
         agent=new GuiDialogAgent();
-        Panel panel = new Panel();
+        final Panel panel = new Panel();
         panel.setLayout(new BorderLayout());
         add(panel);
-        Panel text = new Panel(new FlowLayout());
+        final Panel text = new Panel(new FlowLayout());
         panel.add(text, BorderLayout.NORTH);
         keygenTask=new Thread(new KeyGenerationTask(kpg,this));
         try {
             final Image img = Toolkit.getDefaultToolkit().getImage(this.getClass().getClassLoader().getResource("org/neuclear/commons/crypto/passphraseagents/neuclear.png"));
-            Canvas canvas = new Canvas() {
-                public void paint(Graphics g) {
+            final Canvas canvas = new Canvas() {
+                public void paint(final Graphics g) {
                     setSize(50, 50);
                     g.drawImage(img, 0, 0, this);
 
@@ -105,22 +111,22 @@ public class KeyGeneratorApplet extends Applet {
         statusLabel.setForeground(Color.blue);
 
         text.add(statusLabel);
-        Panel buttons = new Panel(new FlowLayout());
+        final Panel buttons = new Panel(new FlowLayout());
         panel.add(buttons, BorderLayout.SOUTH);
         ok = new Button("OK");
         buttons.add(ok);
-        Button cancel = new Button("Cancel");
+        final Button cancel = new Button("Cancel");
         buttons.add(cancel);
         cancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
+            public void actionPerformed(final ActionEvent actionEvent) {
                 if (keygenTask!=null)
                     keygenTask.interrupt();
                 ok.setEnabled(true);
             }
         });
 
-        ActionListener action = new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
+        final ActionListener action = new ActionListener() {
+            public void actionPerformed(final ActionEvent actionEvent) {
                 ok.setEnabled(false);
                 keygenTask.run();
 
@@ -148,11 +154,11 @@ public class KeyGeneratorApplet extends Applet {
      * @see     Applet#start()
      * @see     Applet#stop()
      */
-    public void destroy() {
+    public final void destroy() {
         random=null;
     }
 
-    void setKp(KeyPair kp) {
+    final void setKp(final KeyPair kp) {
         publickey=kp.getPublic().getEncoded();
         privatekey = kp.getPrivate().getEncoded();
     }

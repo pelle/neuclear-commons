@@ -1,6 +1,12 @@
 /*
- * $Id: NeuClearException.java,v 1.2 2003/11/11 21:17:50 pelle Exp $
+ * $Id: NeuClearException.java,v 1.3 2003/11/21 04:43:42 pelle Exp $
  * $Log: NeuClearException.java,v $
+ * Revision 1.3  2003/11/21 04:43:42  pelle
+ * EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
+ * Otherwise You will Finaliate.
+ * Anything that can be final has been made final throughout everyting. We've used IDEA's Inspector tool to find all instance of variables that could be final.
+ * This should hopefully make everything more stable (and secure).
+ *
  * Revision 1.2  2003/11/11 21:17:50  pelle
  * Further vital reshuffling.
  * org.neudist.crypto.* and org.neudist.utils.* have been moved to respective areas under org.neuclear.commons
@@ -62,7 +68,7 @@ public class NeuClearException extends Exception {
      *         unknown.)
      * @since  1.4
      */
-    public NeuClearException(Throwable cause) {
+    public NeuClearException(final Throwable cause) {
         super(cause);
     }
 
@@ -74,7 +80,7 @@ public class NeuClearException extends Exception {
      * @param   message   the detail message. The detail message is saved for
      *          later retrieval by the {@link #getMessage()} method.
      */
-    public NeuClearException(String message) {
+    public NeuClearException(final String message) {
         super(message);
     }
 
@@ -92,7 +98,7 @@ public class NeuClearException extends Exception {
      *         unknown.)
      * @since  1.4
      */
-    public NeuClearException(String message, Throwable cause) {
+    public NeuClearException(final String message, final Throwable cause) {
         super(message, cause);
     }
 

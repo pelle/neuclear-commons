@@ -1,6 +1,12 @@
 /*
- * $Id: Utility.java,v 1.1 2003/11/11 21:17:52 pelle Exp $
+ * $Id: Utility.java,v 1.2 2003/11/21 04:43:42 pelle Exp $
  * $Log: Utility.java,v $
+ * Revision 1.2  2003/11/21 04:43:42  pelle
+ * EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
+ * Otherwise You will Finaliate.
+ * Anything that can be final has been made final throughout everyting. We've used IDEA's Inspector tool to find all instance of variables that could be final.
+ * This should hopefully make everything more stable (and secure).
+ *
  * Revision 1.1  2003/11/11 21:17:52  pelle
  * Further vital reshuffling.
  * org.neudist.crypto.* and org.neudist.utils.* have been moved to respective areas under org.neuclear.commons
@@ -122,44 +128,44 @@ import org.neuclear.commons.NeuClearException;
 
 import java.io.PrintStream;
 
-public class Utility {
-    public static boolean isEmpty(Object obj) {
+public final class Utility {
+    public static boolean isEmpty(final Object obj) {
         return (obj == null || obj.toString().equals(""));
     }
 
-    public static String denullString(String string) {
+    public static String denullString(final String string) {
         return denullString(string, "");
     }
 
-    public static String denullString(String string, String def) {
+    public static String denullString(final String string, final String def) {
         if (string == null)
             return def;
         return string;
     }
 
     // Im sick of writing the same crap over and over again
-    public static void handleException(Throwable e, PrintStream out) {
+    public static void handleException(final Throwable e, final PrintStream out) {
         out.println("Exception in :" + e.getClass().toString());
         out.println(e.getLocalizedMessage());
         e.printStackTrace(out);
     }
 
-    public static void rethrowException(Throwable e) throws NeuClearException {
+    public static void rethrowException(final Throwable e) throws NeuClearException {
         throw new NeuClearException(e);
     }
 
-    public static void handleException(Throwable e) {
+    public static void handleException(final Throwable e) {
         handleException(e, System.out);
     }
 
-    public static boolean isTrue(String clause, boolean defaultVal) {
+    public static boolean isTrue(String clause, final boolean defaultVal) {
         if (isEmpty(clause))
             return defaultVal;
         clause = clause.toLowerCase();
         return (clause.equals("yes") || clause.equals("y") || clause.equals("1") || clause.equals("true"));
     }
 
-    public static int getIntValue(String strValue, int defValue) {
+    public static int getIntValue(final String strValue, final int defValue) {
         if (strValue == null)
             return defValue;
 
@@ -171,15 +177,15 @@ public class Utility {
 
     }
 
-    public static int getIntValue(String strValue) {
+    public static int getIntValue(final String strValue) {
         return getIntValue(strValue, 0);
     }
 
-    public static int getEnumVal(String[] enum, String key) {
+    public static int getEnumVal(final String[] enum, final String key) {
         return getEnumVal(enum, key, -1);
     }
 
-    public static int getEnumVal(String[] enum, String key, int def) {
+    public static int getEnumVal(final String[] enum, final String key, final int def) {
         if (enum == null || key == null)
             return def;
         for (int i = 0; i < enum.length; i++)

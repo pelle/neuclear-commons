@@ -1,6 +1,12 @@
 /*
- * $Id: CryptoTools.java,v 1.4 2003/11/20 23:41:36 pelle Exp $
+ * $Id: CryptoTools.java,v 1.5 2003/11/21 04:43:41 pelle Exp $
  * $Log: CryptoTools.java,v $
+ * Revision 1.5  2003/11/21 04:43:41  pelle
+ * EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
+ * Otherwise You will Finaliate.
+ * Anything that can be final has been made final throughout everyting. We've used IDEA's Inspector tool to find all instance of variables that could be final.
+ * This should hopefully make everything more stable (and secure).
+ *
  * Revision 1.4  2003/11/20 23:41:36  pelle
  * Getting all the tests to work in id
  * Removing usage of BC in CryptoTools as it was causing issues.
@@ -218,7 +224,7 @@ import java.util.Random;
 
 // TODO Implement some code to automatically BC Provider if not installed
 
-public class CryptoTools {
+public final class CryptoTools {
     /**
      * Call this method at the beginning of an executable. To ensure that BouncyCastle gets installed properly.
      */
@@ -231,10 +237,10 @@ public class CryptoTools {
         }
     }
 
-    public static KeyPair getKeyPair(KeyStore ks, String s, char[] password) throws CryptoException {
+    public static KeyPair getKeyPair(final KeyStore ks, final String s, final char[] password) throws CryptoException {
         try {
-            Certificate cert = ks.getCertificate(s);
-            PrivateKey priv = (PrivateKey) ks.getKey(s, password);
+            final Certificate cert = ks.getCertificate(s);
+            final PrivateKey priv = (PrivateKey) ks.getKey(s, password);
             if (cert == null || priv == null)
                 throw new CryptoException("They KeyStore Doesn't Contain an entry for: " + s);
             return new KeyPair(cert.getPublicKey(), priv);
@@ -249,15 +255,15 @@ public class CryptoTools {
     }
 
 
-    public static String formatKeyAsHex(Key key) {
+    public static String formatKeyAsHex(final Key key) {
         return formatByteArrayAsHex(key.getEncoded());
     }
 
-    public static PublicKey getPublicKeyFromHex(String hex) throws CryptoException {
+    public static PublicKey getPublicKeyFromHex(final String hex) throws CryptoException {
         try {
-            byte barray[] = convertHexToByteArray(hex);
-            X509EncodedKeySpec pubKeySpec = new X509EncodedKeySpec(barray);
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            final byte[] barray = convertHexToByteArray(hex);
+            final X509EncodedKeySpec pubKeySpec = new X509EncodedKeySpec(barray);
+            final KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             return keyFactory.generatePublic(pubKeySpec);
         } catch (NoSuchAlgorithmException e) {
             rethrowException(e);
@@ -268,12 +274,12 @@ public class CryptoTools {
         return null;
     }
 
-    public static String formatByteArrayAsHex(byte barray[]) {
-        byte hexarray[] = new byte[2 * barray.length];
+    public static String formatByteArrayAsHex(final byte[] barray) {
+        final byte[] hexarray = new byte[2 * barray.length];
         int h = 0;
         for (int i = 0; i < barray.length; i++) {
             h = 2 * i;
-            byte src = barray[i];
+            final byte src = barray[i];
             hexarray[h] = hexTable[(src & 0xF0) >> 4];
             hexarray[h + 1] = hexTable[src & 0x0F];
 
@@ -282,11 +288,11 @@ public class CryptoTools {
 
     }
 
-    public static byte[] convertHexToByteArray(String hex) {
-        byte hexarray[] = hex.getBytes();
-        byte bytearray[] = new byte[(hexarray.length / 2)];
+    public static byte[] convertHexToByteArray(final String hex) {
+        final byte[] hexarray = hex.getBytes();
+        final byte[] bytearray = new byte[(hexarray.length / 2)];
         for (int i = 0; i < hexarray.length; i += 2) {
-            byte result;
+            final byte result;
             byte high = hexarray[i];
             byte low = hexarray[i + 1];
             high = mapHexChar((char) high);
@@ -297,9 +303,9 @@ public class CryptoTools {
         return bytearray;
     }
 
-    public static byte[] getHash(String value) throws CryptoException {
+    public static byte[] getHash(final String value) throws CryptoException {
         try {
-            MessageDigest dig = MessageDigest.getInstance("SHA1");
+            final MessageDigest dig = MessageDigest.getInstance("SHA1");
             dig.digest(value.getBytes());
             return dig.digest();
         } catch (NoSuchAlgorithmException e) {
@@ -309,54 +315,54 @@ public class CryptoTools {
     }
 
     //Quick Hack. Not very efficient I know.
-    public static byte[] pad(byte value[], Cipher c) {
-        int blockSize = c.getBlockSize();
+    public static byte[] pad(final byte[] value, final Cipher c) {
+        final int blockSize = c.getBlockSize();
         return pad(value, blockSize);
     }
 
-    public static byte[] pad(byte[] value, int blockSize) {
-        int mod = value.length % blockSize;
-        int diff = blockSize - mod;
-        byte output[] = new byte[value.length + diff];
+    public static byte[] pad(final byte[] value, final int blockSize) {
+        final int mod = value.length % blockSize;
+        final int diff = blockSize - mod;
+        final byte[] output = new byte[value.length + diff];
         System.arraycopy(value, 0, output, 0, value.length);
         for (int i = value.length; i < output.length; i++)
             output[i] = (byte) 0;
         return output;
     }
 
-    public static byte[] encrypt(byte key[], String value) throws CryptoException {
+    public static byte[] encrypt(final byte[] key, final String value) throws CryptoException {
         return encrypt(key, value.getBytes());
     }
 
-    public static byte[] encrypt(String key, byte value[]) throws CryptoException {
+    public static byte[] encrypt(final String key, final byte[] value) throws CryptoException {
         return encrypt(key.getBytes(), value);
     }
 
-    public static byte[] encrypt(String key, String value) throws CryptoException {
+    public static byte[] encrypt(final String key, final String value) throws CryptoException {
         return encrypt(key.getBytes(), value.getBytes());
     }
 
-    public static byte[] encrypt(byte key[], byte value[]) throws CryptoException {
+    public static byte[] encrypt(final byte[] key, final byte[] value) throws CryptoException {
         return cipherProcess(key, value, true);
     }
 
-    public static byte[] decrypt(String key, String value) throws CryptoException {
+    public static byte[] decrypt(final String key, final String value) throws CryptoException {
         return decrypt(key.getBytes(), value.getBytes());
     }
 
-    public static byte[] decrypt(byte key[], byte value[]) throws CryptoException {
+    public static byte[] decrypt(final byte[] key, final byte[] value) throws CryptoException {
         return cipherProcess(key, value, false);
     }
 
-    private static byte[] cipherProcess(byte key[], byte value[], boolean doencrypt) throws CryptoException {
+    private static byte[] cipherProcess(final byte[] key, final byte[] value, final boolean doencrypt) throws CryptoException {
         try {
-            BlockCipher engine = new AESEngine();
-            BufferedBlockCipher cipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(engine));
+            final BlockCipher engine = new AESEngine();
+            final BufferedBlockCipher cipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(engine));
             cipher.init(doencrypt, new KeyParameter(digest256(key)));
 
-            byte[] cipherText = new byte[cipher.getOutputSize(value.length)];
+            final byte[] cipherText = new byte[cipher.getOutputSize(value.length)];
 
-            int outputLen = cipher.processBytes(value, 0, value.length, cipherText, 0);
+            final int outputLen = cipher.processBytes(value, 0, value.length, cipherText, 0);
             cipher.doFinal(cipherText, outputLen);
             return cipherText;
         } catch (InvalidCipherTextException e) {
@@ -365,12 +371,12 @@ public class CryptoTools {
         return null;
     }
 
-    public static Cipher getCipher(byte key[], boolean doencrypt) throws CryptoException {
+    public static Cipher getCipher(final byte[] key, final boolean doencrypt) throws CryptoException {
         try {
-            Cipher cipher = Cipher.getInstance("AES");
-            KeySpec keyspec = new SecretKeySpec(key, "AES");
-            SecretKeyFactory kf = SecretKeyFactory.getInstance("AES");
-            Key skey = kf.generateSecret(keyspec);
+            final Cipher cipher = Cipher.getInstance("AES");
+            final KeySpec keyspec = new SecretKeySpec(key, "AES");
+            final SecretKeyFactory kf = SecretKeyFactory.getInstance("AES");
+            final Key skey = kf.generateSecret(keyspec);
             cipher.init(doencrypt ? Cipher.ENCRYPT_MODE : Cipher.DECRYPT_MODE, skey);
             return cipher;
         } catch (NoSuchAlgorithmException e) {
@@ -385,13 +391,13 @@ public class CryptoTools {
         return null;
     }
 
-    public static byte[] sign(KeyPair kp, byte value[]) throws CryptoException {
+    public static byte[] sign(final KeyPair kp, final byte[] value) throws CryptoException {
         return sign(kp.getPrivate(), value);
     }
 
-    public static byte[] sign(PrivateKey key, byte value[]) throws CryptoException {
+    public static byte[] sign(final PrivateKey key, final byte[] value) throws CryptoException {
         try {
-            Signature sig = getSignatureCipher(key);
+            final Signature sig = getSignatureCipher(key);
             sig.update(value); // put plain text of lock data into signature.
             byte[] raw = sig.sign();
             if (key instanceof DSAPrivateKey) {
@@ -406,7 +412,7 @@ public class CryptoTools {
         return null;
     }
 
-    public static Signature getSignatureCipher(PrivateKey key) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException {
+    public static Signature getSignatureCipher(final PrivateKey key) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException {
         Signature sig = null;
         if (key instanceof RSAPrivateKey)
             sig = Signature.getInstance("SHA1withRSA"); // Set up signature object.
@@ -419,7 +425,7 @@ public class CryptoTools {
         return sig;
     }
 
-    public static boolean verify(PublicKey pk, byte value[], byte sigvalue[]) throws CryptoException {
+    public static boolean verify(final PublicKey pk, final byte[] value, byte sigvalue[]) throws CryptoException {
         try {
             Signature sig = null;
             if (pk instanceof DSAPublicKey) {
@@ -441,29 +447,29 @@ public class CryptoTools {
         return false;
     }
 
-    public static byte[] digest(byte value[]) {
-        Digest dig = new org.bouncycastle.crypto.digests.SHA1Digest();
+    public static byte[] digest(final byte[] value) {
+        final Digest dig = new org.bouncycastle.crypto.digests.SHA1Digest();
         return digest(dig, value);
     }
 
-    public static byte[] digest256(byte value[]) {
-        Digest dig = new SHA256Digest();
+    public static byte[] digest256(final byte[] value) {
+        final Digest dig = new SHA256Digest();
         return digest(dig, value);
     }
 
-    public static byte[] digest512(byte value[]) {
-        Digest dig = new SHA512Digest();
+    public static byte[] digest512(final byte[] value) {
+        final Digest dig = new SHA512Digest();
         return digest(dig, value);
     }
 
-    private static byte[] digest(Digest dig, byte[] value) {
-        byte output[] = new byte[dig.getDigestSize()];
+    private static byte[] digest(final Digest dig, final byte[] value) {
+        final byte[] output = new byte[dig.getDigestSize()];
         dig.update(value, 0, value.length);
         dig.doFinal(output, 0);
         return output;
     }
 
-    public static boolean equalByteArrays(byte one[], byte two[]) {
+    public static boolean equalByteArrays(final byte[] one, final byte[] two) {
         if ((one == null && two != null) || (one != null && two == null))
             return false;
         if (one == null && two == null)
@@ -477,13 +483,13 @@ public class CryptoTools {
         return true;
     }
 
-    public static String formatAsURLSafe(byte val[]) {
-        BigInteger big = new BigInteger(val);
+    public static String formatAsURLSafe(final byte[] val) {
+        final BigInteger big = new BigInteger(val);
         return big.toString(36);
     }
 
     public static String createRandomID() {
-        BigInteger big = new BigInteger(4096, getRandomInstance());
+        final BigInteger big = new BigInteger(4096, getRandomInstance());
         return big.toString(36);
     }
 
@@ -529,18 +535,18 @@ public class CryptoTools {
      *          
      */
     public static Cipher makePBECipher(
-            String algorithm,
-            int mode,
-            char[] password,
-            byte[] salt,
-            int iterationCount,
-            String provider
+            final String algorithm,
+            final int mode,
+            final char[] password,
+            final byte[] salt,
+            final int iterationCount,
+            final String provider
             ) throws GeneralSecurityException {
-        PBEKeySpec pbeSpec = new PBEKeySpec(password);
-        SecretKeyFactory keyFact = SecretKeyFactory.getInstance(algorithm, provider);
-        PBEParameterSpec defParams = new PBEParameterSpec(salt, iterationCount);
+        final PBEKeySpec pbeSpec = new PBEKeySpec(password);
+        final SecretKeyFactory keyFact = SecretKeyFactory.getInstance(algorithm, provider);
+        final PBEParameterSpec defParams = new PBEParameterSpec(salt, iterationCount);
 
-        Cipher cipher = Cipher.getInstance(algorithm, provider);
+        final Cipher cipher = Cipher.getInstance(algorithm, provider);
 
         cipher.init(mode, keyFact.generateSecret(pbeSpec), defParams);
 
@@ -560,10 +566,10 @@ public class CryptoTools {
      *          
      */
     public static Cipher makePBECipher(
-            int mode,
-            char[] password,
-            byte[] salt,
-            int iterationCount
+            final int mode,
+            final char[] password,
+            final byte[] salt,
+            final int iterationCount
             ) throws GeneralSecurityException {
         return makePBECipher(DEFAULT_PBE_ALGORITHM, mode, password, salt, iterationCount, DEFAULT_JCE_PROVIDER);
     }
@@ -579,17 +585,17 @@ public class CryptoTools {
      *          
      */
     public static Cipher makePBECipher(
-            int mode,
-            char[] password
+            final int mode,
+            final char[] password
             ) throws GeneralSecurityException {
         return makePBECipher(DEFAULT_PBE_ALGORITHM, mode, password, DEFAULT_SALT, DEFAULT_ITERATION_COUNT, DEFAULT_JCE_PROVIDER);
     }
 
 
-    public static PublicKey createPK(String mod, String exp) throws CryptoException {
+    public static PublicKey createPK(final String mod, final String exp) throws CryptoException {
         try {
-            KeyFactory rsaFactory = KeyFactory.getInstance("RSA");
-            RSAPublicKeySpec rsaKeyspec = new RSAPublicKeySpec(new BigInteger(Base64.decode(mod)), new BigInteger(Base64.decode(exp)));
+            final KeyFactory rsaFactory = KeyFactory.getInstance("RSA");
+            final RSAPublicKeySpec rsaKeyspec = new RSAPublicKeySpec(new BigInteger(Base64.decode(mod)), new BigInteger(Base64.decode(exp)));
             return rsaFactory.generatePublic(rsaKeyspec);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace(System.err);
@@ -604,7 +610,7 @@ public class CryptoTools {
         return getKeyPairGenerator().generateKeyPair();
     }
 
-    public static KeyPair createKeyPair(String algorithm)
+    public static KeyPair createKeyPair(final String algorithm)
             throws NoSuchAlgorithmException {
         return getKeyPairGenerator(algorithm).generateKeyPair();
     }
@@ -619,7 +625,7 @@ public class CryptoTools {
 
     }
 
-    public static KeyPairGenerator getKeyPairGenerator(String algorithm)
+    public static KeyPairGenerator getKeyPairGenerator(final String algorithm)
             throws NoSuchAlgorithmException {
         if (!algorithm.equals(RSA) && !algorithm.equals(DSA))
             throw new NoSuchAlgorithmException(algorithm + " is not supported");
@@ -632,7 +638,7 @@ public class CryptoTools {
         return dkg;
     }
 
-    public static void rethrowException(Throwable e) throws CryptoException {
+    public static void rethrowException(final Throwable e) throws CryptoException {
         throw new CryptoException(e);
     }
 
@@ -644,14 +650,14 @@ public class CryptoTools {
      * 
      * @see <A HREF="http://www.w3.org/TR/xmldsig-core/#dsa-sha1">6.4.1 DSA</A>
      */
-    public static byte[] convertASN1toXMLDSIG(byte asn1Bytes[]) throws IOException {
+    public static byte[] convertASN1toXMLDSIG(final byte[] asn1Bytes) throws IOException {
 
-        byte rLength = asn1Bytes[3];
+        final byte rLength = asn1Bytes[3];
         int i;
 
         for (i = rLength; (i > 0) && (asn1Bytes[(4 + rLength) - i] == 0); i--) ;
 
-        byte sLength = asn1Bytes[5 + rLength];
+        final byte sLength = asn1Bytes[5 + rLength];
         int j;
 
         for (j = sLength; (j > 0) && (asn1Bytes[(6 + rLength + sLength) - j] == 0); j--) ;
@@ -661,7 +667,7 @@ public class CryptoTools {
                 || (j > 20)) {
             throw new IOException("Invalid ASN.1 format of DSA signature");
         } else {
-            byte xmldsigBytes[] = new byte[40];
+            final byte[] xmldsigBytes = new byte[40];
 
             System.arraycopy(asn1Bytes, (4 + rLength) - i, xmldsigBytes, 20 - i, i);
             System.arraycopy(asn1Bytes, (6 + rLength + sLength) - j, xmldsigBytes, 40 - j, j);
@@ -678,7 +684,7 @@ public class CryptoTools {
      * 
      * @see <A HREF="http://www.w3.org/TR/xmldsig-core/#dsa-sha1">6.4.1 DSA</A>
      */
-    public static byte[] convertXMLDSIGtoASN1(byte xmldsigBytes[]) throws IOException {
+    public static byte[] convertXMLDSIGtoASN1(final byte[] xmldsigBytes) throws IOException {
 
         if (xmldsigBytes.length != 40) {
             throw new IOException("Invalid XMLDSIG format of DSA signature");
@@ -700,7 +706,7 @@ public class CryptoTools {
             l += 1;
         }
 
-        byte asn1Bytes[] = new byte[6 + j + l];
+        final byte[] asn1Bytes = new byte[6 + j + l];
 
         asn1Bytes[0] = 48;
         asn1Bytes[1] = (byte) (4 + j + l);
@@ -728,7 +734,7 @@ public class CryptoTools {
     public static final String DEFAULT_JCE_PROVIDER = "BC";
     private static final byte DEFAULT_SALT[] = "LiquidNightClubPanam".getBytes();
     private static final int DEFAULT_ITERATION_COUNT = 2048;
-    public static byte[] hexTable = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+    public static final byte[] hexTable = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
     private static Random randSource;
 

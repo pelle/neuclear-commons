@@ -24,8 +24,14 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: KeyCache.java,v 1.1 2003/11/18 00:01:02 pelle Exp $
+$Id: KeyCache.java,v 1.2 2003/11/21 04:43:41 pelle Exp $
 $Log: KeyCache.java,v $
+Revision 1.2  2003/11/21 04:43:41  pelle
+EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
+Otherwise You will Finaliate.
+Anything that can be final has been made final throughout everyting. We've used IDEA's Inspector tool to find all instance of variables that could be final.
+This should hopefully make everything more stable (and secure).
+
 Revision 1.1  2003/11/18 00:01:02  pelle
 The sample signing web application for logging in and out is now working.
 There had been an issue in the canonicalizer when dealing with the embedded object of the SignatureRequest object.
@@ -36,37 +42,37 @@ There had been an issue in the canonicalizer when dealing with the embedded obje
  * Keeps a Cache of PrivateKeys. The key to finding the keys in the Cache
  * is a SHA1 Digest of the alias and the passphrase
  */
-public class KeyCache {
-    public KeyCache(KeyStore ks) {
+public final class KeyCache {
+    public KeyCache(final KeyStore ks) {
         this.cache = new HashMap();
         this.ks = ks;
     }
 
-    public Key getKey(String alias, char passphrase[]) throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, NonExistingSignerException {
-        String hash = createHash(alias, passphrase);
+    public final Key getKey(final String alias, final char[] passphrase) throws KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, NonExistingSignerException {
+        final String hash = createHash(alias, passphrase);
         if (cache.containsKey(hash))
             return (Key) cache.get(hash);
         if (ks.containsAlias(alias)) {
-            Key key = ks.getKey(alias, passphrase);
+            final Key key = ks.getKey(alias, passphrase);
             cache.put(hash, key);
             return key;
         }
         return null;
     }
 
-    public final static String createHash(String alias, char passphrase[]) {
-        Digest dig = new org.bouncycastle.crypto.digests.SHA1Digest();
-        byte a[] = alias.getBytes();
+    public final static String createHash(final String alias, final char[] passphrase) {
+        final Digest dig = new org.bouncycastle.crypto.digests.SHA1Digest();
+        final byte[] a = alias.getBytes();
         dig.update(a, 0, a.length);
-        byte p[] = new String(passphrase).getBytes();
+        final byte[] p = new String(passphrase).getBytes();
         dig.update(p, 0, p.length);
-        byte hash[] = new byte[dig.getDigestSize()];
+        final byte[] hash = new byte[dig.getDigestSize()];
         dig.doFinal(hash, 0);
         return new String(hash);
 
 
     }
 
-    private KeyStore ks;
-    private Map cache;
+    private final KeyStore ks;
+    private final Map cache;
 }

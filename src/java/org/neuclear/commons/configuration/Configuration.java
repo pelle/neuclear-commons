@@ -15,22 +15,22 @@ import java.io.InputStream;
  * Date: Aug 13, 2003
  * Time: 11:34:51 AM
  */
-public class Configuration {
+public final class Configuration {
 
-    private static synchronized PicoContainer getContainer(String context) throws ConfigurationException {
+    private static synchronized PicoContainer getContainer(final String context) throws ConfigurationException {
         if (pico == null)
             pico = buildContainer(context);
         return pico;
     }
 
-    public static Object getComponent(Object type, String context) throws ConfigurationException {
+    public static Object getComponent(final Object type, final String context) throws ConfigurationException {
         return getContainer(context).getComponent(type);
     }
 
-    private static PicoContainer buildContainer(String context) throws ConfigurationException {
+    private static PicoContainer buildContainer(final String context) throws ConfigurationException {
         try {
-            InputSourceRegistrationNanoContainer nc = new DomRegistrationNanoContainer.Default();
-            InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(context + ".xml");
+            final InputSourceRegistrationNanoContainer nc = new DomRegistrationNanoContainer.Default();
+            final InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(context + ".xml");
             nc.registerComponents(new InputSource(in));
             nc.instantiateComponents();
             return nc;

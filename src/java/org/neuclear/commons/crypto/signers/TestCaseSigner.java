@@ -26,8 +26,14 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: TestCaseSigner.java,v 1.5 2003/11/18 23:34:55 pelle Exp $
+$Id: TestCaseSigner.java,v 1.6 2003/11/21 04:43:41 pelle Exp $
 $Log: TestCaseSigner.java,v $
+Revision 1.6  2003/11/21 04:43:41  pelle
+EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
+Otherwise You will Finaliate.
+Anything that can be final has been made final throughout everyting. We've used IDEA's Inspector tool to find all instance of variables that could be final.
+This should hopefully make everything more stable (and secure).
+
 Revision 1.5  2003/11/18 23:34:55  pelle
 Payment Web Application is getting there.
 
@@ -55,7 +61,7 @@ PaymentReceiverTest works, but needs a abit more work in its environment to succ
  * are in standard jks format and all the passphrases including the
  * keystore passphrase are the same.
  */
-public class TestCaseSigner extends JCESigner {
+public final class TestCaseSigner extends JCESigner {
 
     /**
      * Creates a TestCaseSigner with the keystore in:<br>
@@ -69,7 +75,7 @@ public class TestCaseSigner extends JCESigner {
         this(KEYSTORE, getKeyStore(), "neuclear");
     }
 
-    public TestCaseSigner(PassPhraseAgent agent) throws GeneralSecurityException, NeuClearException {
+    public TestCaseSigner(final PassPhraseAgent agent) throws GeneralSecurityException, NeuClearException {
         this(KEYSTORE, getKeyStore(), agent);
     }
 
@@ -83,11 +89,11 @@ public class TestCaseSigner extends JCESigner {
      * @throws NeuClearException        
      * @throws GeneralSecurityException 
      */
-    public TestCaseSigner(String name, InputStream in, String passphrase) throws NeuClearException, GeneralSecurityException {
+    public TestCaseSigner(final String name, final InputStream in, final String passphrase) throws NeuClearException, GeneralSecurityException {
         this(name, in, new AlwaysTheSamePassphraseAgent(passphrase));
     }
 
-    public TestCaseSigner(String name, InputStream in, PassPhraseAgent agent) throws NeuClearException, GeneralSecurityException {
+    public TestCaseSigner(final String name, final InputStream in, final PassPhraseAgent agent) throws NeuClearException, GeneralSecurityException {
         super(name,
                 in,
                 "jks", "SUN",
@@ -96,7 +102,7 @@ public class TestCaseSigner extends JCESigner {
     }
 
     private static InputStream getKeyStore() {
-        URL url = TestCaseSigner.class.getClassLoader().getResource(KEYSTORE);
+        final URL url = TestCaseSigner.class.getClassLoader().getResource(KEYSTORE);
         System.out.println("loading keystore from: " + url.toString());
         return TestCaseSigner.class.getClassLoader().getResourceAsStream(KEYSTORE);
 

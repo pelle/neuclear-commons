@@ -17,8 +17,14 @@ import java.security.cert.CertificateException;
  * User: pelleb
  * Date: Feb 21, 2003
  * Time: 5:04:29 PM
- * $Id: JunitTools.java,v 1.2 2003/11/20 23:41:36 pelle Exp $
+ * $Id: JunitTools.java,v 1.3 2003/11/21 04:43:42 pelle Exp $
  * $Log: JunitTools.java,v $
+ * Revision 1.3  2003/11/21 04:43:42  pelle
+ * EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
+ * Otherwise You will Finaliate.
+ * Anything that can be final has been made final throughout everyting. We've used IDEA's Inspector tool to find all instance of variables that could be final.
+ * This should hopefully make everything more stable (and secure).
+ *
  * Revision 1.2  2003/11/20 23:41:36  pelle
  * Getting all the tests to work in id
  * Removing usage of BC in CryptoTools as it was causing issues.
@@ -40,8 +46,8 @@ public final class JunitTools {
     private static void loadKeys() throws CryptoException {
         try {
 
-            KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-            char[] password = "neuclear".toCharArray();
+            final KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+            final char[] password = "neuclear".toCharArray();
             ks.load(new FileInputStream(new File("src/testdata/keys/testkeys.jks")), password);
             rsakey = CryptoTools.getKeyPair(ks, "rsakey", password);
             dsakey = CryptoTools.getKeyPair(ks, "dsakey", password);

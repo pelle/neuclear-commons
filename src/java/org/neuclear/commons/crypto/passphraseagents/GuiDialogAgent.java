@@ -22,8 +22,14 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: GuiDialogAgent.java,v 1.1 2003/11/11 21:17:46 pelle Exp $
+$Id: GuiDialogAgent.java,v 1.2 2003/11/21 04:43:41 pelle Exp $
 $Log: GuiDialogAgent.java,v $
+Revision 1.2  2003/11/21 04:43:41  pelle
+EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
+Otherwise You will Finaliate.
+Anything that can be final has been made final throughout everyting. We've used IDEA's Inspector tool to find all instance of variables that could be final.
+This should hopefully make everything more stable (and secure).
+
 Revision 1.1  2003/11/11 21:17:46  pelle
 Further vital reshuffling.
 org.neudist.crypto.* and org.neudist.utils.* have been moved to respective areas under org.neuclear.commons
@@ -61,17 +67,17 @@ public final class GuiDialogAgent implements InteractiveAgent {
 
         frame.setVisible(false);
         frame.setSize(200, 100);
-        Panel panel = new Panel();
+        final Panel panel = new Panel();
         panel.setLayout(new BorderLayout());
         frame.add(panel);
-        Panel text = new Panel(new FlowLayout());
+        final Panel text = new Panel(new FlowLayout());
         panel.add(text, BorderLayout.NORTH);
 
 
         try {
             img = Toolkit.getDefaultToolkit().getImage(this.getClass().getClassLoader().getResource("org/neuclear/commons/crypto/passphraseagents/neuclear.png"));
-            Canvas canvas = new Canvas() {
-                public void paint(Graphics g) {
+            final Canvas canvas = new Canvas() {
+                public void paint(final Graphics g) {
                     setSize(50, 50);
                     g.drawImage(img, 0, 0, this);
 
@@ -93,14 +99,14 @@ public final class GuiDialogAgent implements InteractiveAgent {
         passphrase = new TextField();
         passphrase.setEchoChar('*');
         panel.add(passphrase, BorderLayout.CENTER);
-        Panel buttons = new Panel(new FlowLayout());
+        final Panel buttons = new Panel(new FlowLayout());
         panel.add(buttons, BorderLayout.SOUTH);
         ok = new Button("Sign");
         buttons.add(ok);
-        Button cancel = new Button("Cancel");
+        final Button cancel = new Button("Cancel");
         buttons.add(cancel);
         cancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
+            public void actionPerformed(final ActionEvent actionEvent) {
                 synchronized (passphrase) {
                     passphrase.setText("");
                     passphrase.notifyAll();
@@ -109,8 +115,8 @@ public final class GuiDialogAgent implements InteractiveAgent {
             }
         });
 
-        ActionListener action = new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
+        final ActionListener action = new ActionListener() {
+            public void actionPerformed(final ActionEvent actionEvent) {
                 synchronized (passphrase) {
                     passphrase.notifyAll();
                 }
@@ -122,7 +128,7 @@ public final class GuiDialogAgent implements InteractiveAgent {
 
     }
 
-    public char[] getPassPhrase(String name) {
+    public char[] getPassPhrase(final String name) {
         synchronized (passphrase) {
             passphrase.setText("");
             nameLabel.setText(name);
@@ -140,18 +146,18 @@ public final class GuiDialogAgent implements InteractiveAgent {
         }
     }
 
-    public static void main(String args[]) {
-        PassPhraseAgent dia = new GuiDialogAgent();
+    public static void main(final String[] args) {
+        final PassPhraseAgent dia = new GuiDialogAgent();
         System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("neu://pelle@test")));
         System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("neu://pelle@test")));
 
         System.exit(0);
     }
 
-    private TextField passphrase;
-    private Button ok;
-    private Label nameLabel;
-    private Frame frame;
+    private final TextField passphrase;
+    private final Button ok;
+    private final Label nameLabel;
+    private final Frame frame;
     private Image img;
 
 

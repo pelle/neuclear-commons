@@ -8,15 +8,21 @@ import java.security.KeyPair;
  * User: pelleb
  * Date: Nov 19, 2003
  * Time: 9:18:12 AM
- * $Id: KeyGenerationTask.java,v 1.1 2003/11/19 14:37:37 pelle Exp $
+ * $Id: KeyGenerationTask.java,v 1.2 2003/11/21 04:43:40 pelle Exp $
  * $Log: KeyGenerationTask.java,v $
+ * Revision 1.2  2003/11/21 04:43:40  pelle
+ * EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
+ * Otherwise You will Finaliate.
+ * Anything that can be final has been made final throughout everyting. We've used IDEA's Inspector tool to find all instance of variables that could be final.
+ * This should hopefully make everything more stable (and secure).
+ *
  * Revision 1.1  2003/11/19 14:37:37  pelle
  * CommandLineAgent now masks the passphrase input using the JLine library which is now a dependency.
  * And the beginnings of a KeyGeneratorApplet
  *
  */
-public class KeyGenerationTask implements Runnable{
-    public KeyGenerationTask(KeyPairGenerator kpg,KeyGeneratorApplet applet) {
+public final class KeyGenerationTask implements Runnable{
+    public KeyGenerationTask(final KeyPairGenerator kpg,final KeyGeneratorApplet applet) {
         this.kpg = kpg;
         this.applet=applet;
     }
@@ -32,8 +38,8 @@ public class KeyGenerationTask implements Runnable{
      *
      * @see     Thread#run()
      */
-    public void run() {
-        KeyPair kp=kpg.generateKeyPair();
+    public final void run() {
+        final KeyPair kp=kpg.generateKeyPair();
         applet.setKp(kp);
     }
 

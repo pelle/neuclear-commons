@@ -1,6 +1,12 @@
 /*
- * $Id: SimpleSigner.java,v 1.3 2003/11/19 23:32:50 pelle Exp $
+ * $Id: SimpleSigner.java,v 1.4 2003/11/21 04:43:41 pelle Exp $
  * $Log: SimpleSigner.java,v $
+ * Revision 1.4  2003/11/21 04:43:41  pelle
+ * EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
+ * Otherwise You will Finaliate.
+ * Anything that can be final has been made final throughout everyting. We've used IDEA's Inspector tool to find all instance of variables that could be final.
+ * This should hopefully make everything more stable (and secure).
+ *
  * Revision 1.3  2003/11/19 23:32:50  pelle
  * Signers now can generatekeys via the generateKey() method.
  * Refactored the relationship between SignedNamedObject and NamedObjectBuilder a bit.
@@ -108,16 +114,16 @@ import java.util.Map;
  * Simple memory based implementation of Signer.
  * Currently it doesnt even use the passphrase. However it does do a SHA1 digest on the name first.
  */
-public class SimpleSigner implements Signer {
+public final class SimpleSigner implements Signer {
 
-    public SimpleSigner(String file, PassPhraseAgent agent) throws NeuClearException, GeneralSecurityException {
+    public SimpleSigner(final String file, final PassPhraseAgent agent) throws NeuClearException, GeneralSecurityException {
         this.agent = agent;
         try {
             signerFile = new File(file);
             if (signerFile.exists()) {
                 System.out.println("NEUDIST: Loading KeyStore");
-                FileInputStream in = new FileInputStream(signerFile);
-                ObjectInputStream s = new ObjectInputStream(in);
+                final FileInputStream in = new FileInputStream(signerFile);
+                final ObjectInputStream s = new ObjectInputStream(in);
                 ks = (HashMap) s.readObject();
             } else
                 ks = new HashMap();
@@ -137,29 +143,29 @@ public class SimpleSigner implements Signer {
         }
     }
 
-    private PrivateKey getKey(String name, char passphrase[]) throws CryptoException, NonExistingSignerException {
+    private PrivateKey getKey(final String name, final char[] passphrase) throws CryptoException, NonExistingSignerException {
         System.out.println("NEUDIST: UnSealing key " + name + " ...");
-        byte encrypted[] = (byte[]) ks.get(getDigestedName(name));
+        final byte[] encrypted = (byte[]) ks.get(getDigestedName(name));
         if (encrypted == null)
             throw new NonExistingSignerException("Signer " + name + "doesnt exist in this Store");
-        ByteArrayInputStream bis = new ByteArrayInputStream(encrypted);
+        final ByteArrayInputStream bis = new ByteArrayInputStream(encrypted);
         byte keyBytes[] = new byte[0];
         try {
-            Cipher c = CryptoTools.makePBECipher(Cipher.DECRYPT_MODE, passphrase);
-            CipherInputStream cin = new CipherInputStream(bis, c);
-            DataInputStream din = new DataInputStream(cin);
+            final Cipher c = CryptoTools.makePBECipher(Cipher.DECRYPT_MODE, passphrase);
+            final CipherInputStream cin = new CipherInputStream(bis, c);
+            final DataInputStream din = new DataInputStream(cin);
             //byte keyBytes[]=new byte[c.getOutputSize(encrypted.length)];
             if (din.readInt() != 11870)  //This is just a quick check to see if the passphrase worked
                 throw new InvalidPassphraseException("Passphrase Didnt Match");
 
-            int i = din.readInt();
+            final int i = din.readInt();
             // Sanity Check
             if (i > 5000)
                 throw new InvalidPassphraseException("Returned key is too big");
             keyBytes = new byte[i];
             din.readFully(keyBytes, 0, keyBytes.length);
             din.close();
-            KeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
+            final KeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
             return kf.generatePrivate(spec);
         } catch (GeneralSecurityException e) {
             throw new InvalidPassphraseException(e.getLocalizedMessage());
@@ -176,7 +182,7 @@ public class SimpleSigner implements Signer {
      * @param key  The PrivateKey itself.
      */
 
-    public void addKey(String name, PrivateKey key) throws GeneralSecurityException, IOException {
+    public final void addKey(final String name, final PrivateKey key) throws GeneralSecurityException, IOException {
         addKey(name, agent.getPassPhrase(name), key);
     }
 
@@ -188,23 +194,23 @@ public class SimpleSigner implements Signer {
      * @param key        The PrivateKey itself.
      */
 
-    public void addKey(String name, char passphrase[], PrivateKey key) throws GeneralSecurityException, IOException {
+    public final void addKey(final String name, final char[] passphrase, final PrivateKey key) throws GeneralSecurityException, IOException {
         System.out.println("NEUDIST: Sealing key: " + name + " in format " + key.getFormat());
-        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+        final ByteArrayOutputStream bOut = new ByteArrayOutputStream();
         DataOutputStream dOut = new DataOutputStream(bOut);
-        Cipher c = CryptoTools.makePBECipher(Cipher.ENCRYPT_MODE, passphrase);
-        CipherOutputStream cOut = new CipherOutputStream(dOut, c);
+        final Cipher c = CryptoTools.makePBECipher(Cipher.ENCRYPT_MODE, passphrase);
+        final CipherOutputStream cOut = new CipherOutputStream(dOut, c);
         dOut = new DataOutputStream(cOut);
         dOut.writeInt(11870);//This is just a quick check to see if the passphrase worked
-        byte keyBytes[] = key.getEncoded(); //I'm assuming this is PKCS8, If not tough dooda
+        final byte[] keyBytes = key.getEncoded(); //I'm assuming this is PKCS8, If not tough dooda
         dOut.writeInt(keyBytes.length);
         dOut.write(keyBytes);
         dOut.close();
-        byte encrypted[] = bOut.toByteArray();
+        final byte[] encrypted = bOut.toByteArray();
         ks.put(getDigestedName(name), encrypted);
     }
 
-    public boolean canSignFor(String name) throws CryptoException {
+    public final boolean canSignFor(final String name) throws CryptoException {
         return ks.containsKey(getDigestedName(name));
     }
 
@@ -215,20 +221,20 @@ public class SimpleSigner implements Signer {
      * @return KEY_NONE,KEY_RSA,KEY_DSA
      * @throws CryptoException 
      */
-    public int getKeyType(String name) throws CryptoException {
+    public final int getKeyType(final String name) throws CryptoException {
         return (canSignFor(name)) ? KEY_RSA : KEY_NONE; // We always use RSA here
     }
 
-    static final protected String getDigestedName(String name) {
+    static final protected String getDigestedName(final String name) {
         return new String(CryptoTools.digest(name.getBytes()));
     }
 
-    public void save() throws IOException {
+    public final void save() throws IOException {
         if (signerFile.getParent() != null)
             signerFile.getParentFile().mkdirs();
 
-        FileOutputStream f = new FileOutputStream(signerFile);
-        ObjectOutput s = new ObjectOutputStream(f);
+        final FileOutputStream f = new FileOutputStream(signerFile);
+        final ObjectOutput s = new ObjectOutputStream(f);
         s.writeObject(ks);
         s.flush();
 
@@ -243,7 +249,7 @@ public class SimpleSigner implements Signer {
      * @throws InvalidPassphraseException if the passphrase doesn't match
      */
 
-    public byte[] sign(String name, byte data[]) throws CryptoException {
+    public final byte[] sign(final String name, final byte[] data) throws CryptoException {
 
         return CryptoTools.sign(getKey(name, agent.getPassPhrase(name)), data);
     }
@@ -257,9 +263,9 @@ public class SimpleSigner implements Signer {
      * @throws org.neuclear.commons.crypto.CryptoException
      *          
      */
-    public PublicKey generateKey(String alias) throws CryptoException {
+    public final PublicKey generateKey(final String alias) throws CryptoException {
         try {
-            KeyPair kp = kpg.generateKeyPair();
+            final KeyPair kp = kpg.generateKeyPair();
             addKey(alias, agent.getPassPhrase(alias), kp.getPrivate());
             return kp.getPublic();
         } catch (GeneralSecurityException e) {

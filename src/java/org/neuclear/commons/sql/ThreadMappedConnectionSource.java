@@ -15,7 +15,7 @@ import java.io.IOException;
  * Time: 4:15:06 PM
  */
 public abstract class ThreadMappedConnectionSource implements ConnectionSource {
-    protected Map threadmap;
+    protected final Map threadmap;
 
     public ThreadMappedConnectionSource() {
         threadmap = new HashMap();
@@ -26,7 +26,7 @@ public abstract class ThreadMappedConnectionSource implements ConnectionSource {
      * @return
      * @throws java.sql.SQLException
      */
-    public Connection getConnection() throws SQLException, IOException {
+    public final Connection getConnection() throws SQLException, IOException {
         Connection con=(Connection)threadmap.get(Thread.currentThread());
 
         if (!(con!=null&&!con.isClosed())) {

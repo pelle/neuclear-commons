@@ -1,6 +1,12 @@
 /*
- * $Id: InvalidPassphraseException.java,v 1.1 2003/11/11 21:17:47 pelle Exp $
+ * $Id: InvalidPassphraseException.java,v 1.2 2003/11/21 04:43:41 pelle Exp $
  * $Log: InvalidPassphraseException.java,v $
+ * Revision 1.2  2003/11/21 04:43:41  pelle
+ * EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
+ * Otherwise You will Finaliate.
+ * Anything that can be final has been made final throughout everyting. We've used IDEA's Inspector tool to find all instance of variables that could be final.
+ * This should hopefully make everything more stable (and secure).
+ *
  * Revision 1.1  2003/11/11 21:17:47  pelle
  * Further vital reshuffling.
  * org.neudist.crypto.* and org.neudist.utils.* have been moved to respective areas under org.neuclear.commons
@@ -38,12 +44,12 @@ package org.neuclear.commons.crypto.signers;
 
 import org.neuclear.commons.crypto.CryptoException;
 
-public class InvalidPassphraseException extends CryptoException {
+public final class InvalidPassphraseException extends CryptoException {
     public InvalidPassphraseException() {
         super("Passphrase incorrect.");
     }
 
-    public InvalidPassphraseException(String msg) {
+    public InvalidPassphraseException(final String msg) {
         super(msg);
     }
 }

@@ -13,9 +13,9 @@ import java.util.HashMap;
  * Date: Aug 6, 2003
  * Time: 3:38:50 PM
  */
-public class DefaultConnectionSource extends ThreadMappedConnectionSource {
+public final class DefaultConnectionSource extends ThreadMappedConnectionSource {
 
-    public Connection createConnection() throws SQLException, IOException {
+    public final Connection createConnection() throws SQLException, IOException {
         return SQLTools.getConnection();
     }
 

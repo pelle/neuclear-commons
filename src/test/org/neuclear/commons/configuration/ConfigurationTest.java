@@ -8,12 +8,12 @@ import org.neuclear.commons.sql.ConnectionSource;
  * Date: Aug 18, 2003
  * Time: 11:15:41 AM
  */
-public class ConfigurationTest extends TestCase {
-    public ConfigurationTest(String string) {
+public final class ConfigurationTest extends TestCase {
+    public ConfigurationTest(final String string) {
         super(string);
     }
 
-    public void testGetComponent() throws ConfigurationException {
+    public final void testGetComponent() throws ConfigurationException {
         assertNotNull(Configuration.getComponent(ConnectionSource.class, "neuclear-commons"));
     }
 }

@@ -22,7 +22,7 @@ public final class SQLTools {
     private static final String PROPS_FILE = "neuclear-ledger.properties";
 
     public final static java.sql.Connection getConnection() throws SQLException, IOException {
-       Properties props=loadProperties();
+       final Properties props=loadProperties();
        try {
             Class.forName(props.getProperty("jdbc.class")).newInstance();
         } catch (InstantiationException e) {
@@ -42,8 +42,8 @@ public final class SQLTools {
 
 
     private static Properties loadProperties() throws IOException {
-        Properties props=new Properties();
-        File propsFile= new File(
+        final Properties props=new Properties();
+        final File propsFile= new File(
                 System.getProperty("user.home")+
                 System.getProperty("file.separator")+
                 PROPS_FILE) ;
@@ -57,7 +57,7 @@ public final class SQLTools {
         return props;
     }
 
-    public final static Timestamp toTimestamp(java.util.Date date) {
+    public final static Timestamp toTimestamp(final java.util.Date date) {
         if (date==null)
             return null;
         return new Timestamp(date.getTime());

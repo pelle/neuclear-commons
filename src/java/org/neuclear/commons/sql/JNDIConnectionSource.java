@@ -25,8 +25,14 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: JNDIConnectionSource.java,v 1.1 2003/11/18 23:34:55 pelle Exp $
+$Id: JNDIConnectionSource.java,v 1.2 2003/11/21 04:43:42 pelle Exp $
 $Log: JNDIConnectionSource.java,v $
+Revision 1.2  2003/11/21 04:43:42  pelle
+EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
+Otherwise You will Finaliate.
+Anything that can be final has been made final throughout everyting. We've used IDEA's Inspector tool to find all instance of variables that could be final.
+This should hopefully make everything more stable (and secure).
+
 Revision 1.1  2003/11/18 23:34:55  pelle
 Payment Web Application is getting there.
 
@@ -37,14 +43,14 @@ Payment Web Application is getting there.
  * Date: Nov 18, 2003
  * Time: 6:09:37 PM
  */
-public class JNDIConnectionSource implements ConnectionSource {
-    public JNDIConnectionSource(String name) throws NamingException {
-        InitialContext ctx = new InitialContext();
+public final class JNDIConnectionSource implements ConnectionSource {
+    public JNDIConnectionSource(final String name) throws NamingException {
+        final InitialContext ctx = new InitialContext();
         this.ds = (DataSource) ctx.lookup(name);
 
     }
 
-    public Connection getConnection() throws SQLException, IOException {
+    public final Connection getConnection() throws SQLException, IOException {
         return ds.getConnection();
     }
 
