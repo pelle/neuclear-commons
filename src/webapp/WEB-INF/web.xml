@@ -1,10 +1,16 @@
 <!DOCTYPE web-app
     PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
     "http://java.sun.com/j2ee/dtds/web-app_2_3.dtd">
-
 <web-app>
     <display-name>NeuClear Commons</display-name>
     <description>
 	NeuClear Commons
     </description>
+    <context-param>
+        <param-name>configurator</param-name>
+        <param-value>org.neuclear.commons.configuration.MockCactusConfiguration</param-value>
+    </context-param>
+    <listener>
+        <listener-class>org.neuclear.commons.configuration.ServletContextContainer</listener-class>
+    </listener>
 </web-app>

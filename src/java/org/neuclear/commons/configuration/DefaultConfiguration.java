@@ -20,6 +20,7 @@ import org.neuclear.commons.crypto.signers.DefaultSigner;
  */
 public class DefaultConfiguration implements Configuration {
     public void configure(MutablePicoContainer pico) {
+        System.out.println("Loading Default Configuration");
         pico.registerComponentImplementation(ConnectionSource.class,DefaultXAConnectionSource.class);
         pico.registerComponentImplementation(DDLDriver.class,HSQLDriver.class);
         pico.registerComponentImplementation(PassPhraseAgent.class,GuiDialogAgent.class);

@@ -29,8 +29,12 @@ public class ServletContextContainerTest extends ServletTestCase{
     }
 
     public void testConfigDemo() throws ServletException, IOException, GeneralSecurityException, NeuClearException {
-        config.setInitParameter("configurator","org.neuclear.commons.configuration.DefaultConfiguration");
-        //TODO set Listener and verify components
+
+//        config.setInitParameter("configurator","org.neuclear.commons.configuration.MockCactusConfiguration");
+        MockConfiguredServlet servlet=new MockConfiguredServlet();
+        servlet.init(config);
+        assertNotNull(servlet.getPico());
+        assertNotNull(servlet.getPico().getComponentInstance(org.neuclear.commons.crypto.passphraseagents.PassPhraseAgent.class));
 
     }
 

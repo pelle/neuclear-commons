@@ -23,6 +23,7 @@ public class ServletContextContainer implements ServletContextListener {
         Configuration conf=null;
         if (!Utility.isEmpty(configname)) {
             try {
+                System.out.println("Configuring with: "+configname);
                 conf=(Configuration) Class.forName(configname).newInstance();
             } catch (InstantiationException e) {
                 e.printStackTrace();  //To change body of catch statement use Options | File Templates.
@@ -46,6 +47,7 @@ public class ServletContextContainer implements ServletContextListener {
     }
 
     public Configuration getDefaultConfiguration(){
+        System.out.println("Loading default configuration");
         return new DefaultConfiguration();
     }
     private LifecyclePicoAdapter lifecycle;
