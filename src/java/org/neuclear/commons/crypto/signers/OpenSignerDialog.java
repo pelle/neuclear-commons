@@ -79,7 +79,7 @@ public class OpenSignerDialog extends JDialog {
         banner = new com.l2fprod.common.swing.BannerPanel();
         banner.setIcon(IconTools.getLogo());
         banner.setTitle(TITLE);
-        banner.setSubtitle("Select an <b>Accounts</b> file or leave as is. Enter your <b>password</b> and youre in.");
+        banner.setSubtitle("Select an <b>Accounts</b> file or leave as is. Enter your <b>password</b> and you are in.");
         Container contents = getContentPane();
 //        contents.setLayout(new BorderLayout());
 //        contents.add(banner,BorderLayout.NORTH);
