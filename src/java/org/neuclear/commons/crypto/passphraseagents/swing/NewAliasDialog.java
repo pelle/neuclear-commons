@@ -5,6 +5,7 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.plaf.Options;
+import com.l2fprod.common.swing.BannerPanel;
 import org.neuclear.commons.crypto.CryptoException;
 import org.neuclear.commons.crypto.passphraseagents.AgentMessages;
 import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
@@ -14,8 +15,12 @@ import java.awt.event.*;
 import java.util.ResourceBundle;
 
 /*
-$Id: NewAliasDialog.java,v 1.12 2004/05/16 00:04:00 pelle Exp $
+$Id: NewAliasDialog.java,v 1.13 2004/05/17 18:54:09 pelle Exp $
 $Log: NewAliasDialog.java,v $
+Revision 1.13  2004/05/17 18:54:09  pelle
+NewAliasDialog now uses BannerLabel
+IdentityListModel is now stored using xstream
+
 Revision 1.12  2004/05/16 00:04:00  pelle
 Added SigningServer which encapsulates all the web serving functionality.
 Added IdentityPanel which contains an IdentityTree of Identities.
@@ -100,6 +105,12 @@ public class NewAliasDialog implements Runnable {
 
         passphrase1 = new JPasswordField();
         passphrase2 = new JPasswordField();
+
+        banner = new com.l2fprod.common.swing.BannerPanel();
+        banner.setIcon(IconTools.getLogo());
+        banner.setTitle("Create Personality");
+        banner.setSubtitle("Choose a <b>name</b> and enter your <b>password</b> twice. The name will only be known to you.");
+
         message = new MessageLabel();
 
         progress = new JProgressBar(0, 100);
@@ -225,7 +236,7 @@ public class NewAliasDialog implements Runnable {
 
         builder.setDefaultDialogBorder();
 
-        builder.addSeparator(caps.getString("newid"), cc.xyw(1, 1, 3));
+        builder.add(banner, cc.xyw(1, 1, 3));
         final JLabel aliaslabel = builder.addLabel(caps.getString("name"), cc.xy(1, 3));
         aliaslabel.setIcon(IconTools.getPersonality());
         aliaslabel.setLabelFor(alias);
@@ -344,5 +355,6 @@ public class NewAliasDialog implements Runnable {
     private JPanel process;
     private MessageLabel message;
     private ResourceBundle caps;
+    private BannerPanel banner;
 
 }
