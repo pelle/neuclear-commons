@@ -1,6 +1,9 @@
 package org.neuclear.commons.configuration;
 
 import junit.framework.TestCase;
+import org.picocontainer.PicoContainer;
+import org.picocontainer.MutablePicoContainer;
+import org.neuclear.commons.crypto.passphraseagents.PassPhraseAgent;
 
 /**
  * User: pelleb
@@ -12,8 +15,19 @@ public final class ConfigurationTest extends TestCase {
         super(string);
     }
 
-    // I am rethinking configuration at the moment. Thus nothing to test
-    public final void testGetComponent() throws ConfigurationException {
-        assertTrue(true);
+
+    public final void testConfigureAndGet()  {
+        PicoContainer pico=new ConfigurableContainer(new Configuration(){
+            public void configure(MutablePicoContainer pico) {
+                pico.registerComponentImplementation(MockInterface.class,MockComponent.class);
+                pico.registerComponentImplementation(MockDependency.class);
+            }
+
+        });
+        assertNotNull(pico);
+        MockInterface obj=(MockInterface) pico.getComponentInstance(MockInterface.class);
+        assertNotNull(obj);
+        assertTrue(obj instanceof MockComponent);
+        assertTrue(obj.alwaysTrue());
     }
 }
