@@ -1,7 +1,6 @@
 package org.neuclear.commons.crypto;
 
 import java.math.BigInteger;
-
 /*
 NeuClear Distributed Transaction Clearing Platform
 (C) 2003 Pelle Braendgaard
@@ -20,8 +19,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: Base32.java,v 1.1 2004/01/16 23:41:59 pelle Exp $
+$Id: Base32.java,v 1.2 2004/01/18 21:20:20 pelle Exp $
 $Log: Base32.java,v $
+Revision 1.2  2004/01/18 21:20:20  pelle
+Created Base32 encoder that now fully complies with Tyler's spec.
+
 Revision 1.1  2004/01/16 23:41:59  pelle
 Added Base32 class. The Base32 encoding used wasnt following the standards.
 Added user creatable Identity for Public Keys
@@ -32,9 +34,10 @@ Added user creatable Identity for Public Keys
  * Utility class for doing URL safe Base32 encodeings as specified in
  * <a href="http://www.waterken.com/dev/Enc/base32/">Tyler Close's Base32 page</a>
  */
-public class Base32 {
+public final class Base32 {
     //Disallow Instantiation
     private Base32(){
+
     }
     /**
       * Encode in Base32 the given <code>{@link java.math.BigInteger}<code>.
@@ -50,17 +53,62 @@ public class Base32 {
 
 
 
-
      /**
       * Method decodeBase32Element
       *
       *
-      * @param base32
+      * @param raw
       *
       * @return
       */
-     public static byte[] decode(final byte[] base32) throws CryptoException {
-         return null;
+     public static byte[] decode(final byte[] raw) throws CryptoException {
+         final int baselength = (raw.length*5);
+         final int mod=baselength%8;
+         final int length=getDecodedLength(raw.length);
+         final byte decoded[]=new byte[length];
+         final byte chunk[]=new byte[5];
+         long chs=0;
+
+         for (int ri=0,di=0;ri<(raw.length);ri=ri+8,di=di+5){
+             int rchsize=(raw.length-ri)>=8?8:(raw.length-ri);
+             for (int j=0;j<rchsize;j++){
+                 chs=(chs<<5)|decodeVal(raw[ri+j]);
+             }
+             switch(rchsize){
+                 case 0:
+                     break;
+                 case 8:
+                     break;
+                 case 2:
+                     if ((chs&0x03)!=0)
+                        throw new CryptoException("Encoding Error");
+                     chs>>=2;
+                     break;
+                 case 4:
+                     if ((chs&0x0F)!=0)
+                        throw new CryptoException("Encoding Error");
+                     chs>>=4;
+                     break;
+                 case 5:
+                     if ((chs&0x01)!=0)
+                        throw new CryptoException("Encoding Error");
+                     chs>>=1;
+                     break;
+                 case 7:
+                     if ((chs&0x07)!=0)
+                        throw new CryptoException("Encoding Error");
+                     chs>>=3;
+                     break;
+                 default:
+                        throw new CryptoException("Encoding Error");
+             }
+             int chsize=(length-di)>=5?5:(length-di);
+             for (int j=0;j<chsize;j++){
+                 decoded[di+(chsize-1-j)]=(byte) ((chs>>(8*j))&0xFF);
+             }
+
+         }
+         return decoded;
      }
 
      /**
@@ -79,39 +127,57 @@ public class Base32 {
       * @param raw <code>byte[]<code> to be base32 encoded
       * @return the <code>String<code> with encoded data
       */
-     public static String encode(final byte[] raw) throws CryptoException {
+     public static String encode(final byte[] raw)  {
          return new String(encodeToByteArray(raw));
      }
-     public static int getEncodedLength(int src){
-         final int baselength = (src*8);
+     public static int getEncodedLength(int src)  {
+         final int baselength = src*8;
          final int mod=baselength%5;
-         if (mod==0)
-               return baselength/5;
-         else
-              return baselength/5+1;
+         if (mod!=0)
+               return baselength/5+1;
+         return baselength/5;
      }
-     public static byte[] encodeToByteArray(final byte[]raw) throws CryptoException {
+    public static int getDecodedLength(int src)  {
+        final int baselength = src*5;
+        return baselength/8;
+    }
+
+    public static byte[] encodeToByteArray(final byte[]raw)  {
          final int baselength = (raw.length*8);
          final int mod=baselength%5;
          final int length=getEncodedLength(raw.length);
          final byte encoded[]=new byte[length];
-         final byte chunk[]=new byte[5];
+         final byte chunk[]=new byte[8];
          long chs=0;
 
          //ri= src index, ei= encoded index
-         int ci=8;
+         int ci=5;
          for (int ri=0,ei=0;ri<raw.length;ri=ri+5,ei=ei+8){
-//             System.out.print(", "+ri);
-             if (ri==(raw.length-1)&&mod>0) {
-                 System.arraycopy(raw,ri,chunk,0,mod);
-                 for(int j=mod;j<5;j++)
-                    chunk[j]=0;
-                 ci=(8*mod)/5+(((8*mod)%5==0)?0:1);
-             } else
-                System.arraycopy(raw,ri,chunk,0,5);
-             chs=new BigInteger(chunk).longValue();
-             for (int j=0;j<ci;j++){
-                 encoded[ei+j]=encodeVal(getPart(chs,j));
+             chs=0;
+             int rcsize=(raw.length-ri)>=5?5:(raw.length-ri);
+             for (int j=ri;j<(ri+rcsize);j++){
+                 chs|=raw[j];
+                 chs<<=8;
+             }
+             chs>>=8;
+             int ecsize=(length-ei)>=8?8:(length-ei);
+             switch((ecsize)){
+                 case 2:
+                     chs<<=2;
+                     break;
+                 case 4:
+                     chs<<=4;
+                     break;
+                 case 5:
+                     chs<<=1;
+                     break;
+                 case 7:
+                     chs<<=3;
+                     break;
+             }
+             for (int j=0;j<ecsize;j++){
+                 encoded[ei+ecsize-1-j]=encodeVal((byte) (chs&31));
+                 chs>>=5;
              }
          }
          return encoded;
@@ -129,10 +195,20 @@ public class Base32 {
          return encode(raw.getBytes());
      }
 
-    private static byte encodeVal(byte val) throws CryptoException {
+    private static byte encodeVal(byte val) {
         if (val>31)
-            throw new CryptoException("Encode Overflow");
+            throw new RuntimeException("Base32 Encoding Overflow");
         return CROSS[val];
+    }
+    private static byte decodeVal(byte val) throws CryptoException {
+        if(val >= 'a' && val <= 'z')
+            return (byte) (val - 'a');
+        else if(val >= '2' && val <= '7')
+            return (byte) (val - '2' + 26);
+        else if(val>= 'A' && val <= 'Z')
+            return (byte)(val - 'A');
+        else
+            throw new CryptoException("Encode Overflow");
     }
 
     private static final byte[] CROSS = new byte[]{

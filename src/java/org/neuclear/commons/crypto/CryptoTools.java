@@ -1,6 +1,9 @@
 /*
- * $Id: CryptoTools.java,v 1.11 2004/01/16 23:41:59 pelle Exp $
+ * $Id: CryptoTools.java,v 1.12 2004/01/18 21:20:20 pelle Exp $
  * $Log: CryptoTools.java,v $
+ * Revision 1.12  2004/01/18 21:20:20  pelle
+ * Created Base32 encoder that now fully complies with Tyler's spec.
+ *
  * Revision 1.11  2004/01/16 23:41:59  pelle
  * Added Base32 class. The Base32 encoding used wasnt following the standards.
  * Added user creatable Identity for Public Keys
@@ -541,8 +544,7 @@ public final class CryptoTools {
      * @return
      */
     public static String encodeBase32(final byte[] val) {
-        final BigInteger big = new BigInteger(val);
-        return big.toString(32);
+        return Base32.encode(val);
     }
 
     public static String createRandomID() {
