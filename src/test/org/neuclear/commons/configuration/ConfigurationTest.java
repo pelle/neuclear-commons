@@ -14,6 +14,6 @@ public class ConfigurationTest extends TestCase {
     }
 
     public void testGetComponent() throws ConfigurationException {
-        assertNotNull(Configuration.getContainer(ConnectionSource.class).getComponentInstance(ConnectionSource.class));
+        assertNotNull(Configuration.getComponent(ConnectionSource.class, "neuclear-commons"));
     }
 }

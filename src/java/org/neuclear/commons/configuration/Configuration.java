@@ -8,6 +8,7 @@ import org.picocontainer.PicoRegistrationException;
 import org.xml.sax.InputSource;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.InputStream;
 
 /**
  * User: pelleb
@@ -16,16 +17,22 @@ import javax.xml.parsers.ParserConfigurationException;
  */
 public class Configuration {
 
-    public static synchronized PicoContainer getContainer(Class context) throws ConfigurationException {
+    private static synchronized PicoContainer getContainer(String context) throws ConfigurationException {
         if (pico == null)
             pico = buildContainer(context);
         return pico;
     }
 
-    private static PicoContainer buildContainer(Class context) throws ConfigurationException {
+    public static Object getComponent(Object type, String context) throws ConfigurationException {
+        return getContainer(context).getComponent(type);
+    }
+
+    private static PicoContainer buildContainer(String context) throws ConfigurationException {
         try {
             InputSourceRegistrationNanoContainer nc = new DomRegistrationNanoContainer.Default();
-            nc.registerComponents(new InputSource(context.getResourceAsStream("neuclear-conf.xml")));
+            InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(context + ".xml");
+            nc.registerComponents(new InputSource(in));
+            nc.instantiateComponents();
             return nc;
         } catch (ParserConfigurationException e) {
             throw new ConfigurationException(e);
@@ -34,14 +41,16 @@ public class Configuration {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             throw new ConfigurationException(e);
-        } catch (PicoInitializationException e) {
-            throw new ConfigurationException(e);
         } catch (NoClassDefFoundError e) {
+            e.printStackTrace();
+            throw new ConfigurationException(e);
+        } catch (PicoInitializationException e) {
             e.printStackTrace();
             throw new ConfigurationException(e);
         }
     }
 
     private static PicoContainer pico;
+    //private static final String CONFIG_FILE_NAME = "neuclear-conf.xml";
 
 }
