@@ -14,21 +14,9 @@ import java.util.Properties;
  * Time: 3:38:50 PM
  */
 public final class DefaultConnectionSource implements ConnectionSource {
-    public DefaultConnectionSource() throws SQLException, NeuClearException, IOException, NamingException {
-        final Properties props = SQLTools.loadProperties();
-        cs = new XAConnectionSource(
-                props.getProperty("jndi.name"),
-                props.getProperty("jdbc.class"),
-                props.getProperty("jdbc.url"),
-                props.getProperty("jdbc.username"),
-                props.getProperty("jdbc.password")
-        );
-    }
 
     public Connection getConnection() throws SQLException, IOException {
-        return cs.getConnection();
+        return SQLTools.getConnection();
     }
-
-    private final ConnectionSource cs;
 
 }

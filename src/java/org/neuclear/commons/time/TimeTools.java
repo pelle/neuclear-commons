@@ -1,6 +1,13 @@
 /*
- * $Id: TimeTools.java,v 1.5 2003/12/19 18:02:53 pelle Exp $
+ * $Id: TimeTools.java,v 1.6 2003/12/24 00:25:41 pelle Exp $
  * $Log: TimeTools.java,v $
+ * Revision 1.6  2003/12/24 00:25:41  pelle
+ * Created a kind of poor man's version of ofbiz.org's EntityEngine. It doesnt use xml to configure it, but code.
+ * Should mainly be used to create tables. Can also insert rows, but hasnt been thoroughly tested.
+ * At some point I will improve that part and add some kind of smart querying engine to it. Similar to EntityEngine. But I dont
+ * need that myself right now.
+ * SQLLedger now uses this to create its tables. It is not fully working yet, but will be shortly.
+ *
  * Revision 1.5  2003/12/19 18:02:53  pelle
  * Revamped a lot of exception handling throughout the framework, it has been simplified in most places:
  * - For most cases the main exception to worry about now is InvalidNamedObjectException.
@@ -146,7 +153,7 @@ public final class TimeTools {
      * Eventually this should return UTC current time.
      * @return
      */
-    public static Date now() {
-        return new Date();
+    public static Timestamp now() {
+        return new Timestamp(System.currentTimeMillis());
     }
 }
