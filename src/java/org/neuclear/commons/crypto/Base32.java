@@ -19,8 +19,13 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: Base32.java,v 1.3 2004/01/19 17:53:13 pelle Exp $
+$Id: Base32.java,v 1.4 2004/01/19 23:49:29 pelle Exp $
 $Log: Base32.java,v $
+Revision 1.4  2004/01/19 23:49:29  pelle
+Unit testing uncovered further issues with Base32
+NSTools is now uptodate as are many other classes. All transactional builders habe been updated.
+Well on the way towards full "green" on Junit.
+
 Revision 1.3  2004/01/19 17:53:13  pelle
 Various clean ups
 
@@ -180,13 +185,13 @@ public final class Base32 {
              }
              for (int j=0;j<ecsize;j++){
                  encoded[ei+ecsize-1-j]=encodeVal((byte) (chs&31));
-                 chs>>=5;
+                 chs>>>=5;
              }
          }
          return encoded;
      }
      private static byte getPart(long chunk,int num){
-         return (byte) ((chunk>>((7-num)*5))&31);
+         return (byte) ((chunk>>>((7-num)*5))&31);
      }
      /**
       * Encode a String as base32
