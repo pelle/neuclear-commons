@@ -1,8 +1,8 @@
 package org.neuclear.commons.crypto.passphraseagents.swing.actions;
 
 import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
+import org.neuclear.commons.crypto.passphraseagents.swing.KeyStorePanel;
 import org.neuclear.commons.crypto.passphraseagents.swing.NewAliasDialog;
-import org.neuclear.commons.crypto.signers.BrowsableSigner;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -26,8 +26,14 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: NewPersonalityAction.java,v 1.3 2004/05/06 21:40:29 pelle Exp $
+$Id: NewPersonalityAction.java,v 1.4 2004/05/14 23:47:01 pelle Exp $
 $Log: NewPersonalityAction.java,v $
+Revision 1.4  2004/05/14 23:47:01  pelle
+Moved PersonalSigner and OpenSignerDialog to neuclear-commons where they belong.
+The whole mechanism of opening keystores is pretty smooth right now.
+Currently working on saving, which doesnt quite work yet. I have added a save method to OpenSignerDialog, which
+should handle it.
+
 Revision 1.3  2004/05/06 21:40:29  pelle
 More swing refactorings
 
@@ -46,19 +52,17 @@ I am creating actions, panels and dialogs.
  * Time: 11:16:19 PM
  */
 public class NewPersonalityAction extends SignerAction {
-    public NewPersonalityAction(BrowsableSigner signer) {
-        super("newid", IconTools.getAddPersonality(), signer);
+    public NewPersonalityAction(KeyStorePanel panel) {
+        super("newid", IconTools.getAddPersonality(), panel.getSigner());
         putValue(SHORT_DESCRIPTION, caps.getString("newid"));
         putValue(MNEMONIC_KEY, new Integer(KeyEvent.VK_N));
-        nad = null;
+        nad = new NewAliasDialog(panel);
     }
 
     /**
      * Invoked when an action occurs.
      */
     public void actionPerformed(ActionEvent e) {
-        if (nad == null)
-            nad = new NewAliasDialog();
 
         SwingUtilities.invokeLater(nad);
     }

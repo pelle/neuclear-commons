@@ -17,8 +17,14 @@ import java.awt.event.KeyListener;
 import java.util.ResourceBundle;
 
 /*
-$Id: NewAliasDialog.java,v 1.10 2004/05/06 17:36:29 pelle Exp $
+$Id: NewAliasDialog.java,v 1.11 2004/05/14 23:47:01 pelle Exp $
 $Log: NewAliasDialog.java,v $
+Revision 1.11  2004/05/14 23:47:01  pelle
+Moved PersonalSigner and OpenSignerDialog to neuclear-commons where they belong.
+The whole mechanism of opening keystores is pretty smooth right now.
+Currently working on saving, which doesnt quite work yet. I have added a save method to OpenSignerDialog, which
+should handle it.
+
 Revision 1.10  2004/05/06 17:36:29  pelle
 Further slight mods in the gui
 
@@ -65,9 +71,6 @@ Added NewAliasDialog, which isnt yet complete.
  * Time: 5:58:38 PM
  */
 public class NewAliasDialog implements Runnable {
-    public NewAliasDialog() {
-        this(null);
-    }
 
     public NewAliasDialog(KeyStorePanel agent) {
         try {
@@ -80,7 +83,7 @@ public class NewAliasDialog implements Runnable {
         } catch (Exception e) {
             // Likely PlasticXP is not in the class path; ignore.
         }
-        this.agent = agent;
+        this.ksPanel = agent;
         caps = AgentMessages.getMessages();
 
         ok = new JButton(caps.getString("create"));
@@ -173,6 +176,10 @@ public class NewAliasDialog implements Runnable {
     private boolean validate() {
         if (alias.getText().length() == 0) {
             message.invalid("Please enter your new Identity Name");
+            return false;
+        }
+        if (ksPanel.getSigner().canSignFor(alias.getText())) {
+            message.invalid(alias.getText() + " already exists");
             return false;
         }
         char[] p1 = passphrase1.getPassword();
@@ -291,9 +298,9 @@ public class NewAliasDialog implements Runnable {
         public void run() {
             try {
                 System.out.println("Generating Key");
-                agent.getSigner().createKeyPair(alias.getText(), passphrase1.getPassword());
+                ksPanel.getSigner().createKeyPair(alias.getText(), passphrase1.getPassword());
                 progress.setVisible(false);
-                agent.updateList(alias.getText());
+                ksPanel.updateList(alias.getText());
                 dialog.hide();
             } catch (CryptoException e) {
                 e.printStackTrace();
@@ -303,7 +310,7 @@ public class NewAliasDialog implements Runnable {
 
     }
 
-    private KeyStorePanel agent;
+    private KeyStorePanel ksPanel;
     private JDialog dialog;
     private JButton ok;
     private JButton cancel;

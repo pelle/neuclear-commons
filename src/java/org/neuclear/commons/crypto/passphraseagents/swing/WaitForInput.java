@@ -3,8 +3,14 @@ package org.neuclear.commons.crypto.passphraseagents.swing;
 import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
 
 /*
-$Id: WaitForInput.java,v 1.5 2004/05/14 19:11:27 pelle Exp $
+$Id: WaitForInput.java,v 1.6 2004/05/14 23:47:01 pelle Exp $
 $Log: WaitForInput.java,v $
+Revision 1.6  2004/05/14 23:47:01  pelle
+Moved PersonalSigner and OpenSignerDialog to neuclear-commons where they belong.
+The whole mechanism of opening keystores is pretty smooth right now.
+Currently working on saving, which doesnt quite work yet. I have added a save method to OpenSignerDialog, which
+should handle it.
+
 Revision 1.5  2004/05/14 19:11:27  pelle
 Added OpenSignerDialog, which has been integrated with PersonalSigner.
 
@@ -35,7 +41,7 @@ This will later be put into a command queue for execution.
 public abstract class WaitForInput implements Runnable {
 
     public Object getResult() throws UserCancellationException {
-        System.out.println(Thread.currentThread());
+//        System.out.println(Thread.currentThread());
 
         synchronized (monitor) {
             try {

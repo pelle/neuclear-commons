@@ -3,13 +3,19 @@ package org.neuclear.commons.crypto.passphraseagents.swing;
 import org.neuclear.commons.LowLevelException;
 import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
 import org.neuclear.commons.crypto.signers.BrowsableSigner;
-import org.neuclear.commons.crypto.signers.DefaultSigner;
+import org.neuclear.commons.crypto.signers.PersonalSigner;
 
 import java.io.IOException;
 
 /*
-$Id: SaveKeyStore.java,v 1.2 2004/04/14 00:10:52 pelle Exp $
+$Id: SaveKeyStore.java,v 1.3 2004/05/14 23:47:01 pelle Exp $
 $Log: SaveKeyStore.java,v $
+Revision 1.3  2004/05/14 23:47:01  pelle
+Moved PersonalSigner and OpenSignerDialog to neuclear-commons where they belong.
+The whole mechanism of opening keystores is pretty smooth right now.
+Currently working on saving, which doesnt quite work yet. I have added a save method to OpenSignerDialog, which
+should handle it.
+
 Revision 1.2  2004/04/14 00:10:52  pelle
 Added a MessageLabel for handling errors, validation and info
 Save works well now.
@@ -46,8 +52,8 @@ public class SaveKeyStore implements Runnable {
      */
     public void run() {
         try {
-            if (signer instanceof DefaultSigner)
-                ((DefaultSigner) signer).save(force);
+            if (signer instanceof PersonalSigner)
+                ((PersonalSigner) signer).save(false);
             else
                 signer.save();
             message.info("KeyStore saved");

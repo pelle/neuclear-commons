@@ -27,10 +27,7 @@ import org.neuclear.commons.crypto.passphraseagents.icons.IconTools;
 import org.neuclear.commons.crypto.passphraseagents.swing.actions.NewPersonalityAction;
 import org.neuclear.commons.crypto.passphraseagents.swing.actions.OpenKeyStoreAction;
 import org.neuclear.commons.crypto.passphraseagents.swing.actions.SaveKeyStoreAction;
-import org.neuclear.commons.crypto.signers.BrowsableSigner;
-import org.neuclear.commons.crypto.signers.DefaultSigner;
-import org.neuclear.commons.crypto.signers.InvalidPassphraseException;
-import org.neuclear.commons.crypto.signers.TestCaseSigner;
+import org.neuclear.commons.crypto.signers.*;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionListener;
@@ -63,23 +60,27 @@ public class KeyStorePanel extends JPanel {
         toolbar.setFloatable(true);
         toolbar.setRollover(true);
 
-        open = new JButton(new OpenKeyStoreAction(signer));
+        openAction = new OpenKeyStoreAction(signer);
+        open = new JButton(openAction);
         open.setText("");
         open.putClientProperty(Options.IS_NARROW_KEY, Boolean.TRUE);
         toolbar.add(open);
-        save = new JButton(new SaveKeyStoreAction(signer));
+        saveAction = new SaveKeyStoreAction(signer);
+        save = new JButton(saveAction);
         save.setText("");
         save.putClientProperty(Options.IS_NARROW_KEY, Boolean.TRUE);
         toolbar.add(save);
         toolbar.addSeparator();
 
-        newPersonality = new NewPersonalityAction(signer);
+        newPersonality = new NewPersonalityAction(this);
         newId = new JButton(newPersonality);
         newId.setText("");
         toolbar.add(newId);
         add(toolbar, BorderLayout.NORTH);
 
         list = new JList();
+        if (signer instanceof PersonalSigner)
+            list.setModel((ListModel) signer);
         list.setBorder(BorderFactory.createLoweredBevelBorder());
         add(list, BorderLayout.CENTER);
 //        nad = new NewAliasDialog(this);
@@ -116,11 +117,11 @@ public class KeyStorePanel extends JPanel {
     }
 
     public Action[] getFileActions() {
-        return new Action[]{};
+        return new Action[]{openAction, saveAction};
     }
 
     public Action[] getActions() {
-        return new Action[]{newPersonality};
+        return new Action[]{newPersonality, openAction, saveAction};
     }
 
     public JLabel getLabel() {
@@ -132,7 +133,7 @@ public class KeyStorePanel extends JPanel {
 
     private void fillAliasList() {
         try {
-            if (signer == null)
+            if (signer == null || signer instanceof PersonalSigner)
                 return;
             Iterator iter = signer.iterator();
             Vector vector = new Vector();
@@ -150,7 +151,7 @@ public class KeyStorePanel extends JPanel {
         list.addListSelectionListener(listener);
     }
 
-    BrowsableSigner getSigner() {
+    public BrowsableSigner getSigner() {
         return signer;
     }
 
@@ -205,6 +206,8 @@ public class KeyStorePanel extends JPanel {
     }
 
     private NewPersonalityAction newPersonality;
+    private OpenKeyStoreAction openAction;
+    private SaveKeyStoreAction saveAction;
 
 
 }

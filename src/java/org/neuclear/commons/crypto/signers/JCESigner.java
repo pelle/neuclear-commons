@@ -1,6 +1,12 @@
 /*
- * $Id: JCESigner.java,v 1.25 2004/04/20 23:32:05 pelle Exp $
+ * $Id: JCESigner.java,v 1.26 2004/05/14 23:47:02 pelle Exp $
  * $Log: JCESigner.java,v $
+ * Revision 1.26  2004/05/14 23:47:02  pelle
+ * Moved PersonalSigner and OpenSignerDialog to neuclear-commons where they belong.
+ * The whole mechanism of opening keystores is pretty smooth right now.
+ * Currently working on saving, which doesnt quite work yet. I have added a save method to OpenSignerDialog, which
+ * should handle it.
+ *
  * Revision 1.25  2004/04/20 23:32:05  pelle
  * All unit tests (junit and cactus) work. The AssetControllerServlet is operational.
  *
@@ -491,7 +497,7 @@ public class JCESigner implements BrowsableSigner {
         try {
             File ksfile = new File(filename);
             ksfile.getParentFile().mkdirs();
-            System.out.println(Thread.currentThread());
+            System.out.println("Saving " + filename + " " + Thread.currentThread());
             ks.store(new FileOutputStream(ksfile), passphrase);
         } catch (Exception e) {
             throw new LowLevelException(e);
