@@ -1,6 +1,9 @@
 /*
- * $Id: CryptoTools.java,v 1.18 2004/03/19 22:21:24 pelle Exp $
+ * $Id: CryptoTools.java,v 1.19 2004/03/31 18:48:25 pelle Exp $
  * $Log: CryptoTools.java,v $
+ * Revision 1.19  2004/03/31 18:48:25  pelle
+ * Added various Streams for simplified crypto operations.
+ *
  * Revision 1.18  2004/03/19 22:21:24  pelle
  * Changes in the XMLSignature class, which is now Abstract there are currently 3 implementations for:
  * - Enveloped
@@ -259,6 +262,7 @@ import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.jce.X509Principal;
 import org.bouncycastle.jce.X509V3CertificateGenerator;
 import org.bouncycastle.jce.interfaces.ECPrivateKey;
+import org.bouncycastle.jce.interfaces.ECPublicKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.neuclear.commons.time.TimeTools;
 
@@ -496,6 +500,19 @@ public final class CryptoTools {
         return sig;
     }
 
+    public static Signature getSignatureCipher(final PublicKey key) throws NoSuchAlgorithmException, InvalidKeyException {
+        Signature sig = null;
+        if (key instanceof RSAPublicKey)
+            sig = Signature.getInstance("SHA1withRSA"); // Set up signature object.
+        else if (key instanceof DSAPublicKey)
+            sig = Signature.getInstance("SHA1withDSA");
+        else if (key instanceof ECPublicKey)
+            sig = Signature.getInstance("SHA1withECDSA");
+
+        sig.initVerify(key); // Initialize with my public key.
+        return sig;
+    }
+
     public static boolean verify(final PublicKey pk, final byte[] value, byte sigvalue[]) throws CryptoException {
         try {
             Signature sig = null;
@@ -642,10 +659,10 @@ public final class CryptoTools {
                                        final int iterationCount,
                                        final String provider) throws GeneralSecurityException {
         final PBEKeySpec pbeSpec = new PBEKeySpec(password);
-        final SecretKeyFactory keyFact = SecretKeyFactory.getInstance(algorithm, provider);
+        final SecretKeyFactory keyFact = SecretKeyFactory.getInstance(algorithm);
         final PBEParameterSpec defParams = new PBEParameterSpec(salt, iterationCount);
 
-        final Cipher cipher = Cipher.getInstance(algorithm, provider);
+        final Cipher cipher = Cipher.getInstance(algorithm);
 
         cipher.init(mode, keyFact.generateSecret(pbeSpec), defParams);
 
@@ -875,9 +892,9 @@ public final class CryptoTools {
     private static KeyPairGenerator dkg;
     private static KeyPairGenerator tkg;
     private static KeyPairGenerator tdkg;
-    public static final String DEFAULT_PBE_ALGORITHM = "PBEWithSHAAnd3-KeyTripleDES-CBC";
+    public static final String DEFAULT_PBE_ALGORITHM = "PBEWithMD5AndDES";
     public static final String DEFAULT_JCE_PROVIDER = "BC";
-    private static final byte DEFAULT_SALT[] = "LiquidNightClubPanam".getBytes();
+    private static final byte DEFAULT_SALT[] = "LiquidNi".getBytes();
     private static final int DEFAULT_ITERATION_COUNT = 2048;
     private static final byte[] HEX_TABLE = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 

@@ -1,6 +1,7 @@
 package org.neuclear.commons.crypto.passphraseagents;
 
 import org.neuclear.commons.Utility;
+import org.neuclear.commons.crypto.signers.Signer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,8 +27,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: ConsoleAgent.java,v 1.2 2004/01/19 17:53:14 pelle Exp $
+$Id: ConsoleAgent.java,v 1.3 2004/03/31 18:48:23 pelle Exp $
 $Log: ConsoleAgent.java,v $
+Revision 1.3  2004/03/31 18:48:23  pelle
+Added various Streams for simplified crypto operations.
+
 Revision 1.2  2004/01/19 17:53:14  pelle
 Various clean ups
 
@@ -81,39 +85,40 @@ public final class ConsoleAgent implements InteractiveAgent {
     }
 
     public char[] getPassPhrase(String name) throws UserCancellationException {
-         return getPassPhrase(name,false);  //To change body of implemented methods use Options | File Templates.
-     }
+        return getPassPhrase(name, false);  //To change body of implemented methods use Options | File Templates.
+    }
 
     public final synchronized char[] getPassPhrase(final String name, boolean incorrect) throws UserCancellationException {
-        if (!incorrect&&cache.containsKey(name))
-            return ((String)cache.get(name)).toCharArray();
+        if (!incorrect && cache.containsKey(name))
+            return ((String) cache.get(name)).toCharArray();
         final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         if (incorrect)
             System.out.println("entered passphrase was incorrect please try again");
-        System.out.println("Please enter passphrase for: " + name+" ('q' to quit)");
+        System.out.println("Please enter passphrase for: " + name + " ('q' to quit)");
         System.out.print(": ");
         try {
-            final String line = new jline.ConsoleReader().readLine(new Character((char)'*'));
+            final String line = new jline.ConsoleReader().readLine(new Character((char) '*'));
             if (line.equals("q"))
                 throw new UserCancellationException(name);
             if (firstrun) {
                 System.out.println("Do you wish to remember your entered passphrases for this sesson?");
-                if(Utility.getAffirmative(false)) {
-                    remember=true;
+                if (Utility.getAffirmative(false)) {
+                    remember = true;
                 }
-                firstrun=false;
+                firstrun = false;
             }
             if (remember)
-                cache.put(name,line);
+                cache.put(name, line);
             return line.toCharArray();
         } catch (IOException e) {
             System.err.println("Couldnt read line. Returning empty passphrase");
             return "".toCharArray();
         }
     }
+
     private final Map cache;
-    private boolean remember=false;
-    private boolean firstrun=true;
+    private boolean remember = false;
+    private boolean firstrun = true;
 
     public static void main(final String[] args) {
         final InteractiveAgent dia = new ConsoleAgent();
@@ -121,12 +126,23 @@ public final class ConsoleAgent implements InteractiveAgent {
             System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("neu://pelle@test")));
             System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("neu://pelle@test")));
             System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("neu://pelle@test")));
-            System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("neu://pelle@test",true)));
+            System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("neu://pelle@test", true)));
         } catch (UserCancellationException e) {
-           System.out.println("user cancelled");
+            System.out.println("user cancelled");
         }
 
         System.exit(0);
+    }
+
+    /**
+     * The User is asked to pick a name by the PassPhraseAgent. The PassPhraseAgent can query the given signer for
+     * a list of included aliases or even create a new keypair.
+     *
+     * @return
+     * @throws UserCancellationException
+     */
+    public char[] getPassPhrase(Signer signer) throws UserCancellationException {
+        return new char[0];
     }
 
 }
