@@ -8,6 +8,7 @@ import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
 import java.security.KeyStoreException;
 import java.security.PublicKey;
 import java.util.Iterator;
+import java.util.prefs.Preferences;
 
 /*
 NeuClear Distributed Transaction Clearing Platform
@@ -27,8 +28,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: DefaultSigner.java,v 1.6 2004/04/12 15:37:01 pelle Exp $
+$Id: DefaultSigner.java,v 1.7 2004/04/12 23:50:07 pelle Exp $
 $Log: DefaultSigner.java,v $
+Revision 1.7  2004/04/12 23:50:07  pelle
+implemented the queue and improved the DefaultSigner
+
 Revision 1.6  2004/04/12 15:37:01  pelle
 Refactored DefaultSigner to delegate to a JCESigner and not inherit.
 
@@ -74,7 +78,9 @@ as SmartCards for end user applications.
  */
 public final class DefaultSigner implements BrowsableSigner {
     public DefaultSigner(final PassPhraseAgent agent) throws UserCancellationException, InvalidPassphraseException {
-        signer = new JCESigner(CryptoTools.DEFAULT_KEYSTORE, "jks", "SUN", agent);
+        Preferences prefs = Preferences.userNodeForPackage(DefaultSigner.class);
+        final String filename = prefs.get("KEYSTORE", CryptoTools.DEFAULT_KEYSTORE);
+        signer = new JCESigner(filename, "jks", "SUN", agent);
 
     }
 

@@ -25,8 +25,11 @@ import java.util.Map;
 import java.util.Vector;
 
 /*
-$Id: KeyStoreDialog.java,v 1.1 2004/04/12 15:00:29 pelle Exp $
+$Id: KeyStoreDialog.java,v 1.2 2004/04/12 23:50:07 pelle Exp $
 $Log: KeyStoreDialog.java,v $
+Revision 1.2  2004/04/12 23:50:07  pelle
+implemented the queue and improved the DefaultSigner
+
 Revision 1.1  2004/04/12 15:00:29  pelle
 Now have a slightly better way of handling the waiting for input using the WaitForInput class.
 This will later be put into a command queue for execution.
@@ -59,7 +62,7 @@ public class KeyStoreDialog {
         sign.setEnabled(false);
         cancel = new JButton("Cancel");
         newId = new JButton("New ...");
-        list = new JList(new String[]{"bob", "carol", "alice"});
+        list = new JList();
         list.setBorder(BorderFactory.createLoweredBevelBorder());
         passphrase = new JPasswordField();
         final URL imageurl = this.getClass().getClassLoader().getResource("org/neuclear/commons/crypto/passphraseagents/neuclear.png");

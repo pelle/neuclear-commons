@@ -20,8 +20,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: AlwaysTheSamePassphraseAgent.java,v 1.3 2003/12/19 18:02:53 pelle Exp $
+$Id: AlwaysTheSamePassphraseAgent.java,v 1.4 2004/04/12 23:50:07 pelle Exp $
 $Log: AlwaysTheSamePassphraseAgent.java,v $
+Revision 1.4  2004/04/12 23:50:07  pelle
+implemented the queue and improved the DefaultSigner
+
 Revision 1.3  2003/12/19 18:02:53  pelle
 Revamped a lot of exception handling throughout the framework, it has been simplified in most places:
 - For most cases the main exception to worry about now is InvalidNamedObjectException.
@@ -66,12 +69,17 @@ public final class AlwaysTheSamePassphraseAgent implements PassPhraseAgent {
         System.out.println("AlwaysTheSamePassphraseAgent started.\nDO NOT USE FOR PRODUCTION SERVERS");
     }
 
+    public AlwaysTheSamePassphraseAgent(final char[] passphrase) {
+        this.passphrase = new String(passphrase);
+        System.out.println("AlwaysTheSamePassphraseAgent started.\nDO NOT USE FOR PRODUCTION SERVERS");
+    }
+
     public final char[] getPassPhrase(final String name) {
         return passphrase.toCharArray();
     }
 
     public char[] getPassPhrase(String name, boolean incorrect) throws UserCancellationException {
-        if (incorrect) throw new LowLevelException("passphrase is incorrect for: "+name);
+        if (incorrect) throw new LowLevelException("passphrase is incorrect for: " + name);
         return getPassPhrase(name);
     }
 

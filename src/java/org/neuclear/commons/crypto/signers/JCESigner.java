@@ -1,6 +1,9 @@
 /*
- * $Id: JCESigner.java,v 1.21 2004/04/09 22:56:45 pelle Exp $
+ * $Id: JCESigner.java,v 1.22 2004/04/12 23:50:08 pelle Exp $
  * $Log: JCESigner.java,v $
+ * Revision 1.22  2004/04/12 23:50:08  pelle
+ * implemented the queue and improved the DefaultSigner
+ *
  * Revision 1.21  2004/04/09 22:56:45  pelle
  * SwingAgent now manages key creation as well through the NewAliasDialog.
  * Many small uservalidation features have also been added.
@@ -172,6 +175,7 @@ import org.neuclear.commons.LowLevelException;
 import org.neuclear.commons.Utility;
 import org.neuclear.commons.crypto.CryptoException;
 import org.neuclear.commons.crypto.CryptoTools;
+import org.neuclear.commons.crypto.passphraseagents.AlwaysTheSamePassphraseAgent;
 import org.neuclear.commons.crypto.passphraseagents.InteractiveAgent;
 import org.neuclear.commons.crypto.passphraseagents.PassPhraseAgent;
 import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
@@ -272,30 +276,15 @@ public class JCESigner implements BrowsableSigner {
         this(loadKeyStore(provider, type, in, initpassphrase), agent);
     }
 
-    /**
-     * @param provider
-     * @param type
-     * @param in
-     * @param agent
-     * @param name
-     * @return
-     * @throws InvalidPassphraseException
-     * @throws UserCancellationException
-     */
-    private static KeyStore loadKeyStore(final String provider, final String type, final InputStream in, final PassPhraseAgent agent, final String name) throws InvalidPassphraseException, UserCancellationException {
-//        System.out.println("Loading JCESigner: "+name);
-        return loadKeyStore(provider, type, in, agent.getPassPhrase("Keystore password for: " + name));
+    private static KeyStore loadKeyStore(final String provider, final String type, final InputStream in, final char[] passphrase) throws InvalidPassphraseException {
+        try {
+            return loadKeyStore(provider, type, in, new AlwaysTheSamePassphraseAgent(passphrase), "keystore");
+        } catch (UserCancellationException e) {
+            throw new LowLevelException(e);
+        }
     }
 
-    /**
-     * @param provider
-     * @param type
-     * @param in
-     * @param passphrase
-     * @return
-     * @throws InvalidPassphraseException
-     */
-    private static KeyStore loadKeyStore(final String provider, final String type, final InputStream in, final char[] passphrase) throws InvalidPassphraseException {
+    private static KeyStore loadKeyStore(final String provider, final String type, final InputStream in, final PassPhraseAgent agent, final String name) throws InvalidPassphraseException, UserCancellationException {
 //       System.out.println("Loading JCESigner using passphrase: "+new String(passphrase));
         try {
             KeyStore ki = null;
@@ -303,7 +292,10 @@ public class JCESigner implements BrowsableSigner {
                 ki = KeyStore.getInstance(type);
             else
                 ki = KeyStore.getInstance(type, provider);
-            ki.load(in, passphrase);
+            if (in != null)
+                ki.load(in, agent.getPassPhrase("Keystore password for: " + name));
+            else
+                ki.load(null, null);
             return ki;
         } catch (KeyStoreException e) {
             throw new LowLevelException(e);

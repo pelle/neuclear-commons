@@ -5,18 +5,19 @@ import org.neuclear.commons.crypto.Base64;
 import org.neuclear.commons.crypto.passphraseagents.InteractiveAgent;
 import org.neuclear.commons.crypto.passphraseagents.UserCancellationException;
 import org.neuclear.commons.crypto.signers.BrowsableSigner;
+import org.neuclear.commons.crypto.signers.DefaultSigner;
 import org.neuclear.commons.crypto.signers.InvalidPassphraseException;
 import org.neuclear.commons.crypto.signers.SetPublicKeyCallBack;
-import org.neuclear.commons.crypto.signers.TestCaseSigner;
 
 import javax.swing.*;
 import java.security.PublicKey;
-import java.util.HashMap;
-import java.util.Map;
 
 /*
-$Id: SwingAgent.java,v 1.3 2004/04/12 15:00:29 pelle Exp $
+$Id: SwingAgent.java,v 1.4 2004/04/12 23:50:07 pelle Exp $
 $Log: SwingAgent.java,v $
+Revision 1.4  2004/04/12 23:50:07  pelle
+implemented the queue and improved the DefaultSigner
+
 Revision 1.3  2004/04/12 15:00:29  pelle
 Now have a slightly better way of handling the waiting for input using the WaitForInput class.
 This will later be put into a command queue for execution.
@@ -46,22 +47,19 @@ public class SwingAgent implements InteractiveAgent {
         }
         ksd = new KeyStoreDialog();
         simple = new SimpleDialog();
-        nad = new NewAliasDialog(ksd);
-        cache = new HashMap();
+        queue = new RunnableQueue();
     }
 
-    private BrowsableSigner signer;
-    private final NewAliasDialog nad;
     private final SimpleDialog simple;
     private final KeyStoreDialog ksd;
-    private final Map cache;
-    private boolean isCancel;
+    private final RunnableQueue queue;
 
     public static void main(final String[] args) {
         final InteractiveAgent dia = new SwingAgent();
         try {
             try {
-                final BrowsableSigner signer = new TestCaseSigner(dia);
+                System.out.println(dia.getPassPhrase("test"));
+                final BrowsableSigner signer = new DefaultSigner(dia);
                 byte sig[] = signer.sign("testdata".getBytes(), new SetPublicKeyCallBack() {
                     public void setPublicKey(PublicKey pub) {
                         System.out.println("PublicKey:");
@@ -94,7 +92,7 @@ public class SwingAgent implements InteractiveAgent {
 
     public char[] getPassPhrase(String name, boolean incorrect) throws UserCancellationException {
         WaitForInput waiter = simple.createGetPassphraseTask(name, incorrect);
-        new Thread(waiter).start();
+        queue.queue(waiter);
         return (char[]) waiter.getResult();
     }
 
@@ -108,7 +106,7 @@ public class SwingAgent implements InteractiveAgent {
      */
     public byte[] sign(BrowsableSigner signer, byte data[], SetPublicKeyCallBack callback) throws UserCancellationException {
         WaitForInput waiter = ksd.createSigningTask(signer, data, callback);
-        new Thread(waiter).start();
+        queue.queue(waiter);
         return (byte[]) waiter.getResult();
     }
 
