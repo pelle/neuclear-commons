@@ -3,6 +3,10 @@ package org.neuclear.commons.crypto.passphraseagents;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
+import java.util.Map;
+import java.util.HashMap;
 
 /*
 NeuClear Distributed Transaction Clearing Platform
@@ -22,8 +26,16 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: GuiDialogAgent.java,v 1.3 2003/12/14 20:52:54 pelle Exp $
+$Id: GuiDialogAgent.java,v 1.4 2003/12/16 23:16:40 pelle Exp $
 $Log: GuiDialogAgent.java,v $
+Revision 1.4  2003/12/16 23:16:40  pelle
+Work done on the SigningServlet. The two phase web model is now only an option.
+Allowing much quicker signing, using the GuiDialogueAgent.
+The screen has also been cleaned up and displays the xml to be signed.
+The GuiDialogueAgent now optionally remembers passphrases and has a checkbox to support this.
+The PassPhraseAgent's now have a UserCancelsException, which allows the agent to tell the application if the user specifically
+cancels the signing process.
+
 Revision 1.3  2003/12/14 20:52:54  pelle
 Added ServletPassPhraseAgent which uses ThreadLocal to transfer the passphrase to the signer.
 Added ServletSignerFactory, which builds Signers for use within servlets based on parameters in the Servlets
@@ -72,6 +84,7 @@ The two Signer implementations both use it for the passphrase.
  */
 public final class GuiDialogAgent implements InteractiveAgent {
     public GuiDialogAgent() {
+        cache=new HashMap();
         frame = new Frame("Please Enter Passphrase...");
 
         frame.setVisible(false);
@@ -110,6 +123,16 @@ public final class GuiDialogAgent implements InteractiveAgent {
         panel.add(passphrase, BorderLayout.CENTER);
         final Panel buttons = new Panel(new FlowLayout());
         panel.add(buttons, BorderLayout.SOUTH);
+
+        remember=new Checkbox("remember passphrase",false);
+        buttons.add(remember);
+        remember.addItemListener(new ItemListener(){
+            public void itemStateChanged(ItemEvent itemEvent) {
+                if (!remember.getState())
+                    cache.clear();
+            }
+
+        });
         ok = new Button("Sign");
         buttons.add(ok);
         final Button cancel = new Button("Cancel");
@@ -118,6 +141,7 @@ public final class GuiDialogAgent implements InteractiveAgent {
             public void actionPerformed(final ActionEvent actionEvent) {
                 synchronized (passphrase) {
                     passphrase.setText("");
+                    isCancel=true;
                     passphrase.notifyAll();
                 }
 
@@ -127,6 +151,7 @@ public final class GuiDialogAgent implements InteractiveAgent {
         final ActionListener action = new ActionListener() {
             public void actionPerformed(final ActionEvent actionEvent) {
                 synchronized (passphrase) {
+                    isCancel=false;
                     passphrase.notifyAll();
                 }
 
@@ -137,9 +162,13 @@ public final class GuiDialogAgent implements InteractiveAgent {
 
     }
 
-    public char[] getPassPhrase(final String name) {
+    public synchronized char[] getPassPhrase(final String name) throws UserCancelsException {
         synchronized (passphrase) {//We dont want multiple agents popping up at the same time
-            passphrase.setText("");
+            if (cache.containsKey(name))
+                passphrase.setText((String) cache.get(name));
+            else
+                passphrase.setText("");
+            isCancel=true;
             nameLabel.setText(name);
             frame.pack();
             frame.setVisible(true);
@@ -149,7 +178,11 @@ public final class GuiDialogAgent implements InteractiveAgent {
                 ;
             }
             frame.setVisible(false);
+            if(isCancel)
+                throw new UserCancelsException(name);
             final String phrase = passphrase.getText();
+            if(remember.getState())
+                cache.put(name,phrase);
             passphrase.setText("");
             return phrase.toCharArray();
         }
@@ -157,17 +190,24 @@ public final class GuiDialogAgent implements InteractiveAgent {
 
     public static void main(final String[] args) {
         final PassPhraseAgent dia = new GuiDialogAgent();
-        System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("neu://pelle@test")));
-        System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("neu://pelle@test")));
+        try {
+            System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("neu://pelle@test")));
+            System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("neu://pelle@test")));
+        } catch (UserCancelsException e) {
+            System.out.print("User Cancellation by: "+e.getName());
+        }
 
         System.exit(0);
     }
 
     private final TextField passphrase;
     private final Button ok;
+    private final Checkbox remember;
     private final Label nameLabel;
     private final Frame frame;
+    private final Map cache;
     private Image img;
+    private boolean isCancel=true;
 
 
 }

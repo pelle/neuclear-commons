@@ -56,7 +56,7 @@ public final class ServletSignerFactory {
         return signer;
     }
 
-    private static final PassPhraseAgent createWrapperAgent(final String keeppassphrase, final PassPhraseAgent coreagent, final String serviceid) {
+    private static final PassPhraseAgent createWrapperAgent(final String keeppassphrase, final PassPhraseAgent coreagent, final String serviceid) throws UserCancelsException {
         if (!Utility.isEmpty(keeppassphrase)&&keeppassphrase.equals("1")&&coreagent instanceof InteractiveAgent)
             return new AskAtStartupAgent((InteractiveAgent)coreagent,serviceid);
         return coreagent;

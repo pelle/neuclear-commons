@@ -22,8 +22,16 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: CommandLineAgent.java,v 1.3 2003/11/21 04:43:41 pelle Exp $
+$Id: CommandLineAgent.java,v 1.4 2003/12/16 23:16:40 pelle Exp $
 $Log: CommandLineAgent.java,v $
+Revision 1.4  2003/12/16 23:16:40  pelle
+Work done on the SigningServlet. The two phase web model is now only an option.
+Allowing much quicker signing, using the GuiDialogueAgent.
+The screen has also been cleaned up and displays the xml to be signed.
+The GuiDialogueAgent now optionally remembers passphrases and has a checkbox to support this.
+The PassPhraseAgent's now have a UserCancelsException, which allows the agent to tell the application if the user specifically
+cancels the signing process.
+
 Revision 1.3  2003/11/21 04:43:41  pelle
 EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
 Otherwise You will Finaliate.
@@ -73,8 +81,12 @@ public final class CommandLineAgent implements InteractiveAgent {
 
     public static void main(final String[] args) {
         final PassPhraseAgent dia = new CommandLineAgent();
-        System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("neu://pelle@test")));
-        System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("neu://pelle@test")));
+        try {
+            System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("neu://pelle@test")));
+            System.out.println("Getting passphrase... " + new String(dia.getPassPhrase("neu://pelle@test")));
+        } catch (UserCancelsException e) {
+            e.printStackTrace();
+        }
 
         System.exit(0);
     }

@@ -1,6 +1,14 @@
 /*
- * $Id: SimpleSigner.java,v 1.5 2003/12/10 23:55:45 pelle Exp $
+ * $Id: SimpleSigner.java,v 1.6 2003/12/16 23:16:40 pelle Exp $
  * $Log: SimpleSigner.java,v $
+ * Revision 1.6  2003/12/16 23:16:40  pelle
+ * Work done on the SigningServlet. The two phase web model is now only an option.
+ * Allowing much quicker signing, using the GuiDialogueAgent.
+ * The screen has also been cleaned up and displays the xml to be signed.
+ * The GuiDialogueAgent now optionally remembers passphrases and has a checkbox to support this.
+ * The PassPhraseAgent's now have a UserCancelsException, which allows the agent to tell the application if the user specifically
+ * cancels the signing process.
+ *
  * Revision 1.5  2003/12/10 23:55:45  pelle
  * Did some cleaning up in the builders
  * Fixed some stuff in IdentityCreator
@@ -189,7 +197,7 @@ public final class SimpleSigner implements Signer {
      * @param key  The PrivateKey itself.
      */
 
-    public final void addKey(final String name, final PrivateKey key) throws GeneralSecurityException, IOException {
+    public final void addKey(final String name, final PrivateKey key) throws GeneralSecurityException, IOException,CryptoException {
         addKey(name, agent.getPassPhrase(name), key);
     }
 

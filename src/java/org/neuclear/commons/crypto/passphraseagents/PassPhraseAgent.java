@@ -19,8 +19,16 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: PassPhraseAgent.java,v 1.1 2003/11/11 21:17:46 pelle Exp $
+$Id: PassPhraseAgent.java,v 1.2 2003/12/16 23:16:40 pelle Exp $
 $Log: PassPhraseAgent.java,v $
+Revision 1.2  2003/12/16 23:16:40  pelle
+Work done on the SigningServlet. The two phase web model is now only an option.
+Allowing much quicker signing, using the GuiDialogueAgent.
+The screen has also been cleaned up and displays the xml to be signed.
+The GuiDialogueAgent now optionally remembers passphrases and has a checkbox to support this.
+The PassPhraseAgent's now have a UserCancelsException, which allows the agent to tell the application if the user specifically
+cancels the signing process.
+
 Revision 1.1  2003/11/11 21:17:46  pelle
 Further vital reshuffling.
 org.neudist.crypto.* and org.neudist.utils.* have been moved to respective areas under org.neuclear.commons
@@ -54,5 +62,5 @@ public interface PassPhraseAgent {
      * @param name 
      * @return 
      */
-    char[] getPassPhrase(String name);
+    char[] getPassPhrase(String name) throws UserCancelsException;
 }

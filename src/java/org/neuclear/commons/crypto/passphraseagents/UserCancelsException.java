@@ -1,5 +1,7 @@
 package org.neuclear.commons.crypto.passphraseagents;
 
+import org.neuclear.commons.crypto.CryptoException;
+
 /*
 NeuClear Distributed Transaction Clearing Platform
 (C) 2003 Pelle Braendgaard
@@ -18,9 +20,9 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: AskAtStartupAgent.java,v 1.3 2003/12/16 23:16:40 pelle Exp $
-$Log: AskAtStartupAgent.java,v $
-Revision 1.3  2003/12/16 23:16:40  pelle
+$Id: UserCancelsException.java,v 1.1 2003/12/16 23:16:40 pelle Exp $
+$Log: UserCancelsException.java,v $
+Revision 1.1  2003/12/16 23:16:40  pelle
 Work done on the SigningServlet. The two phase web model is now only an option.
 Allowing much quicker signing, using the GuiDialogueAgent.
 The screen has also been cleaned up and displays the xml to be signed.
@@ -28,45 +30,22 @@ The GuiDialogueAgent now optionally remembers passphrases and has a checkbox to 
 The PassPhraseAgent's now have a UserCancelsException, which allows the agent to tell the application if the user specifically
 cancels the signing process.
 
-Revision 1.2  2003/11/21 04:43:41  pelle
-EncryptedFileStore now works. It uses the PBECipher with DES3 afair.
-Otherwise You will Finaliate.
-Anything that can be final has been made final throughout everyting. We've used IDEA's Inspector tool to find all instance of variables that could be final.
-This should hopefully make everything more stable (and secure).
-
-Revision 1.1  2003/11/12 16:33:41  pelle
-Idea missed checking this in during a refactoring.
-
-Revision 1.1  2003/10/31 23:58:53  pelle
-The IdentityCreator now fully works with the new Signer architecture.
-
 */
 
 /**
  * User: pelleb
- * Date: Oct 30, 2003
- * Time: 5:09:36 PM
+ * Date: Dec 16, 2003
+ * Time: 4:28:58 PM
  */
-public final class AskAtStartupAgent implements PassPhraseAgent {
-    public AskAtStartupAgent(final InteractiveAgent agent, final String name) throws UserCancelsException {
-        this.name = name;
-        this.passphrase = agent.getPassPhrase(name);
+public class UserCancelsException extends CryptoException {
+    public UserCancelsException(String name) {
+        super("Cancellation by: "+name);
+        this.name=name;
     }
 
-    /**
-     * Retrieve the PassPhrase for a given name/alias
-     * 
-     * @param name 
-     * @return 
-     */
-    public final char[] getPassPhrase(final String name) {
-        if (name.equals(this.name))
-            return passphrase;
-        else
-            return new char[0];
+    public String getName() {
+        return name;
     }
 
     private final String name;
-    private final char[] passphrase;
-
 }
