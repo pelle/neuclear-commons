@@ -24,8 +24,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library); if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-$Id: DDLDriver.java,v 1.1 2003/12/31 00:39:29 pelle Exp $
+$Id: DDLDriver.java,v 1.2 2004/01/07 16:15:56 pelle Exp $
 $Log: DDLDriver.java,v $
+Revision 1.2  2004/01/07 16:15:56  pelle
+I have updated all the current schemas, cleaned out the defunct ones and "completed"
+the xfer and exch schemas.
+
 Revision 1.1  2003/12/31 00:39:29  pelle
 Added Drivers for handling different Database dialects in the entity model.
 Added Statement pattern to ledger, simplifying the statement writing process.
@@ -67,6 +71,9 @@ public class DDLDriver {
      protected void appendURI(StringBuffer buf){
        appendString(buf,50);
          buf.append(" NOT NULL");
+     }
+     protected void appendSHA1(StringBuffer buf){
+         appendString(buf,20);
      }
      protected void appendDefault(StringBuffer buf){
         appendString(buf,50);
@@ -135,6 +142,9 @@ public class DDLDriver {
                  break;
              case ColumnDefinition.FIELD_CHARACTER:
                     appendCharacter(buf);
+                 break;
+             case ColumnDefinition.FIELD_SHA1:
+                    appendSHA1(buf);
                  break;
              default:
                  appendDefault(buf);
